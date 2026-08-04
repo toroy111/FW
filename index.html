@@ -65,10 +65,9 @@
         .product-card { background: #fff; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.03); }
         
-        /* ✨ 調整後不裁切的圖片區塊樣式 */
         .product-img { 
             width: 100%; 
-            height: 180px;            /* ✨ 將原本的 140px 調高到 180px，給照片更多顯示空間 */
+            height: 180px;            
             object-fit: cover; 
             background: #faf8f5; 
         }
@@ -86,15 +85,156 @@
         .qty-btn:hover { background: #eee1d5; }
         .qty-input { width: 40px; height: 100%; border: none; border-left: 1px solid #e5dfd5; border-right: 1px solid #e5dfd5; text-align: center; font-size: 14px; font-weight: 500; outline: none; }
 
+        /* --- 新增：集點卡與優惠券區塊樣式 --- */
+        .points-card-container {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+        }
+        .points-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .points-count {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-amber);
+        }
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stamp-box {
+            aspect-ratio: 1;
+            border: 2px dashed #e5dfd5;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: #fdfbf7;
+            color: #d1c7bd;
+            transition: all 0.3s ease;
+        }
+        .stamp-box.active {
+            border: 2px solid var(--accent-orange);
+            background: #fef3c7;
+            color: var(--accent-orange);
+            transform: scale(1.05);
+        }
+        .wheel-trigger-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .wheel-trigger-btn:disabled {
+            background: #d1c7bd;
+            cursor: not-allowed;
+        }
+        .wheel-trigger-btn:not(:disabled):hover {
+            background: #b45309;
+        }
+
+        .coupon-box {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+        .coupon-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .coupon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-amber);
+        }
+
         /* --- 右側：購物車明細與計算面板 --- */
         .cart-sticky-panel { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.01); position: sticky; top: 100px; }
         .cart-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         .cart-table th, .cart-table td { padding: 10px 4px; text-align: left; border-bottom: 1px solid var(--border-color); }
         .cart-table th { color: #8a7c70; font-weight: 500; font-size: 13px; }
-        .cart-total-bar { margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; }
+        .cart-total-bar { margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 12px; }
         .total-amount { font-size: 22px; font-weight: 700; color: var(--accent-orange); float: right; }
+        .earned-points-hint { font-size: 13px; color: var(--primary-amber); background: #fdfbf7; padding: 8px; border-radius: 6px; text-align: center; border: 1px solid #f3ede2; font-weight: 500; }
+        
         .btn-submit { width: 100%; padding: 14px; background: var(--primary-amber); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.15); }
         .btn-submit:hover { background: #6f4e2d; }
+
+        /* --- 新增：轉盤 PopUp 彈窗 --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .modal-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            font-size: 18px;
+            color: #a39589;
+            cursor: pointer;
+        }
+        .wheel-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 20px auto;
+        }
+        #wheelCanvas { width: 100%; height: 100%; }
+        .pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid #dc2626;
+            z-index: 10;
+        }
 
         footer { text-align: center; padding: 40px 20px; background: #fff; border-top: 1px solid var(--border-color); margin-top: 60px; font-size: 13px; color: #a39589; }
     </style>
@@ -102,12 +242,10 @@
 <body>
 
     <header>
-        <!-- ✏️ 第一處修正：頂部 Logo -->
         <div class="logo"><i class="fa-solid fa-bread-slice"></i> 焰麥</div>
     </header>
 
     <section class="hero">
-        <!-- ✏️ 第二處修正：主視覺大標題 -->
         <h1>焰麥 手作烘焙預購系統</h1>
         <p>每日新鮮揉製發酵，為您提前保留美味</p>
     </section>
@@ -155,6 +293,32 @@
                         <textarea id="note" placeholder="例如：切片、不要包裝袋，或有其他特殊需求請填寫於此..."></textarea>
                     </div>
                 </div>
+
+                <!-- 🎫 新增：數位集點卡與優惠券匣區塊 -->
+                <div class="points-card-container">
+                    <div class="points-header">
+                        <span style="font-weight: 700; font-size: 15px;"><i class="fa-solid fa-ticket" style="color:var(--accent-orange);"></i> 我的預購集點卡</span>
+                        <span class="points-count">累積：<span id="userPoints">0</span> 點</span>
+                    </div>
+                    
+                    <div class="stamp-grid" id="stampGrid">
+                        <!-- 由 JS 動態繪製 5 格點數圈圈 -->
+                    </div>
+
+                    <button class="wheel-trigger-btn" id="openWheelBtn" onclick="openWheelModal()" disabled>
+                        <i class="fa-solid fa-spinner"></i> 集滿 5 點開啓幸運轉盤
+                    </button>
+
+                    <div class="coupon-box">
+                        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #6b5a4c;">
+                            <i class="fa-solid fa-gift"></i> 已獲得優惠券 (可填於備註抵用)：
+                        </div>
+                        <div class="coupon-list" id="couponList">
+                            <p id="noCouponText" style="color: #a39589; font-size: 12px; text-align: center;">尚未獲得優惠券，快去集點抽獎吧！</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="order-form-card">
@@ -179,13 +343,41 @@
                     <tr><td colspan="3" style="text-align: center; color: #9c8e82; padding: 20px 0;">尚未選擇 any 商品項目</td></tr>
                 </tbody>
             </table>
+            
             <div class="cart-total-bar">
-                <div style="font-size: 15px; font-weight: 500;">總金額合計：<span class="total-amount" id="grand-total-display">NT$ 0</span></div>
+                <div style="font-size: 15px; font-weight: 500;">
+                    總金額合計：<span class="total-amount" id="grand-total-display">NT$ 0</span>
+                </div>
+                
+                <!-- 新增：消費集點即時預估提示 -->
+                <div class="earned-points-hint">
+                    🎁 本次預購預計可獲：<span id="earnedPoints" style="font-weight: 700; color: var(--accent-orange);">0</span> 點
+                    <br><span style="font-size: 11px; color: #a39589;">(滿 NT$250 集 1 點，取貨完成後自動累積)</span>
+                </div>
+
                 <button class="btn-submit" onclick="submitOrder()"><i class="fa-solid fa-paper-plane"></i> 安全送出預購訂單</button>
             </div>
         </div>
 
     </section>
+
+    <!-- 🎰 新增：轉盤 PopUp 彈窗 -->
+    <div class="modal-overlay" id="wheelModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark modal-close" onclick="closeWheelModal()"></i>
+            <h3 style="font-size: 18px; color: var(--primary-amber);"><i class="fa-solid fa-arrows-spin"></i> 滿點幸運大轉盤</h3>
+            <p style="font-size: 12px; color: #8a7c70; margin-top: 4px;">每次抽獎扣除 5 點，人人有獎！</p>
+            
+            <div class="wheel-container">
+                <div class="pointer"></div>
+                <canvas id="wheelCanvas" width="240" height="240"></canvas>
+            </div>
+
+            <button class="wheel-trigger-btn" id="spinBtn" onclick="spinWheel()">
+                扣除 5 點，開始旋轉！
+            </button>
+        </div>
+    </div>
 
     <footer>
         <p>© 2026 焰麥 All Rights Reserved. | 用心烘焙，溫暖每一刻。</p>
@@ -212,8 +404,166 @@
         let baseDatabaseDate = ""; 
         let cart = {}; 
 
+        // --- 集點與轉盤資料狀態 ---
+        let userPoints = 5; // 預設給予 5 點方便展示與測試轉盤
+        const coupons = [];
+        const rewards = [
+            { name: "85折優惠", color: "#fef3c7", weight: 0.1 },
+            { name: "折抵 50元", color: "#fde68a", weight: 0.2 },
+            { name: "贈可頌乙個", color: "#fcd34d", weight: 0.2 },
+            { name: "折抵 10元", color: "#fbbf24", weight: 0.4 },
+            { name: "銘謝惠顧",   color: "#f3ede2", weight: 0.1 }
+        ];
+
         const weekDayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
+        // --- 集點與優惠券 UI 更新函數 ---
+        function updatePointsUI() {
+            document.getElementById("userPoints").textContent = userPoints;
+            const stampGridEl = document.getElementById("stampGrid");
+            stampGridEl.innerHTML = "";
+
+            const currentStamps = userPoints % 5;
+            const displayStamps = (userPoints > 0 && currentStamps === 0) ? 5 : currentStamps;
+
+            for (let i = 1; i <= 5; i++) {
+                const box = document.createElement("div");
+                box.className = `stamp-box ${i <= displayStamps ? 'active' : ''}`;
+                box.innerHTML = i <= displayStamps ? '<i class="fa-solid fa-wheat-awn"></i>' : i;
+                stampGridEl.appendChild(box);
+            }
+
+            const openWheelBtn = document.getElementById("openWheelBtn");
+            if (userPoints >= 5) {
+                openWheelBtn.disabled = false;
+                openWheelBtn.innerHTML = `<i class="fa-solid fa-gift"></i> 點數已滿！點擊抽獎`;
+            } else {
+                openWheelBtn.disabled = true;
+                openWheelBtn.innerHTML = `<i class="fa-solid fa-lock"></i> 還差 ${5 - (userPoints % 5)} 點即可抽獎`;
+            }
+
+            // 更新優惠券匣
+            const couponListEl = document.getElementById("couponList");
+            const noCouponText = document.getElementById("noCouponText");
+            if (coupons.length > 0) {
+                noCouponText.style.display = "none";
+                couponListEl.innerHTML = "";
+                coupons.forEach((coupon) => {
+                    const item = document.createElement("div");
+                    item.className = "coupon-item";
+                    item.innerHTML = `<span>🎉 ${coupon}</span><span style="font-size:11px; color:#8a7c70;">未抵用</span>`;
+                    couponListEl.appendChild(item);
+                });
+            }
+        }
+
+        // --- 繪製 Canvas 轉盤 ---
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
+        let currentAngle = 0;
+        let isSpinning = false;
+
+        function drawWheel() {
+            const numOptions = rewards.length;
+            const arcSize = (2 * Math.PI) / numOptions;
+            const radius = canvas.width / 2;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            rewards.forEach((reward, i) => {
+                const angle = currentAngle + i * arcSize;
+                
+                ctx.beginPath();
+                ctx.fillStyle = reward.color;
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius, angle, angle + arcSize);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.save();
+                ctx.fillStyle = "#4a3c31";
+                ctx.font = "bold 13px Noto Sans TC";
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillText(reward.name, radius - 12, 4);
+                ctx.restore();
+            });
+        }
+
+        window.openWheelModal = function() {
+            if (userPoints < 5) return;
+            document.getElementById("wheelModal").style.display = "flex";
+            drawWheel();
+        }
+
+        window.closeWheelModal = function() {
+            if (isSpinning) return;
+            document.getElementById("wheelModal").style.display = "none";
+        }
+
+        window.spinWheel = function() {
+            if (userPoints < 5 || isSpinning) return;
+
+            userPoints -= 5;
+            isSpinning = true;
+            updatePointsUI();
+            document.getElementById("spinBtn").disabled = true;
+
+            // 隨機計算中獎項目
+            const rand = Math.random();
+            let cumulative = 0;
+            let prizeIndex = rewards.length - 1;
+            for (let i = 0; i < rewards.length; i++) {
+                cumulative += rewards[i].weight;
+                if (rand <= cumulative) {
+                    prizeIndex = i;
+                    break;
+                }
+            }
+
+            const numOptions = rewards.length;
+            const arcSize = (2 * Math.PI) / numOptions;
+            const extraRounds = 5;
+            const targetSectorAngle = -(prizeIndex * arcSize + arcSize / 2) - (Math.PI / 2);
+            const totalRotation = (extraRounds * 2 * Math.PI) + targetSectorAngle;
+
+            const startAngle = currentAngle;
+            const duration = 3500;
+            const startTime = performance.now();
+
+            function animate(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                currentAngle = startAngle + (totalRotation - startAngle) * easeOut;
+
+                drawWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    document.getElementById("spinBtn").disabled = false;
+                    const wonReward = rewards[prizeIndex];
+
+                    setTimeout(() => {
+                        if (wonReward.name !== "銘謝惠顧") {
+                            alert(`🎉 恭喜抽中：${wonReward.name}！已自動存入您的優惠券匣。`);
+                            coupons.push(wonReward.name);
+                        } else {
+                            alert("😅 差一點點就抽中了，感謝參與！");
+                        }
+                        updatePointsUI();
+                        closeWheelModal();
+                    }, 100);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // --- 原有系統核心邏輯 ---
         async function loadDates() {
             try {
                 const snapshot = await get(ref(db, "products"));
@@ -356,6 +706,7 @@
             if (Object.keys(cart).length === 0) {
                 tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #9c8e82; padding: 20px 0;">尚未選擇任何商品項目</td></tr>`;
                 document.getElementById("grand-total-display").textContent = "NT$ 0";
+                document.getElementById("earnedPoints").textContent = "0";
                 return;
             }
 
@@ -379,6 +730,10 @@
 
             tbody.innerHTML = html;
             document.getElementById("grand-total-display").textContent = `NT$ ${grandTotal.toLocaleString()}`;
+            
+            // 計算預計獲得點數（滿 250 集 1 點）
+            const earnedPoints = Math.floor(grandTotal / 250);
+            document.getElementById("earnedPoints").textContent = earnedPoints;
         }
 
         window.submitOrder = async function() {
@@ -426,15 +781,27 @@
                     return;
                 }
 
+                // 計算本次可獲得點數
+                let grandTotal = 0;
+                for (let product in cart) {
+                    grandTotal += (currentProductsDataSnapshot[product].price || 0) * cart[product];
+                }
+                let earnedPoints = Math.floor(grandTotal / 250);
+
                 const orderRef = ref(db, "orders");
                 const newOrderRef = push(orderRef);
                 await set(newOrderRef, {
                     name: name, phone: phone, date: date, time: time, location: location, 
                     items: cart,
-                    note: note
+                    note: note,
+                    earnedPoints: earnedPoints
                 });
 
-                alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n🕒 時間：${time}`);
+                // 本地點數即時累積展示
+                userPoints += earnedPoints;
+                updatePointsUI();
+
+                alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n🕒 時間：${time}\n🎁 本次預購獲得 ${earnedPoints} 點數！`);
                 
                 document.getElementById("name").value = "";
                 document.getElementById("phone").value = "";
@@ -448,7 +815,9 @@
             }
         }
 
+        // 初始化
         loadDates();
+        updatePointsUI();
     </script>
 </body>
 </html>
