@@ -63,12 +63,12 @@
         
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
         @media (min-width: 576px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 992px) { .form-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 992px) { .form-grid { grid-template-columns: repeat(5, 1fr); } }
         
         .form-group { display: flex; flex-direction: column; gap: 6px; width: 100%; }
         .form-group label { font-size: 13px; font-weight: 500; color: #7c6e62; }
-        .form-group input, .form-group textarea { padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline: none; width: 100%; }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-amber); }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline: none; width: 100%; background-color: #fff; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-amber); }
         .form-group textarea { resize: vertical; height: 42px; }
 
         .file-upload-wrapper { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
@@ -90,6 +90,7 @@
         .item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; width: 100%; }
         @media (min-width: 576px) { .item-info { flex-direction: row; justify-content: space-between; align-items: center; } }
         
+        .category-tag { background: #f3ede2; color: #8c6239; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-right: 6px; }
         .stock-badge { font-size: 12px; background: #faf8f5; padding: 4px 10px; border-radius: 4px; color: #7c6e62; white-space: nowrap; width: fit-content; }
         
         .action-buttons { display: flex; gap: 6px; align-items: center; }
@@ -173,6 +174,17 @@
                     <input id="date" type="date">
                 </div>
                 <div class="form-group">
+                    <label>麵包類別</label>
+                    <select id="category">
+                        <option value="吐司類">🍞 吐司類</option>
+                        <option value="歐式麵包">🥖 歐式麵包</option>
+                        <option value="甜麵包">🥐 甜麵包</option>
+                        <option value="鹹麵包">🍕 鹹麵包</option>
+                        <option value="常溫糕點">🧁 常溫糕點</option>
+                        <option value="其他">🌾 其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>麵包名稱</label>
                     <input id="product" placeholder="例如：法式經典牛角包">
                 </div>
@@ -243,6 +255,17 @@
             </div>
             <input type="hidden" id="editDate">
             <input type="hidden" id="editOldName">
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>麵包類別</label>
+                <select id="editProductCategory">
+                    <option value="吐司類">🍞 吐司類</option>
+                    <option value="歐式麵包">🥖 歐式麵包</option>
+                    <option value="甜麵包">🥐 甜麵包</option>
+                    <option value="鹹麵包">🍕 鹹麵包</option>
+                    <option value="常溫糕點">🧁 常溫糕點</option>
+                    <option value="其他">🌾 其他</option>
+                </select>
+            </div>
             <div class="form-group" style="margin-bottom:15px;">
                 <label>麵包名稱</label>
                 <input id="editProductName" type="text">
@@ -397,11 +420,13 @@
                 for (let p in order.items) {
                     let qty = order.items[p];
                     let price = 0;
+                    let category = "";
                     if (globalProductsCache && globalProductsCache[targetDate] && globalProductsCache[targetDate][p]) {
                         price = globalProductsCache[targetDate][p].price || 0;
+                        category = globalProductsCache[targetDate][p].category ? `[${globalProductsCache[targetDate][p].category}] ` : "";
                     }
                     orderTotalSum += (price * qty);
-                    itemSummaryArray.push(`${p} × ${qty}個`);
+                    itemSummaryArray.push(`${category}${p} × ${qty}個`);
                 }
 
                 excelRows.push([
@@ -455,7 +480,6 @@
             }
         }
 
-        /* 🌟 新增：刪除單筆顧客訂單並扣回已售數量 */
         window.deleteSingleOrder = async function(orderId) {
             const order = globalOrdersCache[orderId];
             if (!order) return;
@@ -464,7 +488,6 @@
             if (!confirmDel) return;
 
             try {
-                // 1. 扣除庫存中對應商品的 sold 數量
                 const date = order.date;
                 if (order.items && globalProductsCache[date]) {
                     let updates = {};
@@ -481,7 +504,6 @@
                     }
                 }
 
-                // 2. 刪除該訂單
                 await remove(ref(db, `orders/${orderId}`));
 
                 alert("🗑️ 成功刪除該筆訂單！");
@@ -511,7 +533,6 @@
             }
         }
 
-        /* 🌟 新增：開啟編輯 Modal 並填入舊資料 */
         window.openEditModal = function(date, productName) {
             const prod = globalProductsCache[date] ? globalProductsCache[date][productName] : null;
             if (!prod) return;
@@ -519,6 +540,7 @@
             document.getElementById("editDate").value = date;
             document.getElementById("editOldName").value = productName;
             document.getElementById("editProductName").value = productName;
+            document.getElementById("editProductCategory").value = prod.category || "吐司類";
             document.getElementById("editProductPrice").value = prod.price || 0;
             document.getElementById("editProductTotal").value = prod.total || 0;
             document.getElementById("editProductDesc").value = prod.desc || "";
@@ -531,7 +553,7 @@
                 previewThumb.style.display = "none";
             }
 
-            editUploadedImageUrlString = ""; // 重置新上傳 URL 暫存
+            editUploadedImageUrlString = ""; 
             document.getElementById("editUploadStatusText").innerText = "維持原圖";
             document.getElementById("editUploadStatusText").style.color = "#8c6239";
 
@@ -542,11 +564,11 @@
             document.getElementById("editModal").style.display = "none";
         }
 
-        /* 🌟 新增：送出商品編輯更新 */
         window.updateProductSubmit = async function() {
             const date = document.getElementById("editDate").value;
             const oldName = document.getElementById("editOldName").value;
             const newName = document.getElementById("editProductName").value.trim();
+            const category = document.getElementById("editProductCategory").value;
             const price = parseInt(document.getElementById("editProductPrice").value) || 0;
             const total = parseInt(document.getElementById("editProductTotal").value) || 0;
             const desc = document.getElementById("editProductDesc").value.trim();
@@ -566,12 +588,12 @@
             }
 
             try {
-                // 如果修改了品名，需刪除舊檔並建立新檔
                 if (oldName !== newName) {
                     await remove(ref(db, `products/${date}/${oldName}`));
                 }
 
                 await set(ref(db, `products/${date}/${newName}`), {
+                    category: category,
                     price: price,
                     total: total,
                     sold: currentSold,
@@ -590,6 +612,7 @@
 
         window.saveProduct = async function() {
             const date = document.getElementById("date").value;
+            const category = document.getElementById("category").value;
             const product = document.getElementById("product").value.trim();
             const price = parseInt(document.getElementById("price").value) || 0;
             const qty = parseInt(document.getElementById("qty").value) || 0;
@@ -604,6 +627,7 @@
 
             await update(ref(db, "products/" + date), {
                 [product]: {
+                    category: category,
                     total: qty, sold: 0, price: price,
                     img: finalImgUrl,
                     desc: description
@@ -641,6 +665,7 @@
                 html += `<h4><i class="fa-regular fa-calendar"></i> 排程日期：${date}</h4>`;
                 for (let product in data[date]) {
                     let prod = data[date][product];
+                    let categoryTag = prod.category ? `<span class="category-tag">${prod.category}</span>` : "";
                     let remain = (prod.total || 0) - (prod.sold || 0);
                     if (remain < 0) remain = 0;
                     let price = prod.price || 0;
@@ -651,7 +676,7 @@
                     html += `
                         <div class="item-row">
                             <div class="item-info">
-                                <div><b>${product}</b> <span class="price-text" style="font-size:13px; margin-left:8px;">NT$ ${price}</span>${desc}</div>
+                                <div>${categoryTag}<b>${product}</b> <span class="price-text" style="font-size:13px; margin-left:8px;">NT$ ${price}</span>${desc}</div>
                                 <div class="stock-badge">
                                     總產量: ${prod.total} 件 ｜ 已訂: <span style="color:var(--accent-orange); font-weight:700;">${prod.sold}</span> 件 ｜ 剩餘: <span style="color:${remain === 0 ? 'red' : 'green'}; font-weight:700;">${remain}</span> 件
                                 </div>
