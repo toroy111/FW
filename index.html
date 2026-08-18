@@ -460,6 +460,7 @@
 
         /* 👑 登入邏輯（包含管理員判斷與一般顧客驗證） */
         /* 👑 登入邏輯（包含管理員判斷與一般顧客驗證） */
+/* 👑 登入邏輯（嚴格驗證機制：必須先註冊才能登入） */
 window.performLogin = async function() {
     let acc = document.getElementById("loginAcc").value.trim();
     let pwd = document.getElementById("loginPwd").value.trim();
@@ -469,15 +470,19 @@ window.performLogin = async function() {
         return;
     }
 
-    // 👑 1. 管理者身分驗證：只要帳號是 admin，即自動跳轉至 ADMIN 後台
+    // 👑 1. 管理者身分驗證
     if (acc === "admin" || acc === "admin@yamai.com") {
+        if (pwd !== "admin123") { // 可依照需求自訂管理者密碼
+            alert("❌ 管理員密碼錯誤！");
+            return;
+        }
         alert("🔑 管理員身分驗證成功！即將進入後台管理系統...");
         closeLoginModal();
-        window.location.href = "admin.html"; // 跳轉至 ADMIN 後台頁面
+        window.location.href = "admin.html";
         return;
     }
 
-    // 👤 2. 一般顧客 Firebase Auth / Database 登入
+    // 👤 2. 一般顧客身分驗證（Firebase Auth 驗證）
     try {
         let userCred = await signInWithEmailAndPassword(auth, acc, pwd);
         let uid = userCred.user.uid;
@@ -495,14 +500,39 @@ window.performLogin = async function() {
         updateLoginUI();
 
     } catch (authError) {
-        console.warn("Auth 驗證降級模式或帳密錯誤", authError);
+        console.warn("Auth 驗證失敗:", authError);
         
-        // 相容簡易測試驗證
-        isLoggedIn = true;
-        currentUserProfile = { name: acc, phone: "" };
-        alert("🎉 登入成功！已為您解鎖預購資料填寫區塊。");
-        closeLoginModal();
-        updateLoginUI();
+        // 🔒 檢查簡易註冊節點 (registered_users)
+        try {
+            const registeredRef = ref(db, "registered_users");
+            const snapshot = await get(registeredRef);
+            let isValidUser = false;
+            let matchedUser = null;
+
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                for (let key in users) {
+                    if ((users[key].email === acc || users[key].name === acc) && users[key].pwd === pwd) {
+                        isValidUser = true;
+                        matchedUser = users[key];
+                        break;
+                    }
+                }
+            }
+
+            if (isValidUser) {
+                isLoggedIn = true;
+                currentUserProfile = { name: matchedUser.name, phone: matchedUser.phone, email: matchedUser.email };
+                alert(`🎉 歡迎回來，${currentUserProfile.name}！`);
+                closeLoginModal();
+                updateLoginUI();
+            } else {
+                alert("❌ 帳號或密碼錯誤！若尚未建立帳號，請先點擊下方「免費註冊帳號」。");
+            }
+        } catch (dbErr) {
+            console.error("資料庫查詢失敗", dbErr);
+            alert("❌ 登入失敗！帳號或密碼錯誤，請先完成註冊。");
+        }
     }
 };
 
