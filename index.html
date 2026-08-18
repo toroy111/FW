@@ -461,6 +461,7 @@
         /* 👑 登入邏輯（包含管理員判斷與一般顧客驗證） */
         /* 👑 登入邏輯（包含管理員判斷與一般顧客驗證） */
 /* 👑 登入邏輯（嚴格驗證機制：必須先註冊才能登入） */
+/* 👑 1. 登入邏輯（嚴格驗證機制：必須先註冊才能登入） */
 window.performLogin = async function() {
     let acc = document.getElementById("loginAcc").value.trim();
     let pwd = document.getElementById("loginPwd").value.trim();
@@ -470,9 +471,9 @@ window.performLogin = async function() {
         return;
     }
 
-    // 👑 1. 管理者身分驗證
+    // 👑 管理者身分驗證
     if (acc === "admin" || acc === "admin@yamai.com") {
-        if (pwd !== "admin123") { // 可依照需求自訂管理者密碼
+        if (pwd !== "admin123") { // 管理員專屬密碼，可自由更換
             alert("❌ 管理員密碼錯誤！");
             return;
         }
@@ -482,11 +483,13 @@ window.performLogin = async function() {
         return;
     }
 
-    // 👤 2. 一般顧客身分驗證（Firebase Auth 驗證）
+    // 👤 一般顧客身分驗證 (經由 Firebase Auth)
     try {
+        // 使用 Firebase Auth 進行正式驗證
         let userCred = await signInWithEmailAndPassword(auth, acc, pwd);
         let uid = userCred.user.uid;
         
+        // 驗證成功後，向 Database 撈取該用戶的詳細個人資料 (姓名、電話)
         let userSnap = await get(ref(db, "users/" + uid));
         if (userSnap.exists()) {
             currentUserProfile = userSnap.val();
@@ -502,7 +505,7 @@ window.performLogin = async function() {
     } catch (authError) {
         console.warn("Auth 驗證失敗:", authError);
         
-        // 🔒 檢查簡易註冊節點 (registered_users)
+        // 🔒 備用機制：若先前以簡易模式儲存至 registered_users 節點，在此進行人工比對
         try {
             const registeredRef = ref(db, "registered_users");
             const snapshot = await get(registeredRef);
@@ -527,6 +530,7 @@ window.performLogin = async function() {
                 closeLoginModal();
                 updateLoginUI();
             } else {
+                // ❌ 驗證不通過，拒絕登入
                 alert("❌ 帳號或密碼錯誤！若尚未建立帳號，請先點擊下方「免費註冊帳號」。");
             }
         } catch (dbErr) {
@@ -536,79 +540,65 @@ window.performLogin = async function() {
     }
 };
 
-        /* 📝 創建帳號 (註冊) 邏輯 */
-        window.performRegister = async function() {
-            let name = document.getElementById("regName").value.trim();
-            let email = document.getElementById("regEmail").value.trim();
-            let phone = document.getElementById("regPhone").value.trim();
-            let pwd = document.getElementById("regPwd").value.trim();
 
-            if (!name || !email || !phone || !pwd) {
-                alert("請填寫所有註冊必填欄位！");
-                return;
-            }
+/* 📝 2. 創建帳號 (註冊) 邏輯 */
+window.performRegister = async function() {
+    let name = document.getElementById("regName").value.trim();
+    let email = document.getElementById("regEmail").value.trim();
+    let phone = document.getElementById("regPhone").value.trim();
+    let pwd = document.getElementById("regPwd").value.trim();
 
-            if (pwd.length < 6) {
-                alert("為了您的帳號安全，密碼請設定至少 6 位數！");
-                return;
-            }
+    if (!name || !email || !phone || !pwd) {
+        alert("請填寫所有註冊必填欄位！");
+        return;
+    }
 
+    if (pwd.length < 6) {
+        alert("為了您的帳號安全，密碼請設定至少 6 位數！");
+        return;
+    }
+
+    try {
+        // 1. 在 Firebase Auth 建立認證帳號
+        let userCred = await createUserWithEmailAndPassword(auth, email, pwd);
+        let uid = userCred.user.uid;
+
+        // 2. 將使用者的個人基本資料 (姓名、電話、Email) 儲存至 Realtime Database 的 users/{uid} 節點
+        await set(ref(db, "users/" + uid), {
+            name: name,
+            email: email,
+            phone: phone,
+            createdAt: new Date().toISOString()
+        });
+
+        alert("🎉 帳號創建成功！已自動為您登入系統。");
+        isLoggedIn = true;
+        currentUserProfile = { name, email, phone };
+        closeLoginModal();
+        updateLoginUI();
+
+    } catch (err) {
+        console.error("註冊失敗:", err);
+        
+        if (err.code === "auth/email-already-in-use") {
+            alert("❌ 此 Email 已經被註冊過囉！請直接使用該 Email 登入。");
+        } else {
+            // 若 Auth 尚未啟用或權限不足，降級改為寫入 Database 的 registered_users 節點
             try {
-                // 於 Firebase Auth 建立使用者
-                let userCred = await createUserWithEmailAndPassword(auth, email, pwd);
-                let uid = userCred.user.uid;
-
-                // 將使用者完整聯絡資料儲存至 Realtime Database
-                await set(ref(db, "users/" + uid), {
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    createdAt: new Date().toISOString()
-                });
-
-                alert("🎉 帳號創建成功！已自動為您登入系統。");
+                const newUserRef = push(ref(db, "registered_users"));
+                await set(newUserRef, { name, email, phone, pwd });
+                
+                alert("🎉 帳號創建成功！已自動為您登入。");
                 isLoggedIn = true;
                 currentUserProfile = { name, email, phone };
                 closeLoginModal();
                 updateLoginUI();
-
-            } catch (err) {
-                console.error("註冊失敗:", err);
-                if (err.code === "auth/email-already-in-use") {
-                    alert("此 Email 已經被註冊過囉！請直接使用該 Email 登入或選擇忘記密碼。");
-                } else {
-                    // 若無開啟 Firebase Auth，將資料寫入 Database user 節點
-                    const newUserRef = push(ref(db, "registered_users"));
-                    await set(newUserRef, { name, email, phone, pwd });
-                    
-                    alert("🎉 帳號創建成功！已自動為您登入。");
-                    isLoggedIn = true;
-                    currentUserProfile = { name, email, phone };
-                    closeLoginModal();
-                    updateLoginUI();
-                }
+            } catch (dbErr) {
+                alert("❌ 註冊失敗，請檢查網路連線或聯繫系統管理員！");
             }
-        };
-
-        /* 🔐 忘記密碼 邏輯 */
-        window.performForgotPassword = async function() {
-            let email = document.getElementById("forgotEmail").value.trim();
-
-            if (!email) {
-                alert("請輸入您註冊時使用的電子信箱！");
-                return;
-            }
-
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert(`📧 重設密碼郵件已成功發送至 ${email}！\n請前往您的信箱收信並依指示重設密碼。`);
-                switchAuthView('login');
-            } catch (err) {
-                console.error("忘記密碼發送失敗:", err);
-                alert(`重設密碼指示已發送！請檢查您的 ${email} 信箱（若為模擬模式請直接以新密碼登入）。`);
-                switchAuthView('login');
-            }
-        };
+        }
+    }
+};
 
         function updateLoginUI() {
             const loginNotice = document.getElementById("loginNotice");
