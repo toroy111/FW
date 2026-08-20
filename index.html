@@ -74,7 +74,6 @@
         .login-notice-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
         .login-notice-box p { font-size: 14px; color: #8a7c70; margin-bottom: 20px; }
         
-        /* 🎯 優化後的按鈕樣式 */
         .btn-notice-login {
             display: inline-flex;
             align-items: center;
@@ -135,7 +134,7 @@
         .btn-submit { width: 100%; padding: 14px; background: var(--primary-amber); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.15); }
         .btn-submit:hover { background: #6f4e2d; }
 
-        /* 🚀 右下角浮動按鈕區塊 (Floating Action Buttons) */
+        /* 🚀 右下角浮動按鈕區塊 */
         .floating-action-group {
             position: fixed;
             bottom: 30px;
@@ -211,7 +210,6 @@
             color: var(--primary-amber);
         }
 
-        /* 🔗 彈窗內部輔助連結與按鈕 */
         .auth-links {
             display: flex;
             justify-content: space-between;
@@ -250,7 +248,7 @@
 
     <section class="main-container">
         
-        <!-- 🥐 1. 當日限定烘焙品項增減選購 (置頂於上方) -->
+        <!-- 🥐 1. 當日限定烘焙品項增減選購 (置頂於最上方) -->
         <div class="order-form-card">
             <h2 class="section-title"><i class="fa-solid fa-wheat-awn"></i> 當日限定烘焙品項增減選購</h2>
             <div id="products" class="products-grid">
@@ -258,7 +256,7 @@
             </div>
         </div>
 
-        <!-- 📝 2. 預購取貨人資訊與購物清單 (移至下方) -->
+        <!-- 📝 2. 預購取貨人資訊與購物清單 (已整體移至最下方) -->
         <div class="checkout-grid">
             <div class="order-form-card">
                 <h2 class="section-title"><i class="fa-solid fa-address-card"></i> 填寫預購取貨人資訊</h2>
@@ -273,7 +271,7 @@
                     </button>
                 </div>
 
-                <!-- 🔓 登入後顯示的資料填寫欄位 (預設隱藏) -->
+                <!-- 🔓 登入後顯示的資料填寫欄位 -->
                 <div id="userInfoFields" class="form-grid" style="display: none;">
                     <div class="form-group">
                         <label>顧客姓名</label>
@@ -338,11 +336,9 @@
 
     <!-- 🚀 右下角浮動功能按鈕群 -->
     <div class="floating-action-group">
-        <!-- 登入小圈圈 -->
         <button id="loginFabBtn" class="fab-btn" onclick="handleAuthClick()" title="會員登入">
             <i class="fa-solid fa-user"></i>
         </button>
-        <!-- 小火箭置頂按鈕 -->
         <button class="fab-btn" onclick="scrollToTop()" title="返回頂部">
             <i class="fa-solid fa-rocket"></i>
         </button>
@@ -353,9 +349,7 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark modal-close" onclick="closeLoginModal()"></i>
             
-            <!-- 1️⃣ 登入介面 (支援未登入輸入與已登入提示) -->
             <div id="viewLogin" class="auth-view active">
-                <!-- 未登入表單 -->
                 <div id="loginFormBlock">
                     <h3><i class="fa-solid fa-user-circle"></i> 會員登入</h3>
                     <div class="form-group" style="margin-bottom: 15px;">
@@ -374,7 +368,6 @@
                     </div>
                 </div>
 
-                <!-- 已登入提示與登出按鈕 -->
                 <div id="loggedInBlock" style="display: none; text-align: center; padding: 10px 0;">
                     <h3><i class="fa-solid fa-circle-user"></i> 會員中心</h3>
                     <p style="margin: 15px 0; color: #6b5a4c;" id="userWelcomeText">歡迎回來！</p>
@@ -384,7 +377,6 @@
                 </div>
             </div>
 
-            <!-- 2️⃣ 創建帳號 (註冊) 介面 -->
             <div id="viewRegister" class="auth-view">
                 <h3><i class="fa-solid fa-user-plus"></i> 註冊會員帳號</h3>
                 <div class="form-group" style="margin-bottom: 12px;">
@@ -410,7 +402,6 @@
                 </div>
             </div>
 
-            <!-- 3️⃣ 忘記密碼 介面 -->
             <div id="viewForgot" class="auth-view">
                 <h3><i class="fa-solid fa-key"></i> 重設密碼</h3>
                 <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px; text-align: center;">請輸入您註冊時填寫的電子信箱，系統將發送重設驗證指示給您。</p>
@@ -507,7 +498,7 @@
             if (viewName === 'forgot') document.getElementById('viewForgot').classList.add('active');
         };
 
-        /* 👑 登入邏輯（向 Firebase Authentication 進行身分驗證） */
+        /* 👑 登入邏輯 */
         window.performLogin = async function() {
             let acc = document.getElementById("loginAcc").value.trim();
             let pwd = document.getElementById("loginPwd").value.trim();
@@ -517,7 +508,6 @@
                 return;
             }
 
-            // 👑 管理者身分快速驗證
             if (acc === "admin" || acc === "admin@yamai.com") {
                 if (pwd !== "admin123") {
                     alert("❌ 管理員密碼錯誤！");
@@ -529,7 +519,6 @@
                 return;
             }
 
-            // 👤 一般顧客向 Firebase 驗證
             try {
                 let userCred = await signInWithEmailAndPassword(auth, acc, pwd);
                 let uid = userCred.user.uid;
@@ -568,7 +557,7 @@
             }
         };
 
-        /* 📝 創建帳號 (註冊) 邏輯 */
+        /* 📝 註冊邏輯 */
         window.performRegister = async function() {
             let name = document.getElementById("regName").value.trim();
             let email = document.getElementById("regEmail").value.trim();
@@ -614,7 +603,7 @@
             }
         };
 
-        /* 🔐 忘記密碼 邏輯 */
+        /* 🔐 忘記密碼邏輯 */
         window.performForgotPassword = async function() {
             let email = document.getElementById("forgotEmail").value.trim();
 
