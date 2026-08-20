@@ -102,10 +102,11 @@
         .btn-delete-single:hover { background: #fca5a5; color: #b91c1c; }
 
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border-color); border-radius: 6px; }
-        .admin-table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; min-width: 850px; }
+        .admin-table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; min-width: 900px; }
         .admin-table th { background: #faf8f5; color: #7c6e62; font-weight: 500; padding: 14px 12px; text-align: left; border-bottom: 2px solid var(--border-color); }
         .admin-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         
+        .col-account { width: 160px; }
         .col-name { width: 110px; }
         .col-phone { width: 120px; }
         .col-date { width: 110px; }
@@ -120,7 +121,6 @@
         
         .price-text { color: var(--accent-orange); font-weight: 700; white-space: nowrap; font-size: 15px; }
 
-        /* Modal 編輯視窗樣式 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .modal-content { background: white; border-radius: 8px; padding: 25px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; }
@@ -245,13 +245,14 @@
             </div>
         </div>
 
-        <!-- 🌟 新增：顧客個人資訊與歷史訂購總覽卡片 -->
+        <!-- 🌟 顧客個人資訊與歷史訂購總覽卡片（已加上顧客帳號欄位） -->
         <div class="admin-card">
             <h3><i class="fa-solid fa-users"></i> 顧客個人資訊與歷史訂購總覽</h3>
             <div class="table-responsive">
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th class="col-account">顧客帳號 / Email</th>
                             <th class="col-name">顧客姓名</th>
                             <th class="col-phone">聯絡電話</th>
                             <th style="width: 100px;">預訂總次數</th>
@@ -260,14 +261,14 @@
                         </tr>
                     </thead>
                     <tbody id="customerSummary">
-                        <tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無顧客資料</td></tr>
+                        <tr><td colspan="6" style="text-align: center; color: #9c8e82;">載入中...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- 🌟 編輯商品 Modal 彈窗 -->
+    <!-- 編輯商品 Modal 彈窗 -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -340,12 +341,24 @@
 
         let globalProductsCache = {}; 
         let globalOrdersCache = {}; 
+        let globalUsersCache = {};
         let uploadedImageUrlString = ""; 
         let editUploadedImageUrlString = "";
 
         window.initBackend = async function() {
+            await loadUsers();
             await loadInventory(); 
             await loadOrders();    
+        }
+
+        async function loadUsers() {
+            try {
+                const snapshot = await get(ref(db, "users"));
+                globalUsersCache = snapshot.val() || {};
+            } catch (err) {
+                console.error("載入使用者失敗：", err);
+                globalUsersCache = {};
+            }
         }
 
         window.handleFileSelect = function(event, type = 'new') {
@@ -802,28 +815,25 @@
             }
             tbody.innerHTML = html;
 
-            // 🌟 載入完訂單後，自動彙整渲染顧客資料
             renderCustomerSummary();
         }
 
-        // 🌟 新增：計算並渲染顧客統計分析函式
+        // 🌟 自動整合註冊帳號 (users) 與歷史訂購紀錄 (orders) 渲染函式
         function renderCustomerSummary() {
             const summaryTbody = document.getElementById("customerSummary");
-            if (!globalOrdersCache || Object.keys(globalOrdersCache).length === 0) {
-                summaryTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無顧客資料</td></tr>`;
-                return;
-            }
-
+            
             let customers = {};
 
-            for (let key in globalOrdersCache) {
-                let order = globalOrdersCache[key];
-                let phone = order.phone ? order.phone.trim() : "未提供電話";
-                let name = order.name ? order.name.trim() : "未提供姓名";
-                let customerKey = `${name}_${phone}`;
+            // 1. 優先帶入 Firebase users 註冊顧客資料
+            if (globalUsersCache && Object.keys(globalUsersCache).length > 0) {
+                for (let uKey in globalUsersCache) {
+                    let u = globalUsersCache[uKey];
+                    let account = u.email || u.account || u.username || uKey;
+                    let phone = u.phone ? u.phone.trim() : (u.tel ? u.tel.trim() : "未提供電話");
+                    let name = u.name ? u.name.trim() : "未提供姓名";
 
-                if (!customers[customerKey]) {
-                    customers[customerKey] = {
+                    customers[phone] = {
+                        account: account,
                         name: name,
                         phone: phone,
                         orderCount: 0,
@@ -831,66 +841,102 @@
                         itemsMap: {}
                     };
                 }
+            }
 
-                let orderTotalSum = 0;
-                let targetDate = order.date;
+            // 2. 彙整歷史訂單資料 (orders) 進行比對與數據累加
+            if (globalOrdersCache && Object.keys(globalOrdersCache).length > 0) {
+                for (let oKey in globalOrdersCache) {
+                    let order = globalOrdersCache[oKey];
+                    let phone = order.phone ? order.phone.trim() : "未提供電話";
+                    let name = order.name ? order.name.trim() : "未提供姓名";
+                    let account = order.email || order.account || "非會員/現場客";
 
-                for (let p in order.items) {
-                    let qty = order.items[p];
-                    let price = 0;
+                    // 若此顧客非註冊帳號（例如未在 users 列表但有下單），自動建立資料
+                    if (!customers[phone]) {
+                        customers[phone] = {
+                            account: account,
+                            name: name,
+                            phone: phone,
+                            orderCount: 0,
+                            totalAmount: 0,
+                            itemsMap: {}
+                        };
+                    } else {
+                        // 若註冊資料中姓名是預設，則拿訂單發票的最新姓名更新
+                        if (customers[phone].name === "未提供姓名" && name !== "未提供姓名") {
+                            customers[phone].name = name;
+                        }
+                    }
 
-                    let cleanDate = targetDate.trim();
-                    let cleanProdName = p.trim();
+                    let orderTotalSum = 0;
+                    let targetDate = order.date;
 
-                    if (globalProductsCache && globalProductsCache[cleanDate]) {
-                        if (globalProductsCache[cleanDate][cleanProdName]) {
-                            price = globalProductsCache[cleanDate][cleanProdName].price || 0;
-                        } else {
-                            for (let actualProdName in globalProductsCache[cleanDate]) {
-                                if (actualProdName.trim() === cleanProdName) {
-                                    price = globalProductsCache[cleanDate][actualProdName].price || 0;
+                    for (let p in order.items) {
+                        let qty = order.items[p];
+                        let price = 0;
+
+                        let cleanDate = targetDate ? targetDate.trim() : "";
+                        let cleanProdName = p.trim();
+
+                        if (globalProductsCache && globalProductsCache[cleanDate]) {
+                            if (globalProductsCache[cleanDate][cleanProdName]) {
+                                price = globalProductsCache[cleanDate][cleanProdName].price || 0;
+                            } else {
+                                for (let actualProdName in globalProductsCache[cleanDate]) {
+                                    if (actualProdName.trim() === cleanProdName) {
+                                        price = globalProductsCache[cleanDate][actualProdName].price || 0;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (price === 0) {
+                            for (let anyDate in globalProductsCache) {
+                                if (globalProductsCache[anyDate][cleanProdName]) {
+                                    price = globalProductsCache[anyDate][cleanProdName].price || 0;
                                     break;
                                 }
                             }
                         }
-                    }
 
-                    if (price === 0) {
-                        for (let anyDate in globalProductsCache) {
-                            if (globalProductsCache[anyDate][cleanProdName]) {
-                                price = globalProductsCache[anyDate][cleanProdName].price || 0;
-                                break;
-                            }
+                        orderTotalSum += (price * qty);
+
+                        if (!customers[phone].itemsMap[p]) {
+                            customers[phone].itemsMap[p] = 0;
                         }
+                        customers[phone].itemsMap[p] += qty;
                     }
 
-                    orderTotalSum += (price * qty);
-
-                    if (!customers[customerKey].itemsMap[p]) {
-                        customers[customerKey].itemsMap[p] = 0;
-                    }
-                    customers[customerKey].itemsMap[p] += qty;
+                    customers[phone].orderCount += 1;
+                    customers[phone].totalAmount += orderTotalSum;
                 }
-
-                customers[customerKey].orderCount += 1;
-                customers[customerKey].totalAmount += orderTotalSum;
             }
 
+            if (Object.keys(customers).length === 0) {
+                summaryTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無顧客帳號與訂購資料</td></tr>`;
+                return;
+            }
+
+            // 3. 渲染至 HTML 表格
             let html = "";
-            for (let cKey in customers) {
-                let customer = customers[cKey];
+            for (let phoneKey in customers) {
+                let customer = customers[phoneKey];
                 let itemsSummaryArray = [];
 
                 for (let itemName in customer.itemsMap) {
                     itemsSummaryArray.push(`<span class="stock-badge" style="margin-right: 5px; margin-bottom: 5px; display: inline-block;">${itemName} × <b>${customer.itemsMap[itemName]}</b> 個</span>`);
                 }
 
+                let itemsDisplay = itemsSummaryArray.length > 0 ? itemsSummaryArray.join(" ") : `<span style="color:#a39589;">尚無購買紀錄</span>`;
+
                 html += `
                     <tr>
+                        <td><span style="color:var(--primary-amber); font-weight:500;">${customer.account}</span></td>
                         <td><b>${customer.name}</b></td>
                         <td>${customer.phone}</td>
                         <td><span style="background:#f3ede2; color:#8c6239; padding:2px 8px; border-radius:4px; font-weight:bold;">${customer.orderCount} 次</span></td>
-                        <td>${itemsSummaryArray.join(" ")}</td>
+                        <td>${itemsDisplay}</td>
                         <td><span class="price-text">NT$ ${customer.totalAmount.toLocaleString()}</span></td>
                     </tr>
                 `;
