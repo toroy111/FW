@@ -18,54 +18,73 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; color: var(--text-dark); }
         html { scroll-behavior: smooth; }
-        body { background-color: var(--light-bg); }
+        body { background-color: var(--light-bg); line-height: 1.6; }
 
         /* --- 頂部導覽列 --- */
         header {
             background: #fff; border-bottom: 1px solid var(--border-color);
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
         .logo { font-size: 22px; font-weight: 700; color: var(--primary-amber); display: flex; align-items: center; gap: 8px; }
         .logo i { color: var(--accent-orange); }
 
-        /* --- 主視覺區 --- */
+        /* --- 主視覺區 (跨裝置高度與字體適應) --- */
         .hero {
-            background: linear-gradient(rgba(74,60,49,0.6), rgba(74,60,49,0.5)), url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80');
-            background-size: cover; background-position: center; height: 260px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center; padding: 0 20px;
+            background: linear-gradient(rgba(74,60,49,0.65), rgba(74,60,49,0.55)), url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover; background-position: center; 
+            padding: 60px 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center;
         }
-        .hero h1 { color: #fff; font-size: 32px; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .hero p { color: #f3ede2; font-size: 16px; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        .hero h1 { color: #fff; font-size: clamp(24px, 5vw, 36px); font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+        .hero p { color: #f3ede2; font-size: clamp(14px, 3vw, 18px); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 
-        /* --- 核心內容版面 --- */
-        .main-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 30px; }
+        /* --- 核心內容版面容器 --- */
+        .main-container { max-width: 1100px; margin: 30px auto; padding: 0 16px; display: flex; flex-direction: column; gap: 30px; }
         
-        .checkout-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--primary-amber); display: flex; align-items: center; gap: 8px; }
+
+        /* 📱 手機與 💻 電腦 響應式雙欄佈局 */
+        .checkout-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
         @media (min-width: 900px) {
             .checkout-grid { grid-template-columns: 1fr 380px; align-items: start; }
         }
 
-        .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--primary-amber); display: flex; align-items: center; gap: 8px; }
+        /* --- 卡片通用樣式 --- */
+        .order-form-card, .cart-sticky-panel { 
+            background: #fff; 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 24px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+        }
 
-        /* --- 顧客資料填寫與預定選項 --- */
-        .order-form-card { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
-        
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
+        /* 表單網格適應 */
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px; }
         @media (min-width: 600px) {
             .form-grid { grid-template-columns: 1fr 1fr; }
+            .form-grid .full-width { grid-column: span 2; }
         }
         
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         .form-group label { font-size: 14px; font-weight: 700; color: #6b5a4c; }
-        .form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid #e5dfd5; border-radius: 6px; font-size: 15px; outline: none; background-color: #fff; transition: border 0.2s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-amber); box-shadow: 0 0 0 3px rgba(140,98,57,0.1); }
-        .form-group textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+        .form-group input, .form-group select, .form-group textarea { 
+            padding: 12px; 
+            border: 1px solid #e5dfd5; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            outline: none; 
+            background-color: #fff; 
+            transition: all 0.2s; 
+            width: 100%;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-amber); box-shadow: 0 0 0 3px rgba(140,98,57,0.15); }
+        .form-group textarea { resize: vertical; min-height: 80px; font-family: inherit; }
 
-        /* 未登入時的提示區塊 */
+        /* 未登入提示區塊 */
         .login-notice-box {
             text-align: center;
-            padding: 35px 20px;
+            padding: 30px 20px;
             background: #faf8f5;
             border: 2px dashed #e5dfd5;
             border-radius: 10px;
@@ -75,164 +94,94 @@
         .login-notice-box p { font-size: 14px; color: #8a7c70; margin-bottom: 20px; }
         
         .btn-notice-login {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 28px;
-            background: var(--primary-amber);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 10px rgba(140, 98, 57, 0.2);
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px; background: var(--primary-amber); color: #fff;
+            border: none; border-radius: 8px; font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 10px rgba(140, 98, 57, 0.2);
+            width: 100%; max-width: 280px;
         }
-        .btn-notice-login:hover { 
-            background: #6f4e2d;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(140, 98, 57, 0.3);
-        }
-        .btn-notice-login:active {
-            transform: translateY(0);
-        }
+        .btn-notice-login:hover { background: #6f4e2d; transform: translateY(-2px); }
 
-        /* 麵包卡片清單區域 */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 15px; }
-        .product-card { background: #fff; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
-        .product-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.03); }
-        
-        .product-img { 
-            width: 100%; 
-            height: 180px;
-            object-fit: cover; 
-            background: #faf8f5; 
+        /* 🥖 商品網格 (自動依照螢幕寬度分配 1~3 欄) */
+        .products-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 20px; 
+            margin-top: 15px; 
         }
+        .product-card { 
+            background: #fff; 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+        }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .product-img { width: 100%; height: 180px; object-fit: cover; background: #faf8f5; }
+        .product-info { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .product-info h3 { font-size: 17px; font-weight: 700; }
+        .product-desc { font-size: 13px; color: #8a7c70; line-height: 1.5; height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .product-status { font-size: 12px; color: #a39589; }
+        .product-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--border-color); }
+        .price { color: var(--accent-orange); font-weight: 700; font-size: 17px; }
         
-        .product-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; gap: 6px; }
-        .product-info h3 { font-size: 16px; font-weight: 700; }
-        .product-desc { font-size: 13px; color: #8a7c70; line-height: 1.4; height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-        .product-status { font-size: 12px; color: #a39589; margin-top: 4px; }
-        .product-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--border-color); }
-        .price { color: var(--accent-orange); font-weight: 700; font-size: 16px; }
-        
-        /* 數量控制按鈕 */
-        .qty-control { display: flex; align-items: center; border: 1px solid #e5dfd5; border-radius: 4px; overflow: hidden; width: 100px; height: 32px; }
-        .qty-btn { width: 30px; height: 100%; background: #faf8f5; border: none; cursor: pointer; font-size: 14px; font-weight: 700; transition: background 0.2s; }
-        .qty-btn:hover { background: #eee1d5; }
-        .qty-input { width: 40px; height: 100%; border: none; border-left: 1px solid #e5dfd5; border-right: 1px solid #e5dfd5; text-align: center; font-size: 14px; font-weight: 500; outline: none; }
+        /* 數量按鈕按壓體驗強化 */
+        .qty-control { display: flex; align-items: center; border: 1px solid #e5dfd5; border-radius: 6px; overflow: hidden; width: 105px; height: 36px; }
+        .qty-btn { width: 32px; height: 100%; background: #faf8f5; border: none; cursor: pointer; font-size: 16px; font-weight: 700; transition: background 0.2s; }
+        .qty-btn:active { background: #e5dfd5; }
+        .qty-input { width: 41px; height: 100%; border: none; border-left: 1px solid #e5dfd5; border-right: 1px solid #e5dfd5; text-align: center; font-size: 14px; font-weight: 600; outline: none; }
 
-        /* --- 右側：購物車明細與計算面板 --- */
-        .cart-sticky-panel { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.01); position: sticky; top: 100px; }
+        /* 🛒 購物車明細與計算面板 (電腦版懸浮固定) */
+        @media (min-width: 900px) {
+            .cart-sticky-panel { position: sticky; top: 90px; }
+        }
         .cart-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        .cart-table th, .cart-table td { padding: 10px 4px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .cart-table th, .cart-table td { padding: 12px 4px; text-align: left; border-bottom: 1px solid var(--border-color); }
         .cart-table th { color: #8a7c70; font-weight: 500; font-size: 13px; }
         .cart-total-bar { margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; }
         .total-amount { font-size: 22px; font-weight: 700; color: var(--accent-orange); float: right; }
-        .btn-submit { width: 100%; padding: 14px; background: var(--primary-amber); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.15); }
+        .btn-submit { width: 100%; padding: 14px; background: var(--primary-amber); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.18); }
         .btn-submit:hover { background: #6f4e2d; }
 
-        /* 🚀 右下角浮動按鈕區塊 */
+        /* 🚀 右下角浮動按鈕群 (手機與電腦皆好按) */
         .floating-action-group {
-            position: fixed;
-            bottom: 30px;
-            right: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 999;
+            position: fixed; bottom: 25px; right: 20px;
+            display: flex; flex-direction: column; gap: 12px; z-index: 999;
         }
         .fab-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            color: var(--primary-amber);
-            font-size: 18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            width: 48px; height: 48px; border-radius: 50%;
+            background: #fff; border: 1px solid var(--border-color);
+            color: var(--primary-amber); font-size: 18px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             transition: all 0.25s ease;
-            position: relative;
         }
-        .fab-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
-            background: var(--primary-amber);
-            color: #fff;
-        }
-        .fab-btn.logged-in {
-            background: #2563eb;
-            color: #fff;
-            border-color: #2563eb;
-        }
-        .fab-btn.logged-in:hover {
-            background: #1d4ed8;
-        }
+        .fab-btn.logged-in { background: #2563eb; color: #fff; border-color: #2563eb; }
 
-        /* 🔒 會員彈窗 (Modal) */
+        /* 🔒 會員彈窗 ( Modal 滿版適應 ) */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(3px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center;
+            z-index: 1000; backdrop-filter: blur(3px); padding: 16px;
         }
         .modal-card {
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            position: relative;
+            background: #fff; padding: 28px 24px; border-radius: 12px;
+            width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            position: relative; max-height: 90vh; overflow-y: auto;
         }
-        .modal-close {
-            position: absolute;
-            top: 15px; right: 15px;
-            font-size: 18px;
-            cursor: pointer;
-            color: #a39589;
-        }
-        .modal-card h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-align: center;
-            color: var(--primary-amber);
-        }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #a39589; padding: 5px; }
+        .modal-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--primary-amber); }
 
-        .auth-links {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            font-size: 13px;
-        }
-        .auth-links a {
-            color: var(--primary-amber);
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .auth-links a:hover {
-            color: var(--accent-orange);
-            text-decoration: underline;
-        }
+        .auth-links { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 13px; }
+        .auth-links a { color: var(--primary-amber); text-decoration: none; font-weight: 500; cursor: pointer; }
+        .auth-links a:hover { color: var(--accent-orange); text-decoration: underline; }
 
         .auth-view { display: none; }
         .auth-view.active { display: block; }
 
-        footer { text-align: center; padding: 40px 20px; background: #fff; border-top: 1px solid var(--border-color); margin-top: 60px; font-size: 13px; color: #a39589; }
+        footer { text-align: center; padding: 30px 20px; background: #fff; border-top: 1px solid var(--border-color); margin-top: 50px; font-size: 13px; color: #a39589; }
     </style>
 </head>
 <body>
@@ -248,15 +197,15 @@
 
     <section class="main-container">
         
-        <!-- 🥐 1. 當日限定烘焙品項增減選購 (置頂於最上方) -->
+        <!-- 🥐 1. 當日限定烘焙品項增減選購 (頂部置頂區) -->
         <div class="order-form-card">
             <h2 class="section-title"><i class="fa-solid fa-wheat-awn"></i> 當日限定烘焙品項增減選購</h2>
             <div id="products" class="products-grid">
-                <p style="color: #a39589; grid-column: span 3; text-align: center; padding: 20px;">正在載入今日限定美味...</p>
+                <p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">正在載入今日限定美味...</p>
             </div>
         </div>
 
-        <!-- 📝 2. 預購取貨人資訊與購物清單 (已整體移至最下方) -->
+        <!-- 📝 2. 預購取貨人資訊與購物清單 (底端雙欄/單欄自適應區) -->
         <div class="checkout-grid">
             <div class="order-form-card">
                 <h2 class="section-title"><i class="fa-solid fa-address-card"></i> 填寫預購取貨人資訊</h2>
@@ -295,7 +244,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group full-width">
                         <label>指定取貨地點</label>
                         <select id="locationSelect">
                             <option value="早餐店">1. 早餐店</option>
@@ -303,7 +252,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group full-width">
                         <label>訂單備註（選填）</label>
                         <textarea id="note" placeholder="例如：切片、不要包裝袋，或有其他特殊需求請填寫於此..."></textarea>
                     </div>
@@ -668,7 +617,7 @@
                 const select = document.getElementById("dateSelect");
                 
                 if (!data || Object.keys(data).length === 0) {
-                    document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: span 3; text-align: center; padding: 20px;">目前後台尚未上架任何生產排程喔！</p>`;
+                    document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架任何生產排程喔！</p>`;
                     return;
                 }
                 
@@ -713,7 +662,7 @@
 
         async function fetchProductsByDate(dbDate) {
             if (!dbDate) {
-                document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: span 3; text-align: center; padding:20px;">請選擇販售日期</p>`;
+                document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding:20px;">請選擇販售日期</p>`;
                 cart = {};
                 renderCart();
                 return;
@@ -725,7 +674,7 @@
             cart = {}; 
 
             if (!data || Object.keys(data).length === 0) {
-                document.getElementById("products").innerHTML = `<p style="color: red; grid-column: span 3; text-align: center; padding:20px;">⚠️ 該日期目前暫無安排生產排程！</p>`;
+                document.getElementById("products").innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">⚠️ 該日期目前暫無安排生產排程！</p>`;
                 renderCart();
                 return;
             }
