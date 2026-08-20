@@ -244,6 +244,27 @@
                 </table>
             </div>
         </div>
+
+        <!-- 🌟 新增：顧客個人資訊與歷史訂購總覽卡片 -->
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-users"></i> 顧客個人資訊與歷史訂購總覽</h3>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="col-name">顧客姓名</th>
+                            <th class="col-phone">聯絡電話</th>
+                            <th style="width: 100px;">預訂總次數</th>
+                            <th class="col-items">歷史訂購商品與數量總計</th>
+                            <th class="col-total">歷史累積金額</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerSummary">
+                        <tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無顧客資料</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- 🌟 編輯商品 Modal 彈窗 -->
@@ -705,6 +726,7 @@
 
             if (!data) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何預購訂單資料</td></tr>`;
+                renderCustomerSummary();
                 return;
             }
 
@@ -779,6 +801,102 @@
                 `;
             }
             tbody.innerHTML = html;
+
+            // 🌟 載入完訂單後，自動彙整渲染顧客資料
+            renderCustomerSummary();
+        }
+
+        // 🌟 新增：計算並渲染顧客統計分析函式
+        function renderCustomerSummary() {
+            const summaryTbody = document.getElementById("customerSummary");
+            if (!globalOrdersCache || Object.keys(globalOrdersCache).length === 0) {
+                summaryTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無顧客資料</td></tr>`;
+                return;
+            }
+
+            let customers = {};
+
+            for (let key in globalOrdersCache) {
+                let order = globalOrdersCache[key];
+                let phone = order.phone ? order.phone.trim() : "未提供電話";
+                let name = order.name ? order.name.trim() : "未提供姓名";
+                let customerKey = `${name}_${phone}`;
+
+                if (!customers[customerKey]) {
+                    customers[customerKey] = {
+                        name: name,
+                        phone: phone,
+                        orderCount: 0,
+                        totalAmount: 0,
+                        itemsMap: {}
+                    };
+                }
+
+                let orderTotalSum = 0;
+                let targetDate = order.date;
+
+                for (let p in order.items) {
+                    let qty = order.items[p];
+                    let price = 0;
+
+                    let cleanDate = targetDate.trim();
+                    let cleanProdName = p.trim();
+
+                    if (globalProductsCache && globalProductsCache[cleanDate]) {
+                        if (globalProductsCache[cleanDate][cleanProdName]) {
+                            price = globalProductsCache[cleanDate][cleanProdName].price || 0;
+                        } else {
+                            for (let actualProdName in globalProductsCache[cleanDate]) {
+                                if (actualProdName.trim() === cleanProdName) {
+                                    price = globalProductsCache[cleanDate][actualProdName].price || 0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (price === 0) {
+                        for (let anyDate in globalProductsCache) {
+                            if (globalProductsCache[anyDate][cleanProdName]) {
+                                price = globalProductsCache[anyDate][cleanProdName].price || 0;
+                                break;
+                            }
+                        }
+                    }
+
+                    orderTotalSum += (price * qty);
+
+                    if (!customers[customerKey].itemsMap[p]) {
+                        customers[customerKey].itemsMap[p] = 0;
+                    }
+                    customers[customerKey].itemsMap[p] += qty;
+                }
+
+                customers[customerKey].orderCount += 1;
+                customers[customerKey].totalAmount += orderTotalSum;
+            }
+
+            let html = "";
+            for (let cKey in customers) {
+                let customer = customers[cKey];
+                let itemsSummaryArray = [];
+
+                for (let itemName in customer.itemsMap) {
+                    itemsSummaryArray.push(`<span class="stock-badge" style="margin-right: 5px; margin-bottom: 5px; display: inline-block;">${itemName} × <b>${customer.itemsMap[itemName]}</b> 個</span>`);
+                }
+
+                html += `
+                    <tr>
+                        <td><b>${customer.name}</b></td>
+                        <td>${customer.phone}</td>
+                        <td><span style="background:#f3ede2; color:#8c6239; padding:2px 8px; border-radius:4px; font-weight:bold;">${customer.orderCount} 次</span></td>
+                        <td>${itemsSummaryArray.join(" ")}</td>
+                        <td><span class="price-text">NT$ ${customer.totalAmount.toLocaleString()}</span></td>
+                    </tr>
+                `;
+            }
+
+            summaryTbody.innerHTML = html;
         }
 
         initBackend();
