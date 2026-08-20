@@ -330,22 +330,34 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark modal-close" onclick="closeLoginModal()"></i>
             
-            <!-- 1️⃣ 登入介面 -->
+            <!-- 1️⃣ 登入介面 (支援未登入輸入與已登入提示) -->
             <div id="viewLogin" class="auth-view active">
-                <h3><i class="fa-solid fa-user-circle"></i> 會員登入</h3>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label>電子信箱</label>
-                    <input id="loginAcc" type="email" placeholder="請輸入註冊的 Email">
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>密碼</label>
-                    <input id="loginPwd" type="password" placeholder="請輸入密碼">
-                </div>
-                <button class="btn-submit" onclick="performLogin()">確認登入</button>
+                <!-- 未登入表單 -->
+                <div id="loginFormBlock">
+                    <h3><i class="fa-solid fa-user-circle"></i> 會員登入</h3>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>電子信箱</label>
+                        <input id="loginAcc" type="email" placeholder="請輸入註冊的 Email">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label>密碼</label>
+                        <input id="loginPwd" type="password" placeholder="請輸入密碼">
+                    </div>
+                    <button class="btn-submit" onclick="performLogin()">確認登入</button>
 
-                <div class="auth-links">
-                    <a onclick="switchAuthView('register')"><i class="fa-solid fa-user-plus"></i> 免費註冊帳號</a>
-                    <a onclick="switchAuthView('forgot')"><i class="fa-solid fa-key"></i> 忘記密碼？</a>
+                    <div class="auth-links">
+                        <a onclick="switchAuthView('register')"><i class="fa-solid fa-user-plus"></i> 免費註冊帳號</a>
+                        <a onclick="switchAuthView('forgot')"><i class="fa-solid fa-key"></i> 忘記密碼？</a>
+                    </div>
+                </div>
+
+                <!-- 已登入提示與登出按鈕 -->
+                <div id="loggedInBlock" style="display: none; text-align: center; padding: 10px 0;">
+                    <h3><i class="fa-solid fa-circle-user"></i> 會員中心</h3>
+                    <p style="margin: 15px 0; color: #6b5a4c;" id="userWelcomeText">歡迎回來！</p>
+                    <button class="btn-submit" style="background: #dc2626;" onclick="performLogout()">
+                        <i class="fa-solid fa-right-from-bracket"></i> 登出帳號
+                    </button>
                 </div>
             </div>
 
@@ -454,10 +466,7 @@
         /* 🔑 登入彈窗與分頁切換控制 */
         window.handleAuthClick = async function() {
             if (isLoggedIn) {
-                if (confirm("您目前已是登入狀態，是否要登出？")) {
-                    await signOut(auth);
-                    alert("👋 已成功登出。");
-                }
+                openLoginModal('login');
             } else {
                 openLoginModal('login');
             }
@@ -528,7 +537,19 @@
             }
         };
 
-        /* 📝 創建帳號 (註冊) 邏輯（於 Firebase Authentication 建立帳戶，並把資料存入 Realtime Database） */
+        /* 🚪 登出邏輯 */
+        window.performLogout = async function() {
+            try {
+                await signOut(auth);
+                alert("👋 已成功登出。");
+                closeLoginModal();
+            } catch (err) {
+                console.error("登出失敗:", err);
+                alert("❌ 登出失敗，請重試！");
+            }
+        };
+
+        /* 📝 創建帳號 (註冊) 邏輯 */
         window.performRegister = async function() {
             let name = document.getElementById("regName").value.trim();
             let email = document.getElementById("regEmail").value.trim();
@@ -546,11 +567,9 @@
             }
 
             try {
-                // 1. 於 Firebase Auth 建立使用者驗證帳戶
                 let userCred = await createUserWithEmailAndPassword(auth, email, pwd);
                 let uid = userCred.user.uid;
 
-                // 2. 將顧客完整姓名、電話與 Email 存入 Realtime Database "users" 節點
                 await set(ref(db, "users/" + uid), {
                     name: name,
                     email: email,
@@ -576,7 +595,7 @@
             }
         };
 
-        /* 🔐 忘記密碼 邏輯（使用 Firebase 寄送重設信） */
+        /* 🔐 忘記密碼 邏輯 */
         window.performForgotPassword = async function() {
             let email = document.getElementById("forgotEmail").value.trim();
 
@@ -603,17 +622,24 @@
             const loginNotice = document.getElementById("loginNotice");
             const userInfoFields = document.getElementById("userInfoFields");
             const loginFabBtn = document.getElementById("loginFabBtn");
+            const loginFormBlock = document.getElementById("loginFormBlock");
+            const loggedInBlock = document.getElementById("loggedInBlock");
+            const userWelcomeText = document.getElementById("userWelcomeText");
 
             if (isLoggedIn) {
                 loginNotice.style.display = "none";
                 userInfoFields.style.display = "grid";
                 loginFabBtn.classList.add("logged-in");
                 loginFabBtn.innerHTML = '<i class="fa-solid fa-user-check"></i>';
-                loginFabBtn.title = "已登入 (點擊登出)";
+                loginFabBtn.title = "會員中心 (已登入)";
+
+                if (loginFormBlock) loginFormBlock.style.display = "none";
+                if (loggedInBlock) loggedInBlock.style.display = "block";
 
                 if (currentUserProfile) {
                     if (currentUserProfile.name) document.getElementById("name").value = currentUserProfile.name;
                     if (currentUserProfile.phone) document.getElementById("phone").value = currentUserProfile.phone;
+                    if (userWelcomeText) userWelcomeText.textContent = `親愛的 ${currentUserProfile.name || '會員'} 您好！`;
                 }
             } else {
                 loginNotice.style.display = "block";
@@ -621,6 +647,9 @@
                 loginFabBtn.classList.remove("logged-in");
                 loginFabBtn.innerHTML = '<i class="fa-solid fa-user"></i>';
                 loginFabBtn.title = "會員登入";
+
+                if (loginFormBlock) loginFormBlock.style.display = "block";
+                if (loggedInBlock) loggedInBlock.style.display = "none";
             }
         }
 
