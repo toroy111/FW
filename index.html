@@ -39,15 +39,16 @@
         .hero p { color: #f3ede2; font-size: 16px; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 
         /* --- 核心內容版面 --- */
-        .main-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr; gap: 40px; }
+        .main-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 30px; }
         
+        .checkout-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
         @media (min-width: 900px) {
-            .main-container { grid-template-columns: 1fr 380px; align-items: start; }
+            .checkout-grid { grid-template-columns: 1fr 380px; align-items: start; }
         }
 
         .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--primary-amber); display: flex; align-items: center; gap: 8px; }
 
-        /* --- 左側：顧客資料填寫與預定選項 --- */
+        /* --- 顧客資料填寫與預定選項 --- */
         .order-form-card { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
         
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
@@ -249,7 +250,16 @@
 
     <section class="main-container">
         
-        <div style="display: flex; flex-direction: column; gap: 30px;">
+        <!-- 🥐 1. 當日限定烘焙品項增減選購 (置頂於上方) -->
+        <div class="order-form-card">
+            <h2 class="section-title"><i class="fa-solid fa-wheat-awn"></i> 當日限定烘焙品項增減選購</h2>
+            <div id="products" class="products-grid">
+                <p style="color: #a39589; grid-column: span 3; text-align: center; padding: 20px;">正在載入今日限定美味...</p>
+            </div>
+        </div>
+
+        <!-- 📝 2. 預購取貨人資訊與購物清單 (移至下方) -->
+        <div class="checkout-grid">
             <div class="order-form-card">
                 <h2 class="section-title"><i class="fa-solid fa-address-card"></i> 填寫預購取貨人資訊</h2>
                 
@@ -302,31 +312,25 @@
                 </div>
             </div>
 
-            <div class="order-form-card">
-                <h2 class="section-title"><i class="fa-solid fa-wheat-awn"></i> 當日限定烘焙品項增減選購</h2>
-                <div id="products" class="products-grid">
-                    <p style="color: #a39589; grid-column: span 3; text-align: center; padding: 20px;">正在載入今日限定美味...</p>
+            <!-- 🛒 購物預定清單 -->
+            <div class="cart-sticky-panel">
+                <h2 class="section-title" style="margin-bottom: 10px;"><i class="fa-solid fa-basket-shopping"></i> 購物預定清單</h2>
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>品項</th>
+                            <th style="text-align: center; width: 60px;">數量</th>
+                            <th style="text-align: right; width: 80px;">小計</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items-tbody">
+                        <tr><td colspan="3" style="text-align: center; color: #9c8e82; padding: 20px 0;">尚未選擇任何商品項目</td></tr>
+                    </tbody>
+                </table>
+                <div class="cart-total-bar">
+                    <div style="font-size: 15px; font-weight: 500;">總金額合計：<span class="total-amount" id="grand-total-display">NT$ 0</span></div>
+                    <button class="btn-submit" onclick="submitOrder()"><i class="fa-solid fa-paper-plane"></i> 送出預購訂單</button>
                 </div>
-            </div>
-        </div>
-
-        <div class="cart-sticky-panel">
-            <h2 class="section-title" style="margin-bottom: 10px;"><i class="fa-solid fa-basket-shopping"></i> 購物預定清單</h2>
-            <table class="cart-table">
-                <thead>
-                    <tr>
-                        <th>品項</th>
-                        <th style="text-align: center; width: 60px;">數量</th>
-                        <th style="text-align: right; width: 80px;">小計</th>
-                    </tr>
-                </thead>
-                <tbody id="cart-items-tbody">
-                    <tr><td colspan="3" style="text-align: center; color: #9c8e82; padding: 20px 0;">尚未選擇 any 商品項目</td></tr>
-                </tbody>
-            </table>
-            <div class="cart-total-bar">
-                <div style="font-size: 15px; font-weight: 500;">總金額合計：<span class="total-amount" id="grand-total-display">NT$ 0</span></div>
-                <button class="btn-submit" onclick="submitOrder()"><i class="fa-solid fa-paper-plane"></i> 送出預購訂單</button>
             </div>
         </div>
 
@@ -484,11 +488,7 @@
 
         /* 🔑 登入彈窗與分頁切換控制 */
         window.handleAuthClick = async function() {
-            if (isLoggedIn) {
-                openLoginModal('login');
-            } else {
-                openLoginModal('login');
-            }
+            openLoginModal('login');
         };
 
         window.openLoginModal = function(view = 'login') {
