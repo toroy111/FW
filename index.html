@@ -496,7 +496,8 @@
     async function fetchClassicProducts() {
         const container = document.getElementById("classic-products");
         try {
-            const snapshot = await get(ref(db, "classic_products"));
+            // 關鍵修正：對應後台專區 B 存放的 products/經典常駐 路徑
+            const snapshot = await get(ref(db, "products/經典常駐"));
             const data = snapshot.val();
 
             if (!data || Object.keys(data).length === 0) {
@@ -507,14 +508,20 @@
             let html = "";
             for (let product in data) {
                 let p = data[product];
+                
+                // 庫存與價格防呆計算
+                let totalVal = (p.total !== undefined && p.total !== null && p.total !== "") ? Number(p.total) : 999;
+                let soldVal = Number(p.sold || 0);
+                let priceVal = Number(p.price || 0);
+
                 currentProductsDataSnapshot[product] = { 
-                    price: p.price, 
-                    total: p.total || 999, 
-                    sold: p.sold || 0,
+                    price: priceVal, 
+                    total: totalVal, 
+                    sold: soldVal,
                     category: 'B' 
                 };
 
-                let remain = (p.total || 999) - (p.sold || 0);
+                let remain = totalVal - soldVal;
                 let isSoldOut = remain <= 0;
 
                 html += `
@@ -528,7 +535,7 @@
                                 ${isSoldOut ? '<span style="color:red;">[ 已售罄 😭 ]</span>' : '⏳ 預購接單（3天內製作出貨）'}
                             </div>
                             <div class="product-price-row">
-                                <span class="price">NT$ ${p.price || 0}</span>
+                                <span class="price">NT$ ${priceVal}</span>
                                 ${isSoldOut ? '<span style="color:#9c8e82; font-size:13px;">補貨中</span>' : 
                                     `<div class="qty-control">
                                         <button class="qty-btn" onclick="updateQty('${product}', -1)">-</button>
@@ -662,13 +669,16 @@
             const data = snapshot.val();
             const select = document.getElementById("dateSelect");
             
-            if (!data || Object.keys(data).length === 0) {
+            // 排除「經典常駐」節點，只針對日期格式篩選專區 A
+            let dateKeys = data ? Object.keys(data).filter(k => k !== "經典常駐") : [];
+
+            if (!data || dateKeys.length === 0) {
                 document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架專區 A 生產排程！</p>`;
                 return;
             }
             
             select.innerHTML = ""; 
-            let sortedDates = Object.keys(data).sort();
+            let sortedDates = dateKeys.sort();
             let baseDateStr = sortedDates[0]; 
             let baseDate = new Date(baseDateStr);
 
@@ -845,16 +855,19 @@
                 });
             }
 
-            // 扣減專區 B 庫存
+            // 扣減專區 B 庫存 (修正路徑為 products/經典常駐)
             if (isStockOk && Object.keys(cartB).length > 0) {
-                const dbProductRefB = ref(db, "classic_products");
+                const dbProductRefB = ref(db, "products/經典常駐");
                 await runTransaction(dbProductRefB, (currentProducts) => {
                     if (currentProducts) {
                         for (let p in cartB) {
                             if (currentProducts[p]) {
-                                let remain = (currentProducts[p].total || 999) - (currentProducts[p].sold || 0);
+                                let totalVal = (currentProducts[p].total !== undefined && currentProducts[p].total !== null && currentProducts[p].total !== "") ? Number(currentProducts[p].total) : 999;
+                                let soldVal = Number(currentProducts[p].sold || 0);
+                                let remain = totalVal - soldVal;
+                                
                                 if (cartB[p] > remain) { isStockOk = false; return; }
-                                currentProducts[p].sold = (currentProducts[p].sold || 0) + cartB[p];
+                                currentProducts[p].sold = soldVal + cartB[p];
                             }
                         }
                     }
