@@ -488,7 +488,7 @@
             btnA.classList.remove("active");
             secB.style.display = "block";
             secA.style.display = "none";
-            fetchClassicProducts(); // 從 Firebase 動態載入專區 B
+            fetchClassicProducts(); 
         }
     };
 
@@ -507,7 +507,12 @@
             let html = "";
             for (let product in data) {
                 let p = data[product];
-                currentProductsDataSnapshot[product] = { price: p.price, total: p.total || 999, sold: p.sold || 0 };
+                currentProductsDataSnapshot[product] = { 
+                    price: p.price, 
+                    total: p.total || 999, 
+                    sold: p.sold || 0,
+                    category: 'B' 
+                };
 
                 let remain = (p.total || 999) - (p.sold || 0);
                 let isSoldOut = remain <= 0;
@@ -658,7 +663,7 @@
             const select = document.getElementById("dateSelect");
             
             if (!data || Object.keys(data).length === 0) {
-                document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架任何生產排程喔！</p>`;
+                document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架專區 A 生產排程！</p>`;
                 return;
             }
             
@@ -691,7 +696,9 @@
         const snapshot = await get(ref(db, "products/" + dbDate));
         const data = snapshot.val();
         
-        for (let k in data) { currentProductsDataSnapshot[k] = data[k]; }
+        for (let k in data) { 
+            currentProductsDataSnapshot[k] = { ...data[k], category: 'A' }; 
+        }
 
         if (!data || Object.keys(data).length === 0) {
             document.getElementById("products").innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">⚠️ 該日期目前暫無安排生產排程！</p>`;
@@ -809,32 +816,67 @@
 
         try {
             let isStockOk = true;
-            const dbProductRef = ref(db, "products/" + baseDatabaseDate);
 
-            await runTransaction(dbProductRef, (currentProducts) => {
-                if (currentProducts) {
-                    for (let p in cart) {
-                        if (currentProducts[p]) {
-                            let remain = currentProducts[p].total - currentProducts[p].sold;
-                            if (cart[p] > remain) { isStockOk = false; return; }
-                            currentProducts[p].sold += cart[p];
+            // 分離專區 A 與 專區 B 品項
+            let cartA = {};
+            let cartB = {};
+            for (let p in cart) {
+                if (currentProductsDataSnapshot[p] && currentProductsDataSnapshot[p].category === 'B') {
+                    cartB[p] = cart[p];
+                } else {
+                    cartA[p] = cart[p];
+                }
+            }
+
+            // 扣減專區 A 庫存
+            if (Object.keys(cartA).length > 0 && baseDatabaseDate) {
+                const dbProductRefA = ref(db, "products/" + baseDatabaseDate);
+                await runTransaction(dbProductRefA, (currentProducts) => {
+                    if (currentProducts) {
+                        for (let p in cartA) {
+                            if (currentProducts[p]) {
+                                let remain = currentProducts[p].total - currentProducts[p].sold;
+                                if (cartA[p] > remain) { isStockOk = false; return; }
+                                currentProducts[p].sold += cartA[p];
+                            }
                         }
                     }
-                }
-                return currentProducts;
-            });
+                    return currentProducts;
+                });
+            }
+
+            // 扣減專區 B 庫存
+            if (isStockOk && Object.keys(cartB).length > 0) {
+                const dbProductRefB = ref(db, "classic_products");
+                await runTransaction(dbProductRefB, (currentProducts) => {
+                    if (currentProducts) {
+                        for (let p in cartB) {
+                            if (currentProducts[p]) {
+                                let remain = (currentProducts[p].total || 999) - (currentProducts[p].sold || 0);
+                                if (cartB[p] > remain) { isStockOk = false; return; }
+                                currentProducts[p].sold = (currentProducts[p].sold || 0) + cartB[p];
+                            }
+                        }
+                    }
+                    return currentProducts;
+                });
+            }
 
             if (!isStockOk) {
-                alert("庫存發生變動，請重新調整數量！");
-                fetchProductsByDate(baseDatabaseDate);
+                alert("庫存發生變動或剩餘數量不足，請重新調整數量！");
+                if (baseDatabaseDate) fetchProductsByDate(baseDatabaseDate);
+                fetchClassicProducts();
                 return;
             }
 
-            await set(push(ref(db, "orders")), { name, phone, date, time, location, items: cart, note });
+            // 寫入 Firebase 訂單資料庫
+            await set(push(ref(db, "orders")), { name, phone, date, time, location, items: cart, note, createdAt: new Date().toISOString() });
 
             alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n🕒 時間：${time}`);
             cart = {};
-            fetchProductsByDate(baseDatabaseDate);
+            renderCart();
+            if (baseDatabaseDate) fetchProductsByDate(baseDatabaseDate);
+            fetchClassicProducts();
         } catch (err) {
             console.error(err);
             alert("連線有誤，請再試一次。");
