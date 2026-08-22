@@ -3,10 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🛑 防搜尋引擎抓取標籤 -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    
     <title>焰麥 - 麵包管理後台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script>
+        // 🔒 簡易後台進入密碼阻擋
+        (function() {
+            const secretPass = "bakery888"; // 👈 請修改為您的自訂密碼
+            if (sessionStorage.getItem("admin_authenticated") !== "true") {
+                const userPwd = prompt("🔒 進入安全性管理後台，請輸入存取密碼：");
+                if (userPwd === secretPass) {
+                    sessionStorage.setItem("admin_authenticated", "true");
+                } else {
+                    alert("⛔ 密碼錯誤，存取被拒絕！");
+                    document.write("<h1 style='text-align:center;margin-top:50px;'>403 Forbidden - 無權限訪問</h1>");
+                    window.stop();
+                }
+            }
+        })();
+    </script>
 
     <style>
         :root {
@@ -60,10 +81,14 @@
         .admin-card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.01); }
         @media (min-width: 768px) { .admin-card { padding: 25px; } }
         .admin-card h3 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
-        
+
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .tab-btn { background: #fff; border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 6px; }
+        .tab-btn.active { background: var(--primary-amber); color: #fff; border-color: var(--primary-amber); }
+
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
         @media (min-width: 576px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 992px) { .form-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (min-width: 992px) { .form-grid { grid-template-columns: repeat(6, 1fr); } }
         
         .form-group { display: flex; flex-direction: column; gap: 6px; width: 100%; }
         .form-group label { font-size: 13px; font-weight: 500; color: #7c6e62; }
@@ -90,6 +115,10 @@
         .item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; width: 100%; }
         @media (min-width: 576px) { .item-info { flex-direction: row; justify-content: space-between; align-items: center; } }
         
+        .section-tag { padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-right: 6px; color: white; }
+        .section-tag.tag-a { background: var(--primary-amber); }
+        .section-tag.tag-b { background: var(--accent-orange); }
+
         .category-tag { background: #f3ede2; color: #8c6239; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-right: 6px; }
         .stock-badge { font-size: 12px; background: #faf8f5; padding: 4px 10px; border-radius: 4px; color: #7c6e62; white-space: nowrap; width: fit-content; }
         
@@ -102,11 +131,10 @@
         .btn-delete-single:hover { background: #fca5a5; color: #b91c1c; }
 
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border-color); border-radius: 6px; }
-        .admin-table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; min-width: 900px; }
+        .admin-table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; min-width: 850px; }
         .admin-table th { background: #faf8f5; color: #7c6e62; font-weight: 500; padding: 14px 12px; text-align: left; border-bottom: 2px solid var(--border-color); }
         .admin-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         
-        .col-account { width: 160px; }
         .col-name { width: 110px; }
         .col-phone { width: 120px; }
         .col-date { width: 110px; }
@@ -116,9 +144,7 @@
 
         .order-items-wrapper { display: flex; flex-direction: column; gap: 6px; }
         .order-items { white-space: nowrap; color: #555; font-size: 13.5px; }
-        
         .order-note-box { margin-top: 8px; padding: 6px 10px; background: #fdfbf7; border-left: 3px solid var(--primary-amber); border-radius: 0 4px 4px 0; font-size: 12.5px; color: #7c6e62; line-height: 1.4; white-space: normal; word-break: break-all; }
-        
         .price-text { color: var(--accent-orange); font-weight: 700; white-space: nowrap; font-size: 15px; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
@@ -167,10 +193,17 @@
         </div>
 
         <div class="admin-card">
-            <h3><i class="fa-solid fa-plus"></i> 上架特定日期販售種類</h3>
+            <h3><i class="fa-solid fa-plus"></i> 上架與發布商品（專區 A / 專區 B）</h3>
             <div class="form-grid">
                 <div class="form-group">
-                    <label>販售日期</label>
+                    <label>歸屬專區</label>
+                    <select id="section">
+                        <option value="A">🌾 專區 A：今日現烤預購</option>
+                        <option value="B">🔥 專區 B：經典熱銷 / 接單烘焙</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>販售/出貨日期</label>
                     <input id="date" type="date">
                 </div>
                 <div class="form-group">
@@ -186,11 +219,11 @@
                 </div>
                 <div class="form-group">
                     <label>麵包名稱</label>
-                    <input id="product" placeholder="例如：法式經典牛角包">
+                    <input id="product" placeholder="例如：招牌黑糖肉桂捲">
                 </div>
                 <div class="form-group">
                     <label>單個售價 (NT$)</label>
-                    <input id="price" type="number" min="0" placeholder="例如：18">
+                    <input id="price" type="number" min="0" placeholder="例如：320">
                 </div>
                 <div class="form-group">
                     <label>準備生產總量</label>
@@ -200,7 +233,7 @@
             <div class="form-grid" style="grid-template-columns: 1fr;">
                 <div style="display: flex; flex-direction: column; gap: 15px; grid-column: 1 / -1;">
                     <div class="form-group">
-                        <label>上架商品圖片 (支援自動智慧壓縮、手機相機與檔案)</label>
+                        <label>上架商品圖片 (支援自動智慧壓縮與圖床上傳)</label>
                         <div class="file-upload-wrapper">
                             <label for="imageFileInput" class="file-upload-btn">
                                 <i class="fa-solid fa-image"></i> 選擇圖片檔案
@@ -221,6 +254,13 @@
 
         <div class="admin-card">
             <h3><i class="fa-solid fa-boxes-stacked"></i> 當前上架販售明細與剩餘庫存同步計算</h3>
+            
+            <div class="category-tabs">
+                <button class="tab-btn active" id="tabInvAll" onclick="filterInventory('ALL')"><i class="fa-solid fa-list"></i> 全部品項</button>
+                <button class="tab-btn" id="tabInvA" onclick="filterInventory('A')"><i class="fa-solid fa-wheat-awn"></i> 專區 A：今日現烤</button>
+                <button class="tab-btn" id="tabInvB" onclick="filterInventory('B')"><i class="fa-solid fa-fire"></i> 專區 B：經典熱銷</button>
+            </div>
+
             <div id="inventory">載入中...</div>
         </div>
 
@@ -244,31 +284,8 @@
                 </table>
             </div>
         </div>
-
-        <!-- 🌟 顧客個人資訊與歷史訂購總覽卡片（已加上顧客帳號欄位） -->
-        <div class="admin-card">
-            <h3><i class="fa-solid fa-users"></i> 顧客個人資訊與歷史訂購總覽</h3>
-            <div class="table-responsive">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th class="col-account">顧客帳號 / Email</th>
-                            <th class="col-name">顧客姓名</th>
-                            <th class="col-phone">聯絡電話</th>
-                            <th style="width: 100px;">預訂總次數</th>
-                            <th class="col-items">歷史訂購商品與數量總計</th>
-                            <th class="col-total">歷史累積金額</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customerSummary">
-                        <tr><td colspan="6" style="text-align: center; color: #9c8e82;">載入中...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
-    <!-- 編輯商品 Modal 彈窗 -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -277,6 +294,13 @@
             </div>
             <input type="hidden" id="editDate">
             <input type="hidden" id="editOldName">
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>歸屬專區</label>
+                <select id="editProductSection">
+                    <option value="A">🌾 專區 A：今日現烤預購</option>
+                    <option value="B">🔥 專區 B：經典熱銷 / 接單烘焙</option>
+                </select>
+            </div>
             <div class="form-group" style="margin-bottom:15px;">
                 <label>麵包類別</label>
                 <select id="editProductCategory">
@@ -341,25 +365,23 @@
 
         let globalProductsCache = {}; 
         let globalOrdersCache = {}; 
-        let globalUsersCache = {};
         let uploadedImageUrlString = ""; 
         let editUploadedImageUrlString = "";
+        let currentInvFilter = "ALL";
 
         window.initBackend = async function() {
-            await loadUsers();
             await loadInventory(); 
             await loadOrders();    
         }
 
-        async function loadUsers() {
-            try {
-                const snapshot = await get(ref(db, "users"));
-                globalUsersCache = snapshot.val() || {};
-            } catch (err) {
-                console.error("載入使用者失敗：", err);
-                globalUsersCache = {};
-            }
-        }
+        window.filterInventory = function(filter) {
+            currentInvFilter = filter;
+            document.querySelectorAll('.category-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+            if (filter === 'ALL') document.getElementById('tabInvAll').classList.add('active');
+            if (filter === 'A') document.getElementById('tabInvA').classList.add('active');
+            if (filter === 'B') document.getElementById('tabInvB').classList.add('active');
+            renderInventoryUI();
+        };
 
         window.handleFileSelect = function(event, type = 'new') {
             const file = event.target.files[0];
@@ -574,6 +596,7 @@
             document.getElementById("editDate").value = date;
             document.getElementById("editOldName").value = productName;
             document.getElementById("editProductName").value = productName;
+            document.getElementById("editProductSection").value = prod.section || "A";
             document.getElementById("editProductCategory").value = prod.category || "吐司類";
             document.getElementById("editProductPrice").value = prod.price || 0;
             document.getElementById("editProductTotal").value = prod.total || 0;
@@ -602,6 +625,7 @@
             const date = document.getElementById("editDate").value;
             const oldName = document.getElementById("editOldName").value;
             const newName = document.getElementById("editProductName").value.trim();
+            const section = document.getElementById("editProductSection").value;
             const category = document.getElementById("editProductCategory").value;
             const price = parseInt(document.getElementById("editProductPrice").value) || 0;
             const total = parseInt(document.getElementById("editProductTotal").value) || 0;
@@ -627,6 +651,7 @@
                 }
 
                 await set(ref(db, `products/${date}/${newName}`), {
+                    section: section,
                     category: category,
                     price: price,
                     total: total,
@@ -645,15 +670,16 @@
         }
 
         window.saveProduct = async function() {
-            const date = document.getElementById("date").value;
+            const section = document.getElementById("section").value;
+            const date = document.getElementById("date").value || new Date().toISOString().split('T')[0];
             const category = document.getElementById("category").value;
             const product = document.getElementById("product").value.trim();
             const price = parseInt(document.getElementById("price").value) || 0;
             const qty = parseInt(document.getElementById("qty").value) || 0;
             const description = document.getElementById("description").value.trim();
 
-            if (!date || !product || qty <= 0 || price <= 0) {
-                alert("請確認『日期、名稱、售價、數量』皆有填寫！");
+            if (!product || qty <= 0 || price <= 0) {
+                alert("請確認『名稱、售價、數量』皆有填寫！");
                 return;
             }
 
@@ -661,6 +687,7 @@
 
             await update(ref(db, "products/" + date), {
                 [product]: {
+                    section: section,
                     category: category,
                     total: qty, sold: 0, price: price,
                     img: finalImgUrl,
@@ -685,20 +712,30 @@
 
         async function loadInventory() {
             const snapshot = await get(ref(db, "products"));
-            const data = snapshot.val();
-            globalProductsCache = data || {}; 
+            globalProductsCache = snapshot.val() || {}; 
+            renderInventoryUI();
+        }
 
-            if (!data) {
+        function renderInventoryUI() {
+            const data = globalProductsCache;
+            if (!data || Object.keys(data).length === 0) {
                 document.getElementById("inventory").innerHTML = "<p style='color: #9c8e82;'>目前尚無任何上架商品規劃。</p>";
                 return;
             }
 
             let html = "";
             for (let date in data) {
-                html += `<div class="date-group">`;
-                html += `<h4><i class="fa-regular fa-calendar"></i> 排程日期：${date}</h4>`;
+                let dateHtml = "";
                 for (let product in data[date]) {
                     let prod = data[date][product];
+                    let pSection = prod.section || 'A'; 
+
+                    if (currentInvFilter !== 'ALL' && pSection !== currentInvFilter) continue;
+
+                    let sectionTag = pSection === 'A' 
+                        ? `<span class="section-tag tag-a">專區 A (現烤)</span>` 
+                        : `<span class="section-tag tag-b">專區 B (熱銷)</span>`;
+
                     let categoryTag = prod.category ? `<span class="category-tag">${prod.category}</span>` : "";
                     let remain = (prod.total || 0) - (prod.sold || 0);
                     if (remain < 0) remain = 0;
@@ -707,10 +744,10 @@
 
                     const escapedProduct = product.replace(/'/g, "\\'");
 
-                    html += `
+                    dateHtml += `
                         <div class="item-row">
                             <div class="item-info">
-                                <div>${categoryTag}<b>${product}</b> <span class="price-text" style="font-size:13px; margin-left:8px;">NT$ ${price}</span>${desc}</div>
+                                <div>${sectionTag}${categoryTag}<b>${product}</b> <span class="price-text" style="font-size:13px; margin-left:8px;">NT$ ${price}</span>${desc}</div>
                                 <div class="stock-badge">
                                     總產量: ${prod.total} 件 ｜ 已訂: <span style="color:var(--accent-orange); font-weight:700;">${prod.sold}</span> 件 ｜ 剩餘: <span style="color:${remain === 0 ? 'red' : 'green'}; font-weight:700;">${remain}</span> 件
                                 </div>
@@ -726,9 +763,16 @@
                         </div>
                     `;
                 }
-                html += `</div>`;
+
+                if (dateHtml) {
+                    html += `<div class="date-group">`;
+                    html += `<h4><i class="fa-regular fa-calendar"></i> 排程日期：${date}</h4>`;
+                    html += dateHtml;
+                    html += `</div>`;
+                }
             }
-            document.getElementById("inventory").innerHTML = html;
+
+            document.getElementById("inventory").innerHTML = html || "<p style='color: #9c8e82;'>該專區目前無上架商品。</p>";
         }
 
         async function loadOrders() {
@@ -739,7 +783,6 @@
 
             if (!data) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何預購訂單資料</td></tr>`;
-                renderCustomerSummary();
                 return;
             }
 
@@ -814,135 +857,6 @@
                 `;
             }
             tbody.innerHTML = html;
-
-            renderCustomerSummary();
-        }
-
-        // 🌟 自動整合註冊帳號 (users) 與歷史訂購紀錄 (orders) 渲染函式
-        function renderCustomerSummary() {
-            const summaryTbody = document.getElementById("customerSummary");
-            
-            let customers = {};
-
-            // 1. 優先帶入 Firebase users 註冊顧客資料
-            if (globalUsersCache && Object.keys(globalUsersCache).length > 0) {
-                for (let uKey in globalUsersCache) {
-                    let u = globalUsersCache[uKey];
-                    let account = u.email || u.account || u.username || uKey;
-                    let phone = u.phone ? u.phone.trim() : (u.tel ? u.tel.trim() : "未提供電話");
-                    let name = u.name ? u.name.trim() : "未提供姓名";
-
-                    customers[phone] = {
-                        account: account,
-                        name: name,
-                        phone: phone,
-                        orderCount: 0,
-                        totalAmount: 0,
-                        itemsMap: {}
-                    };
-                }
-            }
-
-            // 2. 彙整歷史訂單資料 (orders) 進行比對與數據累加
-            if (globalOrdersCache && Object.keys(globalOrdersCache).length > 0) {
-                for (let oKey in globalOrdersCache) {
-                    let order = globalOrdersCache[oKey];
-                    let phone = order.phone ? order.phone.trim() : "未提供電話";
-                    let name = order.name ? order.name.trim() : "未提供姓名";
-                    let account = order.email || order.account || "非會員/現場客";
-
-                    // 若此顧客非註冊帳號（例如未在 users 列表但有下單），自動建立資料
-                    if (!customers[phone]) {
-                        customers[phone] = {
-                            account: account,
-                            name: name,
-                            phone: phone,
-                            orderCount: 0,
-                            totalAmount: 0,
-                            itemsMap: {}
-                        };
-                    } else {
-                        // 若註冊資料中姓名是預設，則拿訂單發票的最新姓名更新
-                        if (customers[phone].name === "未提供姓名" && name !== "未提供姓名") {
-                            customers[phone].name = name;
-                        }
-                    }
-
-                    let orderTotalSum = 0;
-                    let targetDate = order.date;
-
-                    for (let p in order.items) {
-                        let qty = order.items[p];
-                        let price = 0;
-
-                        let cleanDate = targetDate ? targetDate.trim() : "";
-                        let cleanProdName = p.trim();
-
-                        if (globalProductsCache && globalProductsCache[cleanDate]) {
-                            if (globalProductsCache[cleanDate][cleanProdName]) {
-                                price = globalProductsCache[cleanDate][cleanProdName].price || 0;
-                            } else {
-                                for (let actualProdName in globalProductsCache[cleanDate]) {
-                                    if (actualProdName.trim() === cleanProdName) {
-                                        price = globalProductsCache[cleanDate][actualProdName].price || 0;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (price === 0) {
-                            for (let anyDate in globalProductsCache) {
-                                if (globalProductsCache[anyDate][cleanProdName]) {
-                                    price = globalProductsCache[anyDate][cleanProdName].price || 0;
-                                    break;
-                                }
-                            }
-                        }
-
-                        orderTotalSum += (price * qty);
-
-                        if (!customers[phone].itemsMap[p]) {
-                            customers[phone].itemsMap[p] = 0;
-                        }
-                        customers[phone].itemsMap[p] += qty;
-                    }
-
-                    customers[phone].orderCount += 1;
-                    customers[phone].totalAmount += orderTotalSum;
-                }
-            }
-
-            if (Object.keys(customers).length === 0) {
-                summaryTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無顧客帳號與訂購資料</td></tr>`;
-                return;
-            }
-
-            // 3. 渲染至 HTML 表格
-            let html = "";
-            for (let phoneKey in customers) {
-                let customer = customers[phoneKey];
-                let itemsSummaryArray = [];
-
-                for (let itemName in customer.itemsMap) {
-                    itemsSummaryArray.push(`<span class="stock-badge" style="margin-right: 5px; margin-bottom: 5px; display: inline-block;">${itemName} × <b>${customer.itemsMap[itemName]}</b> 個</span>`);
-                }
-
-                let itemsDisplay = itemsSummaryArray.length > 0 ? itemsSummaryArray.join(" ") : `<span style="color:#a39589;">尚無購買紀錄</span>`;
-
-                html += `
-                    <tr>
-                        <td><span style="color:var(--primary-amber); font-weight:500;">${customer.account}</span></td>
-                        <td><b>${customer.name}</b></td>
-                        <td>${customer.phone}</td>
-                        <td><span style="background:#f3ede2; color:#8c6239; padding:2px 8px; border-radius:4px; font-weight:bold;">${customer.orderCount} 次</span></td>
-                        <td>${itemsDisplay}</td>
-                        <td><span class="price-text">NT$ ${customer.totalAmount.toLocaleString()}</span></td>
-                    </tr>
-                `;
-            }
-
-            summaryTbody.innerHTML = html;
         }
 
         initBackend();
