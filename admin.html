@@ -15,7 +15,7 @@
     <script>
         // 🔒 簡易後台進入密碼阻擋
         (function() {
-            const secretPass = "bakery888"; // 👈 請修改為您的自訂密碼
+            const secretPass = "admin"; // 👈 請修改為您的自訂密碼
             if (sessionStorage.getItem("admin_authenticated") !== "true") {
                 const userPwd = prompt("🔒 進入安全性管理後台，請輸入存取密碼：");
                 if (userPwd === secretPass) {
