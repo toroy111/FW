@@ -242,8 +242,7 @@
             <h3><i class="fa-solid fa-boxes-stacked"></i> 當前上架販售明細與剩餘庫存同步計算</h3>
             
             <div class="category-tabs">
-                <button class="tab-btn active" id="tabInvAll" onclick="filterInventory('ALL')"><i class="fa-solid fa-list"></i> 全部品項</button>
-                <button class="tab-btn" id="tabInvA" onclick="filterInventory('A')"><i class="fa-solid fa-wheat-awn"></i> 專區 A：今日現烤</button>
+                <button class="tab-btn active" id="tabInvA" onclick="filterInventory('A')"><i class="fa-solid fa-wheat-awn"></i> 專區 A：今日現烤</button>
                 <button class="tab-btn" id="tabInvB" onclick="filterInventory('B')"><i class="fa-solid fa-fire"></i> 專區 B：經典熱銷</button>
             </div>
 
@@ -272,7 +271,7 @@
             </div>
         </div>
 
-        <!-- 👥 註冊會員資料區塊（新增加在最下面） -->
+        <!-- 👥 註冊會員資料區塊 -->
         <div class="admin-card">
             <h3><i class="fa-solid fa-users"></i> 註冊客人資訊列表</h3>
             <div class="table-responsive">
@@ -377,7 +376,7 @@
         let globalUsersCache = {};
         let uploadedImageUrlString = ""; 
         let editUploadedImageUrlString = "";
-        let currentInvFilter = "ALL";
+        let currentInvFilter = "A"; // 預設為專區 A：今日現烤
 
         window.initBackend = async function() {
             await window.loadInventory(); 
@@ -388,7 +387,6 @@
         window.filterInventory = function(filter) {
             currentInvFilter = filter;
             document.querySelectorAll('.category-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (filter === 'ALL') document.getElementById('tabInvAll').classList.add('active');
             if (filter === 'A') document.getElementById('tabInvA').classList.add('active');
             if (filter === 'B') document.getElementById('tabInvB').classList.add('active');
             window.renderInventoryUI();
@@ -721,7 +719,6 @@
             }
         }
 
-        // 將 loadInventory 掛載至全局範疇
         window.loadInventory = async function() {
             try {
                 const snapshot = await get(ref(db, "products"));
@@ -733,7 +730,6 @@
             }
         }
 
-        // 將 renderInventoryUI 掛載至全局範疇
         window.renderInventoryUI = function() {
             const container = document.getElementById("inventory");
             if (!globalProductsCache || Object.keys(globalProductsCache).length === 0) {
@@ -750,14 +746,16 @@
 
                 for (let prodName in products) {
                     const item = products[prodName];
-                    if (currentInvFilter !== 'ALL' && item.section !== currentInvFilter) {
+                    const itemSection = item.section || 'A';
+                    
+                    if (itemSection !== currentInvFilter) {
                         continue;
                     }
 
                     const sold = item.sold || 0;
                     const remaining = item.total - sold;
-                    const sectionTagClass = item.section === 'B' ? 'tag-b' : 'tag-a';
-                    const sectionText = item.section === 'B' ? '專區 B' : '專區 A';
+                    const sectionTagClass = itemSection === 'B' ? 'tag-b' : 'tag-a';
+                    const sectionText = itemSection === 'B' ? '專區 B' : '專區 A';
 
                     itemsHtml += `
                         <div class="item-row">
@@ -789,10 +787,9 @@
                 }
             }
 
-            container.innerHTML = html || `<p style="color:#8c6239;">目前篩選分類下無品項</p>`;
+            container.innerHTML = html || `<p style="color:#8c6239;">目前分類下無任何商品品項</p>`;
         }
 
-        // 將 loadOrders 掛載至全局範疇
         window.loadOrders = async function() {
             try {
                 const snapshot = await get(ref(db, "orders"));
@@ -846,7 +843,6 @@
             }
         }
 
-        // 載入與刪除會員邏輯
         window.loadUsers = async function() {
             try {
                 const snapshot = await get(ref(db, "users"));
