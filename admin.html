@@ -182,12 +182,12 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>歸屬專區</label>
-                    <select id="section">
+                    <select id="section" onchange="toggleSectionForm()">
                         <option value="A">🌾 專區 A：今日現烤預購</option>
                         <option value="B">🔥 專區 B：經典熱銷 / 接單烘焙</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-date">
                     <label>販售/出貨日期</label>
                     <input id="date" type="date">
                 </div>
@@ -206,11 +206,11 @@
                     <label>麵包名稱</label>
                     <input id="product" placeholder="例如：招牌黑糖肉桂捲">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-price">
                     <label>單個售價 (NT$)</label>
                     <input id="price" type="number" min="0" placeholder="例如：320">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-qty">
                     <label>準備生產總量</label>
                     <input id="qty" type="number" min="1" placeholder="例如：50">
                 </div>
@@ -379,10 +379,28 @@
         let currentInvFilter = "A"; // 預設為專區 A：今日現烤
 
         window.initBackend = async function() {
+            window.toggleSectionForm();
             await window.loadInventory(); 
             await window.loadOrders();    
             await window.loadUsers();
         }
+
+        window.toggleSectionForm = function() {
+            const section = document.getElementById("section").value;
+            const groupDate = document.getElementById("group-date");
+            const groupPrice = document.getElementById("group-price");
+            const groupQty = document.getElementById("group-qty");
+
+            if (section === 'B') {
+                groupDate.style.display = 'none';
+                groupPrice.style.display = 'none';
+                groupQty.style.display = 'none';
+            } else {
+                groupDate.style.display = 'flex';
+                groupPrice.style.display = 'flex';
+                groupQty.style.display = 'flex';
+            }
+        };
 
         window.filterInventory = function(filter) {
             currentInvFilter = filter;
@@ -600,16 +618,27 @@
 
         window.saveProduct = async function() {
             const section = document.getElementById("section").value;
-            const date = document.getElementById("date").value;
+            let date = document.getElementById("date").value;
             const category = document.getElementById("category").value;
             const product = document.getElementById("product").value.trim();
-            const price = parseInt(document.getElementById("price").value, 10);
-            const qty = parseInt(document.getElementById("qty").value, 10);
+            let price = parseInt(document.getElementById("price").value, 10);
+            let qty = parseInt(document.getElementById("qty").value, 10);
             const description = document.getElementById("description").value.trim();
 
-            if (!date || !product || isNaN(price) || isNaN(qty)) {
-                alert("請填寫所有欄位資訊！");
-                return;
+            if (section === 'B') {
+                if (!date) date = "經典常駐";
+                if (isNaN(price)) price = 0;
+                if (isNaN(qty)) qty = 0;
+                
+                if (!product) {
+                    alert("請輸入麵包名稱！");
+                    return;
+                }
+            } else {
+                if (!date || !product || isNaN(price) || isNaN(qty)) {
+                    alert("請填寫所有欄位資訊！");
+                    return;
+                }
             }
 
             try {
