@@ -2,12 +2,43 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="robots" content="noindex, nofollow, noarchive">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🛑 防搜尋引擎抓取標籤 -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    
     <title>焰麥 - 麵包管理後台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script>
+        // 🔒 後台身分驗證與登出管理
+        (function() {
+            const secretPass = "admin"; // 👈 請修改為您的自訂密碼
+            
+            // 檢查登入狀態
+            if (sessionStorage.getItem("admin_authenticated") !== "true") {
+                const userPwd = prompt("🔒 進入安全性管理後台，請輸入存取密碼：");
+                if (userPwd === secretPass) {
+                    sessionStorage.setItem("admin_authenticated", "true");
+                } else {
+                    alert("⛔ 密碼錯誤，存取被拒絕！");
+                    document.write("<h1 style='text-align:center;margin-top:50px;'>403 Forbidden - 無權限訪問</h1>");
+                    window.stop();
+                }
+            }
+        })();
+
+        // 🚪 手動登出功能
+        function logoutBackend() {
+            if (confirm("確定要登出管理後台嗎？")) {
+                sessionStorage.removeItem("admin_authenticated");
+                alert("🔒 已成功登出！");
+                window.location.reload(); // 重新載入頁面，會再次觸發密碼驗證
+            }
+        }
+    </script>
 
     <style>
         :root {
@@ -37,10 +68,11 @@
         header h2 { color: #f3ede2; font-size: 20px; display: flex; align-items: center; gap: 8px; }
         header h2 i { color: var(--accent-orange); }
         
-        .header-actions { display: flex; gap: 10px; }
-        .header-btn { padding: 10px 18px; background: rgba(255,255,255,0.08); border: none; border-radius: 6px; text-align: left; color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; }
-        .header-btn-logout { padding: 10px 18px; background: var(--danger-red); border: none; border-radius: 6px; color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: opacity 0.2s; }
-        .header-btn-logout:hover { opacity: 0.9; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .header-btn { padding: 8px 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #fff; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: all 0.2s; }
+        .header-btn:hover { background: rgba(255,255,255,0.18); }
+        .btn-logout { background: #dc2626; border-color: #dc2626; }
+        .btn-logout:hover { background: #b91c1c; }
 
         .main-content { flex-grow: 1; padding: 25px 5%; max-width: 1400px; margin: 0 auto; width: 100%; }
         .page-title { font-size: 24px; font-weight: 500; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
@@ -128,9 +160,7 @@
 
         .order-items-wrapper { display: flex; flex-direction: column; gap: 6px; }
         .order-items { white-space: nowrap; color: #555; font-size: 13.5px; }
-        
         .order-note-box { margin-top: 8px; padding: 6px 10px; background: #fdfbf7; border-left: 3px solid var(--primary-amber); border-radius: 0 4px 4px 0; font-size: 12.5px; color: #7c6e62; line-height: 1.4; white-space: normal; word-break: break-all; }
-        
         .price-text { color: var(--accent-orange); font-weight: 700; white-space: nowrap; font-size: 15px; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
@@ -149,7 +179,7 @@
         <h2><i class="fa-solid fa-cookie-bite"></i> 焰麥</h2>
         <div class="header-actions">
             <button class="header-btn"><i class="fa-solid fa-gears"></i> 後台管理中心</button>
-            <button class="header-btn-logout" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> 登出</button>
+            <button class="header-btn btn-logout" onclick="logoutBackend()"><i class="fa-solid fa-right-from-bracket"></i> 安全登出</button>
         </div>
     </header>
 
@@ -335,10 +365,10 @@
         </div>
     </div>
 
+    <!-- Firebase 模組載入 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, update, get, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAuth, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgeP2a6Z-TqJaZ5F0j_2UoXVQ_WE3sckw",
@@ -352,32 +382,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const auth = getAuth(app);
-
-        // 設定認證為 SESSION 模式（僅在當前視窗有效，關閉瀏覽器即會登出，避免永久登入）
-        setPersistence(auth, browserSessionPersistence);
-
-        // 檢查登入狀態：未登入時跳轉至登入頁面 login.html
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "login.html";
-            }
-        });
-
-        // 登出功能函數
-        window.logoutAdmin = async function() {
-            const confirmLogout = confirm("確定要登出系統嗎？");
-            if (!confirmLogout) return;
-
-            try {
-                await signOut(auth);
-                alert("已成功登出！");
-                window.location.href = "login.html";
-            } catch (error) {
-                console.error("登出失敗：", error);
-                alert("登出失敗，請重試！");
-            }
-        };
 
         let globalProductsCache = {}; 
         let globalOrdersCache = {}; 
@@ -875,7 +879,8 @@
             tbody.innerHTML = html;
         }
 
-        initBackend();
+        // 自動初始化後台資料
+        window.initBackend();
     </script>
 </body>
 </html>
