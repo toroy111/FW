@@ -271,6 +271,27 @@
                 </table>
             </div>
         </div>
+
+        <!-- 👥 註冊會員資料區塊（新增加在最下面） -->
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-users"></i> 註冊客人資訊列表</h3>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 150px;">會員姓名</th>
+                            <th style="width: 150px;">聯絡電話</th>
+                            <th style="width: 220px;">電子郵件 (Email)</th>
+                            <th style="width: 160px;">註冊時間</th>
+                            <th class="col-action">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users">
+                        <tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無任何註冊客人資料</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- 🌟 編輯商品 Modal 彈窗 -->
@@ -353,6 +374,7 @@
 
         let globalProductsCache = {}; 
         let globalOrdersCache = {}; 
+        let globalUsersCache = {};
         let uploadedImageUrlString = ""; 
         let editUploadedImageUrlString = "";
         let currentInvFilter = "ALL";
@@ -360,6 +382,7 @@
         window.initBackend = async function() {
             await window.loadInventory(); 
             await window.loadOrders();    
+            await window.loadUsers();
         }
 
         window.filterInventory = function(filter) {
@@ -820,6 +843,58 @@
                 ordersTable.innerHTML = html;
             } catch (error) {
                 console.error(error);
+            }
+        }
+
+        // 載入與刪除會員邏輯
+        window.loadUsers = async function() {
+            try {
+                const snapshot = await get(ref(db, "users"));
+                const usersTable = document.getElementById("users");
+                globalUsersCache = snapshot.exists() ? snapshot.val() : {};
+
+                if (!globalUsersCache || Object.keys(globalUsersCache).length === 0) {
+                    usersTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無任何註冊客人資料</td></tr>`;
+                    return;
+                }
+
+                let html = "";
+                for (let userId in globalUsersCache) {
+                    const user = globalUsersCache[userId];
+                    const name = user.name || user.username || "未提供";
+                    const phone = user.phone || "未提供";
+                    const email = user.email || "未提供";
+                    const createdAt = user.createdAt || user.date || "未知";
+
+                    html += `
+                        <tr>
+                            <td>${name}</td>
+                            <td>${phone}</td>
+                            <td>${email}</td>
+                            <td>${createdAt}</td>
+                            <td class="col-action">
+                                <button class="btn-delete-single" onclick="deleteSingleUser('${userId}', '${name}')"><i class="fa-solid fa-user-xmark"></i> 刪除</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+                usersTable.innerHTML = html;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        window.deleteSingleUser = async function(userId, name) {
+            const confirmDel = confirm(`確定要刪除會員「${name}」的註冊帳號資料嗎？`);
+            if (!confirmDel) return;
+
+            try {
+                await remove(ref(db, `users/${userId}`));
+                alert("🗑️ 成功刪除該會員帳號資料！");
+                window.loadUsers();
+            } catch (error) {
+                console.error(error);
+                alert("刪除會員失敗，請重試！");
             }
         }
 
