@@ -51,6 +51,7 @@
             margin-bottom: 20px;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 10px;
+            flex-wrap: wrap;
         }
         .tab-btn {
             background: #fff;
@@ -177,6 +178,7 @@
         }
         .badge-tag.fresh { background: var(--primary-amber); }
         .badge-tag.hot { background: var(--accent-orange); }
+        .badge-tag.custom { background: #2563eb; }
 
         /* 數量按鈕按壓體驗 */
         .qty-control { display: flex; align-items: center; border: 1px solid #e5dfd5; border-radius: 6px; overflow: hidden; width: 105px; height: 36px; }
@@ -256,7 +258,10 @@
                     <i class="fa-solid fa-wheat-awn"></i> 專區 A：今日現烤預購
                 </button>
                 <button class="tab-btn" id="tabB" onclick="switchCategory('B')">
-                    <i class="fa-solid fa-fire"></i> 專區 B：經典熱銷 / 接單烘焙
+                    <i class="fa-solid fa-fire"></i> 專區 B：經典熱銷
+                </button>
+                <button class="tab-btn" id="tabC" onclick="switchCategory('C')">
+                    <i class="fa-solid fa-clock-rotate-left"></i> 專區 C：客製接單烘焙
                 </button>
             </div>
 
@@ -270,10 +275,36 @@
 
             <!-- 專區 B 內容 (預設隱藏) -->
             <div id="sectionB" style="display: none;">
-                <h2 class="section-title"><i class="fa-solid fa-fire"></i> 經典熱銷 / 接單排單烘焙專區</h2>
-                <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px;">以下品項為接單排單後新鮮製作，下單後需等待 2~3 天出貨。</p>
+                <h2 class="section-title"><i class="fa-solid fa-fire"></i> 經典熱銷專區</h2>
+                <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px;">以下為店內熱銷經典麵包，點選數量即可加入購物車！</p>
                 <div id="classic-products" class="products-grid">
-                    <p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">正在載入經典熱銷品項...</p>
+                    <!-- 經典熱銷預設品項 -->
+                </div>
+            </div>
+
+            <!-- 專區 C 內容：接單烘焙 (預設隱藏) -->
+            <div id="sectionC" style="display: none;">
+                <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> 接單烘焙預約專區</h2>
+                <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px;">可從經典熱销品項中進行客製預訂，請選擇想要的麵包品項、數量以及希望出貨/取貨的時間點。</p>
+                
+                <!-- 預約時間選項卡區塊 -->
+                <div class="form-grid" style="background: #faf8f5; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label><i class="fa-regular fa-calendar-check"></i> 希望取貨 / 出貨日期</label>
+                        <input id="customOrderDate" type="date">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-regular fa-clock"></i> 希望取貨時間點</label>
+                        <select id="customOrderTime">
+                            <option value="上午時段 (09:00 - 12:00)">上午時段 (09:00 - 12:00)</option>
+                            <option value="下午時段 (14:00 - 17:00)" selected>下午時段 (14:00 - 17:00)</option>
+                            <option value="晚間時段 (17:00 - 19:30)">晚間時段 (17:00 - 19:30)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="custom-products" class="products-grid">
+                    <!-- 載入經典品項以供挑選 -->
                 </div>
             </div>
 
@@ -468,64 +499,88 @@
     let cart = {}; 
     let isLoggedIn = false; 
     let currentUserProfile = null;
+    let currentCategory = 'A'; // 記錄當前專區
 
     const weekDayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
     /* 🔘 專區 Tab 切換 logic */
     window.switchCategory = function(category) {
+        currentCategory = category;
         const btnA = document.getElementById("tabA");
         const btnB = document.getElementById("tabB");
+        const btnC = document.getElementById("tabC");
         const secA = document.getElementById("sectionA");
         const secB = document.getElementById("sectionB");
+        const secC = document.getElementById("sectionC");
+
+        // 隱藏所有專區區塊
+        secA.style.display = "none";
+        secB.style.display = "none";
+        secC.style.display = "none";
+        btnA.classList.remove("active");
+        btnB.classList.remove("active");
+        btnC.classList.remove("active");
 
         if (category === 'A') {
             btnA.classList.add("active");
-            btnB.classList.remove("active");
             secA.style.display = "block";
-            secB.style.display = "none";
-        } else {
+        } else if (category === 'B') {
             btnB.classList.add("active");
-            btnA.classList.remove("active");
             secB.style.display = "block";
-            secA.style.display = "none";
-            fetchClassicProducts(); // 切換時再度刷新專區 B
+            fetchClassicProducts('B'); 
+        } else if (category === 'C') {
+            btnC.classList.add("active");
+            secC.style.display = "block";
+            initCustomDateField();
+            fetchClassicProducts('C'); 
         }
     };
 
-    /* 從 Firebase 動態載入專區 B (經典熱銷) 產品 */
-    async function fetchClassicProducts() {
-        const container = document.getElementById("classic-products");
+    /* 設定專區 C 的預設預約日期（預設 3 天後） */
+    function initCustomDateField() {
+        const dateInput = document.getElementById("customOrderDate");
+        if (dateInput && !dateInput.value) {
+            let today = new Date();
+            today.setDate(today.getDate() + 3);
+            dateInput.value = today.toISOString().split('T')[0];
+            dateInput.min = today.toISOString().split('T')[0];
+        }
+    }
+
+    /* 從 Firebase 動態載入專區 B 或 C (經典熱銷 / 接單烘焙) 產品 */
+    async function fetchClassicProducts(targetCategory = 'B') {
+        const containerId = targetCategory === 'C' ? "custom-products" : "classic-products";
+        const container = document.getElementById(containerId);
         try {
             const snapshot = await get(ref(db, "classic_products"));
             const data = snapshot.val();
 
             if (!data || Object.keys(data).length === 0) {
-                container.innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架專區 B 品項！</p>`;
+                container.innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架品項！</p>`;
                 return;
             }
 
             let html = "";
             for (let product in data) {
                 let p = data[product];
-                // 寫入快照資料並進行型態轉換防呆
-                currentProductsDataSnapshot[product] = { 
-                    price: Number(p.price) || 0, 
-                    total: Number(p.total) || 999, 
-                    sold: Number(p.sold) || 0 
-                };
+                currentProductsDataSnapshot[product] = { price: p.price, total: p.total || 999, sold: p.sold || 0 };
 
                 let remain = (p.total || 999) - (p.sold || 0);
                 let isSoldOut = remain <= 0;
 
+                const tagText = targetCategory === 'C' ? "🛠️ 接單烘焙" : "🔥 經典熱銷";
+                const tagClass = targetCategory === 'C' ? "badge-tag custom" : "badge-tag hot";
+                const statusText = targetCategory === 'C' ? "接單排單製作" : "預購接單（3天內製作出貨）";
+
                 html += `
                     <div class="product-card" style="${isSoldOut ? 'opacity: 0.65;' : ''}">
-                        <div class="badge-tag hot">🔥 經典熱銷</div>
+                        <div class="${tagClass}">${tagText}</div>
                         <img class="product-img" src="${p.img || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80'}">
                         <div class="product-info">
                             <h3>${product}</h3>
-                            <p class="product-desc">${p.desc || "接單排單後新鮮製作。"}</p>
+                            <p class="product-desc">${p.desc || "新鮮製作。"}</p>
                             <div class="product-status" style="color: #d97706; font-weight:bold;">
-                                ${isSoldOut ? '<span style="color:red;">[ 已售罄 😭 ]</span>' : '⏳ 預購接單（3天內製作出貨）'}
+                                ${isSoldOut ? '<span style="color:red;">[ 已售罄 😭 ]</span>' : `⏳ ${statusText}`}
                             </div>
                             <div class="product-price-row">
                                 <span class="price">NT$ ${p.price || 0}</span>
@@ -543,7 +598,7 @@
             }
             container.innerHTML = html;
         } catch (err) {
-            console.error("載入專區 B 失敗:", err);
+            console.error(err);
             container.innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">載入失敗，請檢查網路！</p>`;
         }
     }
@@ -657,9 +712,6 @@
     }
 
     async function loadDates() {
-        // 同步預載入專區 B 商品，確保後台新增商品後直接寫入全域快照
-        fetchClassicProducts();
-
         try {
             const snapshot = await get(ref(db, "products"));
             const data = snapshot.val();
@@ -699,14 +751,7 @@
         const snapshot = await get(ref(db, "products/" + dbDate));
         const data = snapshot.val();
         
-        for (let k in data) { 
-            let p = data[k];
-            currentProductsDataSnapshot[k] = {
-                price: Number(p.price) || 0,
-                total: Number(p.total) || 0,
-                sold: Number(p.sold) || 0
-            };
-        }
+        for (let k in data) { currentProductsDataSnapshot[k] = data[k]; }
 
         if (!data || Object.keys(data).length === 0) {
             document.getElementById("products").innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">⚠️ 該日期目前暫無安排生產排程！</p>`;
@@ -788,8 +833,7 @@
         let grandTotal = 0;
         for (let product in cart) {
             let qty = cart[product];
-            let pData = currentProductsDataSnapshot[product] || { price: 0 };
-            let price = Number(pData.price) || 0;
+            let price = currentProductsDataSnapshot[product].price || 0;
             let subtotal = price * qty;
             grandTotal += subtotal;
 
@@ -820,25 +864,39 @@
         let location = document.getElementById("locationSelect").value; 
         let note = document.getElementById("note").value.trim();
 
+        // 若當前位於專區 C（接單烘焙），取用專區 C 自訂的時間點
+        if (currentCategory === 'C') {
+            const customDate = document.getElementById("customOrderDate").value;
+            const customTime = document.getElementById("customOrderTime").value;
+            if (!customDate) {
+                alert("請填寫專區 C 的希望取貨/出貨日期！");
+                return;
+            }
+            date = customDate;
+            time = customTime;
+        }
+
         if (!name || !phone || !date) { alert("請填寫完整的取貨資訊！"); return; }
         if (Object.keys(cart).length === 0) { alert("請先挑選商品！"); return; }
 
         try {
             let isStockOk = true;
-            const dbProductRef = ref(db, "products/" + baseDatabaseDate);
 
-            await runTransaction(dbProductRef, (currentProducts) => {
-                if (currentProducts) {
-                    for (let p in cart) {
-                        if (currentProducts[p]) {
-                            let remain = currentProducts[p].total - currentProducts[p].sold;
-                            if (cart[p] > remain) { isStockOk = false; return; }
-                            currentProducts[p].sold += cart[p];
+            if (currentCategory === 'A') {
+                const dbProductRef = ref(db, "products/" + baseDatabaseDate);
+                await runTransaction(dbProductRef, (currentProducts) => {
+                    if (currentProducts) {
+                        for (let p in cart) {
+                            if (currentProducts[p]) {
+                                let remain = currentProducts[p].total - currentProducts[p].sold;
+                                if (cart[p] > remain) { isStockOk = false; return; }
+                                currentProducts[p].sold += cart[p];
+                            }
                         }
                     }
-                }
-                return currentProducts;
-            });
+                    return currentProducts;
+                });
+            }
 
             if (!isStockOk) {
                 alert("庫存發生變動，請重新調整數量！");
@@ -846,11 +904,22 @@
                 return;
             }
 
-            await set(push(ref(db, "orders")), { name, phone, date, time, location, items: cart, note });
+            await set(push(ref(db, "orders")), { 
+                name, 
+                phone, 
+                date, 
+                time, 
+                location, 
+                items: cart, 
+                note,
+                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱銷" : "今日現烤")
+            });
 
             alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n🕒 時間：${time}`);
             cart = {};
-            fetchProductsByDate(baseDatabaseDate);
+            if (currentCategory === 'A') fetchProductsByDate(baseDatabaseDate);
+            else fetchClassicProducts(currentCategory);
+            renderCart();
         } catch (err) {
             console.error(err);
             alert("連線有誤，請再試一次。");
