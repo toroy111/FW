@@ -99,6 +99,7 @@
         .section-tag { padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-right: 6px; color: white; }
         .section-tag.tag-a { background: var(--primary-amber); }
         .section-tag.tag-b { background: var(--accent-orange); }
+        .section-tag.tag-c { background: #059669; }
 
         .category-tag { background: #f3ede2; color: #8c6239; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-right: 6px; }
         .stock-badge { font-size: 12px; background: #faf8f5; padding: 4px 10px; border-radius: 4px; color: #7c6e62; white-space: nowrap; width: fit-content; }
@@ -178,13 +179,14 @@
 
         <!-- 🥖 上架商品表單區塊 -->
         <div class="admin-card">
-            <h3><i class="fa-solid fa-plus"></i> 上架與發布商品（專區 A / 專區 B）</h3>
+            <h3><i class="fa-solid fa-plus"></i> 上架與發布商品（專區 A / 專區 B / 接單烘焙）</h3>
             <div class="form-grid">
                 <div class="form-group">
                     <label>歸屬專區</label>
                     <select id="section" onchange="toggleSectionForm()">
                         <option value="A">🌾 專區 A：今日現烤預購</option>
-                        <option value="B">🔥 專區 B：經典熱銷 / 接單烘焙</option>
+                        <option value="B">🔥 專區 B：經典熱銷</option>
+                        <option value="C">👨‍🍳 接單烘焙：專屬客製烘焙</option>
                     </select>
                 </div>
                 <div class="form-group" id="group-date">
@@ -244,14 +246,15 @@
             <div class="category-tabs">
                 <button class="tab-btn active" id="tabInvA" onclick="filterInventory('A')"><i class="fa-solid fa-wheat-awn"></i> 專區 A：今日現烤</button>
                 <button class="tab-btn" id="tabInvB" onclick="filterInventory('B')"><i class="fa-solid fa-fire"></i> 專區 B：經典熱銷</button>
+                <button class="tab-btn" id="tabInvC" onclick="filterInventory('C')"><i class="fa-solid fa-kitchen-set"></i> 接單烘焙</button>
             </div>
 
             <div id="inventory">載入中...</div>
         </div>
 
-        <!-- 📋 顧客預購訂單區塊 -->
+        <!-- 📋 顧客預購訂單區塊（專區 A & B） -->
         <div class="admin-card">
-            <h3><i class="fa-solid fa-list-check"></i> 顧客預購訂單明細與金額總計</h3>
+            <h3><i class="fa-solid fa-list-check"></i> 專區 A & B 顧客預購訂單明細與金額總計</h3>
             <div class="table-responsive">
                 <table class="admin-table">
                     <thead>
@@ -266,6 +269,28 @@
                     </thead>
                     <tbody id="orders">
                         <tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何預購訂單資料</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 👨‍🍳 接單烘焙訂單區塊 -->
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-kitchen-set"></i> 👨‍🍳 接單烘焙（接單製作）顧客訂單明細</h3>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="col-name">訂購人姓名</th>
+                            <th class="col-phone">聯絡電話</th>
+                            <th class="col-date">預訂取貨日期</th>
+                            <th class="col-items">接單烘焙麵包品項與數量</th>
+                            <th class="col-total">小計金額</th>
+                            <th class="col-action">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customBakeOrders">
+                        <tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何接單烘焙訂單資料</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -306,7 +331,8 @@
                 <label>歸屬專區</label>
                 <select id="editProductSection">
                     <option value="A">🌾 專區 A：今日現烤預購</option>
-                    <option value="B">🔥 專區 B：經典熱銷 / 接單烘焙</option>
+                    <option value="B">🔥 專區 B：經典熱銷</option>
+                    <option value="C">👨‍🍳 接單烘焙：專屬客製烘焙</option>
                 </select>
             </div>
             <div class="form-group" style="margin-bottom:15px;">
@@ -391,7 +417,7 @@
             const groupPrice = document.getElementById("group-price");
             const groupQty = document.getElementById("group-qty");
 
-            if (section === 'B') {
+            if (section === 'B' || section === 'C') {
                 groupDate.style.display = 'none';
                 groupPrice.style.display = 'none';
                 groupQty.style.display = 'none';
@@ -407,6 +433,7 @@
             document.querySelectorAll('.category-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
             if (filter === 'A') document.getElementById('tabInvA').classList.add('active');
             if (filter === 'B') document.getElementById('tabInvB').classList.add('active');
+            if (filter === 'C') document.getElementById('tabInvC').classList.add('active');
             window.renderInventoryUI();
         };
 
@@ -625,7 +652,7 @@
             let qty = parseInt(document.getElementById("qty").value, 10);
             const description = document.getElementById("description").value.trim();
 
-            if (section === 'B') {
+            if (section === 'B' || section === 'C') {
                 if (!date) date = "經典常駐";
                 if (isNaN(price)) price = 0;
                 if (isNaN(qty)) qty = 0;
@@ -783,8 +810,11 @@
 
                     const sold = item.sold || 0;
                     const remaining = item.total - sold;
-                    const sectionTagClass = itemSection === 'B' ? 'tag-b' : 'tag-a';
-                    const sectionText = itemSection === 'B' ? '專區 B' : '專區 A';
+                    
+                    let sectionTagClass = 'tag-a';
+                    let sectionText = '專區 A';
+                    if (itemSection === 'B') { sectionTagClass = 'tag-b'; sectionText = '專區 B'; }
+                    if (itemSection === 'C') { sectionTagClass = 'tag-c'; sectionText = '接單烘焙'; }
 
                     itemsHtml += `
                         <div class="item-row">
@@ -823,50 +853,102 @@
             try {
                 const snapshot = await get(ref(db, "orders"));
                 const ordersTable = document.getElementById("orders");
+                const customOrdersTable = document.getElementById("customBakeOrders");
                 globalOrdersCache = snapshot.exists() ? snapshot.val() : {};
 
                 if (!globalOrdersCache || Object.keys(globalOrdersCache).length === 0) {
                     ordersTable.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何預購訂單資料</td></tr>`;
+                    customOrdersTable.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何接單烘焙訂單資料</td></tr>`;
                     return;
                 }
 
-                let html = "";
+                let standardOrdersHtml = "";
+                let customOrdersHtml = "";
+
                 for (let orderId in globalOrdersCache) {
                     const order = globalOrdersCache[orderId];
                     let totalSum = 0;
+                    let customTotalSum = 0;
+                    
                     let itemsSummary = [];
+                    let customItemsSummary = [];
 
                     for (let item in order.items) {
                         const qty = order.items[item];
                         let price = 0;
+                        let section = 'A';
+
+                        // 判斷該品項歸屬專區
                         if (globalProductsCache[order.date] && globalProductsCache[order.date][item]) {
                             price = globalProductsCache[order.date][item].price || 0;
+                            section = globalProductsCache[order.date][item].section || 'A';
+                        } else {
+                            // 搜尋其他日期是否有匹配的經典/接單品項
+                            for (let d in globalProductsCache) {
+                                if (globalProductsCache[d][item]) {
+                                    price = globalProductsCache[d][item].price || 0;
+                                    section = globalProductsCache[d][item].section || 'A';
+                                    break;
+                                }
+                            }
                         }
-                        totalSum += price * qty;
-                        itemsSummary.push(`<div class="order-items">${item} × ${qty}</div>`);
+
+                        if (section === 'C') {
+                            customTotalSum += price * qty;
+                            customItemsSummary.push(`<div class="order-items">🥖 <strong>${item}</strong> × ${qty} 個</div>`);
+                        } else {
+                            totalSum += price * qty;
+                            itemsSummary.push(`<div class="order-items">${item} × ${qty}</div>`);
+                        }
                     }
 
                     const noteHtml = order.note ? `<div class="order-note-box">📝 備註：${order.note}</div>` : '';
 
-                    html += `
-                        <tr>
-                            <td class="col-name">${order.name}</td>
-                            <td class="col-phone">${order.phone}</td>
-                            <td class="col-date">${order.date}</td>
-                            <td class="col-items">
-                                <div class="order-items-wrapper">
-                                    ${itemsSummary.join("")}
-                                    ${noteHtml}
-                                </div>
-                            </td>
-                            <td class="col-total"><span class="price-text">NT$ ${totalSum}</span></td>
-                            <td class="col-action">
-                                <button class="btn-delete-single" onclick="deleteSingleOrder('${orderId}')"><i class="fa-solid fa-trash-can"></i> 刪除</button>
-                            </td>
-                        </tr>
-                    `;
+                    // 若包含專區 A/B 的商品
+                    if (itemsSummary.length > 0) {
+                        standardOrdersHtml += `
+                            <tr>
+                                <td class="col-name">${order.name}</td>
+                                <td class="col-phone">${order.phone}</td>
+                                <td class="col-date">${order.date}</td>
+                                <td class="col-items">
+                                    <div class="order-items-wrapper">
+                                        ${itemsSummary.join("")}
+                                        ${noteHtml}
+                                    </div>
+                                </td>
+                                <td class="col-total"><span class="price-text">NT$ ${totalSum}</span></td>
+                                <td class="col-action">
+                                    <button class="btn-delete-single" onclick="deleteSingleOrder('${orderId}')"><i class="fa-solid fa-trash-can"></i> 刪除</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+
+                    // 若包含接單烘焙 (專區 C) 的商品
+                    if (customItemsSummary.length > 0) {
+                        customOrdersHtml += `
+                            <tr>
+                                <td class="col-name">${order.name}</td>
+                                <td class="col-phone">${order.phone}</td>
+                                <td class="col-date">${order.date}</td>
+                                <td class="col-items">
+                                    <div class="order-items-wrapper">
+                                        ${customItemsSummary.join("")}
+                                        ${noteHtml}
+                                    </div>
+                                </td>
+                                <td class="col-total"><span class="price-text">NT$ ${customTotalSum}</span></td>
+                                <td class="col-action">
+                                    <button class="btn-delete-single" onclick="deleteSingleOrder('${orderId}')"><i class="fa-solid fa-trash-can"></i> 刪除</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
                 }
-                ordersTable.innerHTML = html;
+
+                ordersTable.innerHTML = standardOrdersHtml || `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何專區 A & B 預購訂單資料</td></tr>`;
+                customOrdersTable.innerHTML = customOrdersHtml || `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何接單烘焙訂單資料</td></tr>`;
             } catch (error) {
                 console.error(error);
             }
