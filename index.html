@@ -273,7 +273,7 @@
                 <h2 class="section-title"><i class="fa-solid fa-fire"></i> 經典熱銷 / 接單排單烘焙專區</h2>
                 <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px;">以下品項為接單排單後新鮮製作，下單後需等待 2~3 天出貨。</p>
                 <div id="classic-products" class="products-grid">
-                    <!-- 經典熱銷預設品項 -->
+                    <p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">正在載入經典熱銷品項...</p>
                 </div>
             </div>
 
@@ -488,7 +488,7 @@
             btnA.classList.remove("active");
             secB.style.display = "block";
             secA.style.display = "none";
-            fetchClassicProducts(); // 從 Firebase 動態載入專區 B
+            fetchClassicProducts(); // 切換時再度刷新專區 B
         }
     };
 
@@ -507,8 +507,7 @@
             let html = "";
             for (let product in data) {
                 let p = data[product];
-                
-                // 正確整理快照資料並預防轉型問題
+                // 寫入快照資料並進行型態轉換防呆
                 currentProductsDataSnapshot[product] = { 
                     price: Number(p.price) || 0, 
                     total: Number(p.total) || 999, 
@@ -544,8 +543,8 @@
             }
             container.innerHTML = html;
         } catch (err) {
-            console.error("載入專區 B 失敗：", err);
-            container.innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">載入失敗，請檢查網路連線！</p>`;
+            console.error("載入專區 B 失敗:", err);
+            container.innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">載入失敗，請檢查網路！</p>`;
         }
     }
 
@@ -658,6 +657,9 @@
     }
 
     async function loadDates() {
+        // 同步預載入專區 B 商品，確保後台新增商品後直接寫入全域快照
+        fetchClassicProducts();
+
         try {
             const snapshot = await get(ref(db, "products"));
             const data = snapshot.val();
