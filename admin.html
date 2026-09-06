@@ -62,7 +62,6 @@
         @media (min-width: 768px) { .admin-card { padding: 25px; } }
         .admin-card h3 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
 
-        /* 🔘 Tab 分頁切換選單 */
         .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
         .tab-btn { background: #fff; border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 6px; }
         .tab-btn.active { background: var(--primary-amber); color: #fff; border-color: var(--primary-amber); }
@@ -122,7 +121,7 @@
         .col-date { width: 110px; }
         .col-items { width: auto; }
         .col-total { width: 120px; } 
-        .col-action { width: 90px; text-align: center !important; }
+        .col-action { width: 140px; text-align: center !important; }
 
         .order-items-wrapper { display: flex; flex-direction: column; gap: 6px; }
         .order-items { white-space: nowrap; color: #555; font-size: 13.5px; }
@@ -131,7 +130,6 @@
         
         .price-text { color: var(--accent-orange); font-weight: 700; white-space: nowrap; font-size: 15px; }
 
-        /* Modal 編輯視窗樣式 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .modal-content { background: white; border-radius: 8px; padding: 25px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; }
@@ -239,6 +237,42 @@
             <button class="btn-add" onclick="saveProduct()"><i class="fa-solid fa-cloud-arrow-up"></i> 發布商品至前台</button>
         </div>
 
+        <!-- 🎁 抽獎獎項設定管理區塊 -->
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-gift"></i> 🎁 抽獎獎項設定管理</h3>
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="form-group">
+                    <label>獎項名稱</label>
+                    <input id="prizeTitle" placeholder="例如：折價券 50 元">
+                </div>
+                <div class="form-group">
+                    <label>折抵金額 (NT$)</label>
+                    <input id="prizeDiscount" type="number" min="0" placeholder="50">
+                </div>
+                <div class="form-group">
+                    <label>中獎機率權重 (數字越大機率越高)</label>
+                    <input id="prizeProb" type="number" min="1" value="10" placeholder="10">
+                </div>
+            </div>
+            <button class="btn-add" onclick="savePrize()" style="margin-bottom: 20px;"><i class="fa-solid fa-plus-circle"></i> 新增抽獎獎項</button>
+            
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>獎項名稱</th>
+                            <th>折抵金額 (NT$)</th>
+                            <th>中獎權重</th>
+                            <th class="col-action">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prizesTableBody">
+                        <tr><td colspan="4" style="text-align: center; color: #9c8e82;">尚無任何獎項設定</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- 📦 庫存管理區塊 -->
         <div class="admin-card">
             <h3><i class="fa-solid fa-boxes-stacked"></i> 當前上架販售明細與剩餘庫存同步計算</h3>
@@ -298,27 +332,29 @@
 
         <!-- 👥 註冊會員資料區塊 -->
         <div class="admin-card">
-            <h3><i class="fa-solid fa-users"></i> 註冊客人資訊列表</h3>
+            <h3><i class="fa-solid fa-users"></i> 註冊客人資訊與累積點數列表</h3>
             <div class="table-responsive">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="width: 150px;">會員姓名</th>
-                            <th style="width: 150px;">聯絡電話</th>
-                            <th style="width: 220px;">電子郵件 (Email)</th>
-                            <th style="width: 160px;">註冊時間</th>
+                            <th style="width: 130px;">會員姓名</th>
+                            <th style="width: 130px;">聯絡電話</th>
+                            <th style="width: 180px;">電子郵件 (Email)</th>
+                            <th style="width: 120px;">總消費金額</th>
+                            <th style="width: 100px;">累積點數</th>
+                            <th style="width: 160px;">持有優惠券數量</th>
                             <th class="col-action">操作</th>
                         </tr>
                     </thead>
                     <tbody id="users">
-                        <tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無任何註冊客人資料</td></tr>
+                        <tr><td colspan="7" style="text-align: center; color: #9c8e82;">尚無任何註冊客人資料</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- 🌟 編輯商品 Modal 彈窗 -->
+    <!-- 商品 Modal 編輯視窗 -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -380,9 +416,36 @@
         </div>
     </div>
 
+    <!-- 🎁 抽獎獎項 Modal 編輯視窗 -->
+    <div id="editPrizeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> 編輯抽獎獎項</h3>
+                <button class="modal-close" onclick="closeEditPrizeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="hidden" id="editPrizeId">
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>獎項名稱</label>
+                <input id="editPrizeTitle" type="text" placeholder="例如：折價券 50 元">
+            </div>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>折抵金額 (NT$)</label>
+                <input id="editPrizeDiscount" type="number" min="0" placeholder="50">
+            </div>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>中獎機率權重 (數字越大機率越高)</label>
+                <input id="editPrizeProb" type="number" min="1" placeholder="10">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEditPrizeModal()">取消</button>
+                <button class="btn-save" onclick="updatePrizeSubmit()">儲存變更</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, update, get, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, update, get, remove, set, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgeP2a6Z-TqJaZ5F0j_2UoXVQ_WE3sckw",
@@ -400,15 +463,17 @@
         let globalProductsCache = {}; 
         let globalOrdersCache = {}; 
         let globalUsersCache = {};
+        let globalPrizesCache = {};
         let uploadedImageUrlString = ""; 
         let editUploadedImageUrlString = "";
-        let currentInvFilter = "A"; // 預設為專區 A：今日現烤
+        let currentInvFilter = "A";
 
         window.initBackend = async function() {
             window.toggleSectionForm();
             await window.loadInventory(); 
             await window.loadOrders();    
             await window.loadUsers();
+            await window.loadPrizes();
         }
 
         window.toggleSectionForm = function() {
@@ -485,14 +550,10 @@
 
                             if (result.success) {
                                 const url = result.data.url;
-                                if (isEdit) {
-                                    editUploadedImageUrlString = url;
-                                } else {
-                                    uploadedImageUrlString = url;
-                                }
+                                if (isEdit) editUploadedImageUrlString = url;
+                                else uploadedImageUrlString = url;
                                 statusText.innerText = "✅ 壓縮上傳成功！";
                                 statusText.style.color = "green";
-                                
                                 previewThumb.src = url;
                                 previewThumb.style.display = "block";
                             } else {
@@ -502,13 +563,110 @@
                             console.error(error);
                             statusText.innerText = "❌ 上傳失敗，請稍後重試！";
                             statusText.style.color = "var(--danger-red)";
-                            if (isEdit) editUploadedImageUrlString = "";
-                            else uploadedImageUrlString = "";
                         }
                     }, "image/jpeg", 0.82);
                 };
             };
         }
+
+        /* 🎁 抽獎獎項新增、載入、編輯與刪除 */
+        window.savePrize = async function() {
+            const title = document.getElementById("prizeTitle").value.trim();
+            const discount = parseInt(document.getElementById("prizeDiscount").value, 10) || 0;
+            const prob = parseInt(document.getElementById("prizeProb").value, 10) || 10;
+
+            if (!title) { alert("請填寫獎項名稱！"); return; }
+
+            try {
+                await push(ref(db, "prizes"), { title, discount, prob });
+                alert("✅ 成功新增抽獎獎項！");
+                document.getElementById("prizeTitle").value = "";
+                document.getElementById("prizeDiscount").value = "";
+                document.getElementById("prizeProb").value = "10";
+                window.loadPrizes();
+            } catch (err) { alert("新增失敗，請重試！"); }
+        };
+
+        window.loadPrizes = async function() {
+            try {
+                const snapshot = await get(ref(db, "prizes"));
+                const container = document.getElementById("prizesTableBody");
+                globalPrizesCache = snapshot.exists() ? snapshot.val() : {};
+
+                if (!snapshot.exists()) {
+                    container.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #9c8e82;">尚無任何獎項設定</td></tr>`;
+                    return;
+                }
+
+                let html = "";
+                for (let k in globalPrizesCache) {
+                    let prize = globalPrizesCache[k];
+                    html += `
+                        <tr>
+                            <td><b>${prize.title}</b></td>
+                            <td class="price-text">NT$ ${prize.discount}</td>
+                            <td>${prize.prob}</td>
+                            <td class="col-action">
+                                <div class="action-buttons" style="justify-content: center;">
+                                    <button class="btn-edit-single" onclick="openEditPrizeModal('${k}')"><i class="fa-solid fa-pen-to-square"></i> 編輯</button>
+                                    <button class="btn-delete-single" onclick="deletePrize('${k}')"><i class="fa-solid fa-trash-can"></i> 刪除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+                container.innerHTML = html;
+            } catch (err) { console.error(err); }
+        };
+
+        window.openEditPrizeModal = function(prizeId) {
+            const prize = globalPrizesCache[prizeId];
+            if (!prize) return;
+
+            document.getElementById("editPrizeId").value = prizeId;
+            document.getElementById("editPrizeTitle").value = prize.title || "";
+            document.getElementById("editPrizeDiscount").value = prize.discount !== undefined ? prize.discount : 0;
+            document.getElementById("editPrizeProb").value = prize.prob !== undefined ? prize.prob : 10;
+
+            document.getElementById("editPrizeModal").style.display = "flex";
+        };
+
+        window.closeEditPrizeModal = function() {
+            document.getElementById("editPrizeModal").style.display = "none";
+        };
+
+        window.updatePrizeSubmit = async function() {
+            const prizeId = document.getElementById("editPrizeId").value;
+            const title = document.getElementById("editPrizeTitle").value.trim();
+            const discount = parseInt(document.getElementById("editPrizeDiscount").value, 10);
+            const prob = parseInt(document.getElementById("editPrizeProb").value, 10);
+
+            if (!title || isNaN(discount) || isNaN(prob)) {
+                alert("請完整輸入正確的獎項資訊！");
+                return;
+            }
+
+            try {
+                await update(ref(db, `prizes/${prizeId}`), {
+                    title: title,
+                    discount: discount,
+                    prob: prob
+                });
+
+                alert("✅ 成功更新獎項！");
+                window.closeEditPrizeModal();
+                window.loadPrizes();
+            } catch (err) { alert("更新失敗，請重試！"); }
+        };
+
+        window.deletePrize = async function(prizeId) {
+            if (!confirm("確定要刪除該抽獎獎項嗎？")) return;
+            try {
+                await remove(ref(db, `prizes/${prizeId}`));
+                alert("🗑️ 成功刪除獎項！");
+                window.loadPrizes();
+            } catch (err) { alert("刪除失敗！"); }
+        };
 
         window.exportToExcel = function() {
             if (!globalOrdersCache || Object.keys(globalOrdersCache).length === 0) {
@@ -517,26 +675,18 @@
             }
 
             const excelRows = [
-                ["預訂取貨日期", "訂購人姓名", "聯絡電話", "訂購麵包內容物明細", "顧客備註", "訂單總金額 (NT$)"]
+                ["預訂取貨日期", "訂購人姓名", "聯絡電話", "訂購麵包內容物明細", "使用優惠券", "折抵金額", "最終金額 (NT$)", "顧客備註"]
             ];
 
             for (let key in globalOrdersCache) {
                 let order = globalOrdersCache[key];
                 let itemSummaryArray = [];
-                let orderTotalSum = 0;
                 let targetDate = order.date;
                 let orderNote = order.note ? order.note : "無";
 
                 for (let p in order.items) {
                     let qty = order.items[p];
-                    let price = 0;
-                    let category = "";
-                    if (globalProductsCache && globalProductsCache[targetDate] && globalProductsCache[targetDate][p]) {
-                        price = globalProductsCache[targetDate][p].price || 0;
-                        category = globalProductsCache[targetDate][p].category ? `[${globalProductsCache[targetDate][p].category}] ` : "";
-                    }
-                    orderTotalSum += (price * qty);
-                    itemSummaryArray.push(`${category}${p} × ${qty}個`);
+                    itemSummaryArray.push(`${p} × ${qty}個`);
                 }
 
                 excelRows.push([
@@ -544,8 +694,10 @@
                     order.name,
                     order.phone,
                     itemSummaryArray.join(" ｜ "),
-                    orderNote,
-                    orderTotalSum
+                    order.couponUsed || "無",
+                    order.discount || 0,
+                    order.finalTotal || order.subtotal || 0,
+                    orderNote
                 ]);
             }
 
@@ -558,91 +710,47 @@
         }
 
         window.deleteDataSelection = async function(type) {
-            let title = type === 'orders' ? "「1. 所有顧客訂購的資料（將連帶歸零麵包已訂數量）」" : "「2. 所有已上架的麵包庫存資料」";
+            let title = type === 'orders' ? "「1. 所有顧客訂購的資料」" : "「2. 所有已上架的麵包庫存資料」";
             const step1 = confirm(`⚠️ 核心警告：您確定要刪除 ${title} 嗎？`);
             if (!step1) return;
             
             try {
                 if (type === 'orders') {
                     await remove(ref(db, "orders"));
-                    const prodSnapshot = await get(ref(db, "products"));
-                    const prodData = prodSnapshot.val();
-                    
-                    if (prodData) {
-                        let updates = {};
-                        for (let date in prodData) {
-                            for (let productName in prodData[date]) {
-                                updates[`products/${date}/${productName}/sold`] = 0;
-                            }
-                        }
-                        await update(ref(db), updates);
-                    }
-                    alert(`🗑️ 成功！已清空所有顧客訂單，並將所有已上架麵包的已訂數量歸零、重新計算庫存！`);
+                    alert(`🗑️ 成功！已清空所有顧客訂單！`);
                 } else {
                     await remove(ref(db, type));
                     alert(`🗑️ 成功！已徹底清空資料庫內 ${title}。`);
                 }
-                
                 window.initBackend(); 
-            } catch (err) {
-                console.error(err);
-                alert("刪除或重置過程中發生錯誤，請檢查網路連線。");
-            }
+            } catch (err) { console.error(err); }
         }
 
-        window.deleteSingleOrder = async function(orderId) {
-            const order = globalOrdersCache[orderId];
-            if (!order) return;
-
-            const confirmDel = confirm(`確定要刪除顧客「${order.name}」的這筆預購訂單嗎？\n刪除後該訂單的數量將自動從庫存已訂量中扣除。`);
-            if (!confirmDel) return;
-
-            try {
-                const date = order.date;
-                if (order.items && globalProductsCache[date]) {
-                    let updates = {};
-                    for (let p in order.items) {
-                        const qty = order.items[p];
-                        if (globalProductsCache[date][p]) {
-                            const currentSold = globalProductsCache[date][p].sold || 0;
-                            const newSold = Math.max(0, currentSold - qty);
-                            updates[`products/${date}/${p}/sold`] = newSold;
-                        }
-                    }
-                    if (Object.keys(updates).length > 0) {
-                        await update(ref(db), updates);
+       window.deleteDataSelection = async function(type) {
+    let title = type === 'orders' ? "「1. 所有顧客訂購的資料」" : "「2. 所有已上架的麵包庫存資料」";
+    const step1 = confirm(`⚠️ 核心警告：您確定要刪除 ${title} 嗎？`);
+    if (!step1) return;
+    
+    try {
+        if (type === 'orders') {
+            // 1. 先將所有商品的 sold (已訂數量) 重置歸零
+            if (globalProductsCache) {
+                for (let date in globalProductsCache) {
+                    for (let productName in globalProductsCache[date]) {
+                        await update(ref(db, `products/${date}/${productName}`), { sold: 0 });
                     }
                 }
-
-                await remove(ref(db, `orders/${orderId}`));
-
-                alert("🗑️ 成功刪除該筆訂單！");
-                window.initBackend();
-            } catch (error) {
-                console.error(error);
-                alert("刪除訂單失敗，請稍後重試。");
             }
+            // 2. 清空訂單
+            await remove(ref(db, "orders"));
+            alert(`🗑️ 成功！已清空所有顧客訂單，並將所有商品已訂數量歸零！`);
+        } else {
+            await remove(ref(db, type));
+            alert(`🗑️ 成功！已徹底清空資料庫內 ${title}。`);
         }
-
-        window.deleteSingleProduct = async function(date, productName) {
-            const confirmDelete = confirm(`確定要將 ${date} 的商品「${productName}」單獨下架刪除嗎？`);
-            if (!confirmDelete) return;
-
-            try {
-                await remove(ref(db, `products/${date}/${productName}`));
-                const snapshot = await get(ref(db, `products/${date}`));
-                if (!snapshot.exists() || Object.keys(snapshot.val()).length === 0) {
-                    await remove(ref(db, `products/${date}`));
-                }
-
-                alert(`🗑️ 已成功刪除商品：${productName}`);
-                window.initBackend(); 
-            } catch (error) {
-                console.error(error);
-                alert("刪除失敗，請檢查網路連線後再試一次。");
-            }
-        }
-
+        window.initBackend(); 
+    } catch (err) { console.error(err); }
+}
         window.saveProduct = async function() {
             const section = document.getElementById("section").value;
             let date = document.getElementById("date").value;
@@ -656,16 +764,9 @@
                 if (!date) date = "經典常駐";
                 if (isNaN(price)) price = 0;
                 if (isNaN(qty)) qty = 0;
-                
-                if (!product) {
-                    alert("請輸入麵包名稱！");
-                    return;
-                }
+                if (!product) { alert("請輸入麵包名稱！"); return; }
             } else {
-                if (!date || !product || isNaN(price) || isNaN(qty)) {
-                    alert("請填寫所有欄位資訊！");
-                    return;
-                }
+                if (!date || !product || isNaN(price) || isNaN(qty)) { alert("請填寫所有欄位資訊！"); return; }
             }
 
             try {
@@ -690,14 +791,9 @@
                 document.getElementById("description").value = "";
                 uploadedImageUrlString = "";
                 document.getElementById("previewThumb").style.display = "none";
-                document.getElementById("uploadStatusText").innerText = "尚未選擇檔案";
-                document.getElementById("uploadStatusText").style.color = "#8c6239";
 
                 window.initBackend();
-            } catch (error) {
-                console.error(error);
-                alert("發布失敗，請重試！");
-            }
+            } catch (error) { alert("發布失敗，請重試！"); }
         }
 
         window.openEditModal = function(date, productName) {
@@ -722,15 +818,10 @@
             }
 
             editUploadedImageUrlString = ""; 
-            document.getElementById("editUploadStatusText").innerText = "維持原圖";
-            document.getElementById("editUploadStatusText").style.color = "#8c6239";
-
             document.getElementById("editModal").style.display = "flex";
         }
 
-        window.closeEditModal = function() {
-            document.getElementById("editModal").style.display = "none";
-        }
+        window.closeEditModal = function() { document.getElementById("editModal").style.display = "none"; }
 
         window.updateProductSubmit = async function() {
             const date = document.getElementById("editDate").value;
@@ -742,10 +833,7 @@
             const total = parseInt(document.getElementById("editProductTotal").value, 10);
             const desc = document.getElementById("editProductDesc").value.trim();
 
-            if (!newName || isNaN(price) || isNaN(total)) {
-                alert("請完整輸入正確的欄位資訊！");
-                return;
-            }
+            if (!newName || isNaN(price) || isNaN(total)) { alert("請完整輸入正確的欄位資訊！"); return; }
 
             try {
                 const oldProdData = globalProductsCache[date][oldName];
@@ -757,22 +845,14 @@
                 }
 
                 await set(ref(db, `products/${date}/${newName}`), {
-                    section: section,
-                    category: category,
-                    price: price,
-                    total: total,
-                    sold: currentSold,
-                    desc: desc,
-                    img: finalImg
+                    section: section, category: category, price: price,
+                    total: total, sold: currentSold, desc: desc, img: finalImg
                 });
 
                 alert("✅ 成功儲存變更！");
                 window.closeEditModal();
                 window.initBackend();
-            } catch (error) {
-                console.error(error);
-                alert("更新變更失敗，請重試！");
-            }
+            } catch (error) { alert("更新變更失敗，請重試！"); }
         }
 
         window.loadInventory = async function() {
@@ -780,10 +860,7 @@
                 const snapshot = await get(ref(db, "products"));
                 globalProductsCache = snapshot.exists() ? snapshot.val() : {};
                 window.renderInventoryUI();
-            } catch (error) {
-                console.error(error);
-                document.getElementById("inventory").innerText = "載入庫存失敗。";
-            }
+            } catch (error) { console.error(error); }
         }
 
         window.renderInventoryUI = function() {
@@ -803,10 +880,7 @@
                 for (let prodName in products) {
                     const item = products[prodName];
                     const itemSection = item.section || 'A';
-                    
-                    if (itemSection !== currentInvFilter) {
-                        continue;
-                    }
+                    if (itemSection !== currentInvFilter) continue;
 
                     const sold = item.sold || 0;
                     const remaining = item.total - sold;
@@ -867,45 +941,23 @@
 
                 for (let orderId in globalOrdersCache) {
                     const order = globalOrdersCache[orderId];
-                    let totalSum = 0;
-                    let customTotalSum = 0;
-                    
                     let itemsSummary = [];
                     let customItemsSummary = [];
 
                     for (let item in order.items) {
                         const qty = order.items[item];
-                        let price = 0;
-                        let section = 'A';
-
-                        // 判斷該品項歸屬專區
-                        if (globalProductsCache[order.date] && globalProductsCache[order.date][item]) {
-                            price = globalProductsCache[order.date][item].price || 0;
-                            section = globalProductsCache[order.date][item].section || 'A';
-                        } else {
-                            // 搜尋其他日期是否有匹配的經典/接單品項
-                            for (let d in globalProductsCache) {
-                                if (globalProductsCache[d][item]) {
-                                    price = globalProductsCache[d][item].price || 0;
-                                    section = globalProductsCache[d][item].section || 'A';
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (section === 'C') {
-                            customTotalSum += price * qty;
+                        if (order.category === "接單烘焙") {
                             customItemsSummary.push(`<div class="order-items">🥖 <strong>${item}</strong> × ${qty} 個</div>`);
                         } else {
-                            totalSum += price * qty;
                             itemsSummary.push(`<div class="order-items">${item} × ${qty}</div>`);
                         }
                     }
 
-                    const noteHtml = order.note ? `<div class="order-note-box">📝 備註：${order.note}</div>` : '';
+                    const couponText = order.couponUsed ? `<div style="font-size:12px; color:#dc2626;">🎟️ 優惠券：${order.couponUsed} (-NT$ ${order.discount})</div>` : '';
+                    const noteHtml = (order.note ? `<div class="order-note-box">📝 備註：${order.note}</div>` : '') + couponText;
+                    const displayTotal = order.finalTotal !== undefined ? order.finalTotal : (order.subtotal || 0);
 
-                    // 若包含專區 A/B 的商品
-                    if (itemsSummary.length > 0) {
+                    if (order.category !== "接單烘焙" && itemsSummary.length > 0) {
                         standardOrdersHtml += `
                             <tr>
                                 <td class="col-name">${order.name}</td>
@@ -917,7 +969,7 @@
                                         ${noteHtml}
                                     </div>
                                 </td>
-                                <td class="col-total"><span class="price-text">NT$ ${totalSum}</span></td>
+                                <td class="col-total"><span class="price-text">NT$ ${displayTotal}</span></td>
                                 <td class="col-action">
                                     <button class="btn-delete-single" onclick="deleteSingleOrder('${orderId}')"><i class="fa-solid fa-trash-can"></i> 刪除</button>
                                 </td>
@@ -925,8 +977,7 @@
                         `;
                     }
 
-                    // 若包含接單烘焙 (專區 C) 的商品
-                    if (customItemsSummary.length > 0) {
+                    if (order.category === "接單烘焙" && customItemsSummary.length > 0) {
                         customOrdersHtml += `
                             <tr>
                                 <td class="col-name">${order.name}</td>
@@ -938,7 +989,7 @@
                                         ${noteHtml}
                                     </div>
                                 </td>
-                                <td class="col-total"><span class="price-text">NT$ ${customTotalSum}</span></td>
+                                <td class="col-total"><span class="price-text">NT$ ${displayTotal}</span></td>
                                 <td class="col-action">
                                     <button class="btn-delete-single" onclick="deleteSingleOrder('${orderId}')"><i class="fa-solid fa-trash-can"></i> 刪除</button>
                                 </td>
@@ -949,9 +1000,7 @@
 
                 ordersTable.innerHTML = standardOrdersHtml || `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何專區 A & B 預購訂單資料</td></tr>`;
                 customOrdersTable.innerHTML = customOrdersHtml || `<tr><td colspan="6" style="text-align: center; color: #9c8e82;">尚無任何接單烘焙訂單資料</td></tr>`;
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         window.loadUsers = async function() {
@@ -961,24 +1010,28 @@
                 globalUsersCache = snapshot.exists() ? snapshot.val() : {};
 
                 if (!globalUsersCache || Object.keys(globalUsersCache).length === 0) {
-                    usersTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9c8e82;">尚無任何註冊客人資料</td></tr>`;
+                    usersTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #9c8e82;">尚無任何註冊客人資料</td></tr>`;
                     return;
                 }
 
                 let html = "";
                 for (let userId in globalUsersCache) {
                     const user = globalUsersCache[userId];
-                    const name = user.name || user.username || "未提供";
+                    const name = user.name || "未提供";
                     const phone = user.phone || "未提供";
                     const email = user.email || "未提供";
-                    const createdAt = user.createdAt || user.date || "未知";
+                    const totalSpent = user.totalSpent || 0;
+                    const points = user.points || 0;
+                    const couponCount = user.coupons ? user.coupons.length : 0;
 
                     html += `
                         <tr>
-                            <td>${name}</td>
+                            <td><b>${name}</b></td>
                             <td>${phone}</td>
                             <td>${email}</td>
-                            <td>${createdAt}</td>
+                            <td class="price-text">NT$ ${totalSpent}</td>
+                            <td><b style="color:#d97706;">${points} 點</b></td>
+                            <td>🎟️ ${couponCount} 張</td>
                             <td class="col-action">
                                 <button class="btn-delete-single" onclick="deleteSingleUser('${userId}', '${name}')"><i class="fa-solid fa-user-xmark"></i> 刪除</button>
                             </td>
@@ -986,26 +1039,18 @@
                     `;
                 }
                 usersTable.innerHTML = html;
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         window.deleteSingleUser = async function(userId, name) {
-            const confirmDel = confirm(`確定要刪除會員「${name}」的註冊帳號資料嗎？`);
-            if (!confirmDel) return;
-
+            if (!confirm(`確定要刪除會員「${name}」的註冊帳號資料嗎？`)) return;
             try {
                 await remove(ref(db, `users/${userId}`));
                 alert("🗑️ 成功刪除該會員帳號資料！");
                 window.loadUsers();
-            } catch (error) {
-                console.error(error);
-                alert("刪除會員失敗，請重試！");
-            }
+            } catch (error) { alert("刪除會員失敗，請重試！"); }
         }
 
-        // 初始化資料載入
         window.initBackend();
     </script>
 </body>
