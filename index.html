@@ -20,7 +20,6 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--light-bg); line-height: 1.6; }
 
-        /* --- 頂部導覽列 --- */
         header {
             background: #fff; border-bottom: 1px solid var(--border-color);
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
@@ -29,7 +28,6 @@
         .logo { font-size: 22px; font-weight: 700; color: var(--primary-amber); display: flex; align-items: center; gap: 8px; }
         .logo i { color: var(--accent-orange); }
 
-        /* --- 主視覺區 --- */
         .hero {
             background: linear-gradient(rgba(74,60,49,0.65), rgba(74,60,49,0.55)), url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80');
             background-size: cover; background-position: center; 
@@ -39,75 +37,38 @@
         .hero h1 { color: #fff; font-size: clamp(24px, 5vw, 36px); font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
         .hero p { color: #f3ede2; font-size: clamp(14px, 3vw, 18px); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 
-        /* --- 核心內容版面容器 --- */
         .main-container { max-width: 1100px; margin: 30px auto; padding: 0 16px; display: flex; flex-direction: column; gap: 30px; }
-        
         .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--primary-amber); display: flex; align-items: center; gap: 8px; }
 
-        /* 🔘 專區切換 Tab 按鈕列 */
-        .category-tabs {
-            display: flex; gap: 12px; margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap;
-        }
-        .tab-btn {
-            background: #fff; border: 1px solid var(--border-color);
-            padding: 10px 20px; border-radius: 20px; font-size: 15px; font-weight: 700;
-            cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 8px; color: var(--text-dark);
-        }
+        .category-tabs { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { background: #fff; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 8px; color: var(--text-dark); }
         .tab-btn:hover { border-color: var(--primary-amber); color: var(--primary-amber); }
-        .tab-btn.active {
-            background: var(--primary-amber); color: #fff; border-color: var(--primary-amber);
-            box-shadow: 0 4px 10px rgba(140, 98, 57, 0.2);
-        }
+        .tab-btn.active { background: var(--primary-amber); color: #fff; border-color: var(--primary-amber); box-shadow: 0 4px 10px rgba(140, 98, 57, 0.2); }
         .tab-btn.active i { color: #fff; }
 
-        /* 📱 手機與 💻 電腦 響應式雙欄佈局 */
         .checkout-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-        @media (min-width: 900px) {
-            .checkout-grid { grid-template-columns: 1fr 380px; align-items: start; }
-        }
+        @media (min-width: 900px) { .checkout-grid { grid-template-columns: 1fr 380px; align-items: start; } }
 
-        /* --- 卡片通用樣式 --- */
-        .order-form-card, .cart-sticky-panel { 
-            background: #fff; border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
-        }
-
+        .order-form-card, .cart-sticky-panel { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px; }
-        @media (min-width: 600px) {
-            .form-grid { grid-template-columns: 1fr 1fr; }
-            .form-grid .full-width { grid-column: span 2; }
-        }
+        @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } .form-grid .full-width { grid-column: span 2; } }
         
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         .form-group label { font-size: 14px; font-weight: 700; color: #6b5a4c; }
-        .form-group input, .form-group select, .form-group textarea { 
-            padding: 12px; border: 1px solid #e5dfd5; border-radius: 8px; font-size: 15px; outline: none; background-color: #fff; transition: all 0.2s; width: 100%;
-        }
+        .form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid #e5dfd5; border-radius: 8px; font-size: 15px; outline: none; background-color: #fff; transition: all 0.2s; width: 100%; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-amber); box-shadow: 0 0 0 3px rgba(140,98,57,0.15); }
         .form-group textarea { resize: vertical; min-height: 80px; font-family: inherit; }
 
-        .login-notice-box {
-            text-align: center; padding: 30px 20px; background: #faf8f5; border: 2px dashed #e5dfd5; border-radius: 10px;
-        }
+        .login-notice-box { text-align: center; padding: 30px 20px; background: #faf8f5; border: 2px dashed #e5dfd5; border-radius: 10px; }
         .login-notice-box i { font-size: 38px; color: var(--primary-amber); margin-bottom: 12px; }
         .login-notice-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
         .login-notice-box p { font-size: 14px; color: #8a7c70; margin-bottom: 20px; }
         
-        .btn-notice-login {
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 12px 28px; background: var(--primary-amber); color: #fff;
-            border: none; border-radius: 8px; font-size: 15px; font-weight: 700;
-            cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 10px rgba(140, 98, 57, 0.2);
-            width: 100%; max-width: 280px;
-        }
+        .btn-notice-login { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 28px; background: var(--primary-amber); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 10px rgba(140, 98, 57, 0.2); width: 100%; max-width: 280px; }
         .btn-notice-login:hover { background: #6f4e2d; transform: translateY(-2px); }
 
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 15px; }
-        .product-card { 
-            background: #fff; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden;
-            display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; position: relative;
-        }
+        .product-card { background: #fff; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
         .product-img { width: 100%; height: 180px; object-fit: cover; background: #faf8f5; }
         .product-info { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
@@ -136,44 +97,19 @@
         .btn-submit { width: 100%; padding: 12px; background: var(--primary-amber); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.18); }
         .btn-submit:hover { background: #6f4e2d; }
 
-        /* 🚀 浮動按鈕群與懸浮抽獎 */
-        .floating-action-group {
-            position: fixed; bottom: 25px; right: 20px;
-            display: flex; flex-direction: column; gap: 12px; z-index: 999;
-        }
-        .fab-btn {
-            width: 52px; height: 52px; border-radius: 50%;
-            background: #fff; border: 1px solid var(--border-color);
-            color: var(--primary-amber); font-size: 20px;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            transition: all 0.25s ease; position: relative;
-        }
+        .floating-action-group { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 999; }
+        .fab-btn { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid var(--border-color); color: var(--primary-amber); font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.25s ease; position: relative; }
         .fab-btn.logged-in { background: #2563eb; color: #fff; border-color: #2563eb; }
         
-        /* 🎁 懸浮抽獎按鈕特別樣式 */
-        .fab-lottery {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #fff; border: 2px solid #fff;
-            animation: pulse-glow 2s infinite;
-        }
+        .fab-lottery { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: 2px solid #fff; animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow {
             0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); transform: scale(1); }
             50% { box-shadow: 0 0 0 12px rgba(217, 119, 6, 0); transform: scale(1.08); }
             100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); transform: scale(1); }
         }
 
-        /* 🔒 會員與抽獎彈窗 (優化版) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center;
-            z-index: 1000; backdrop-filter: blur(3px); padding: 16px;
-        }
-        .modal-card {
-            background: #fff; padding: 20px; border-radius: 16px;
-            width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            position: relative; max-height: 85vh; overflow-y: auto;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); padding: 16px; }
+        .modal-card { background: #fff; padding: 20px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; max-height: 85vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #a39589; padding: 5px; z-index: 20; }
         .modal-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 15px; text-align: center; color: var(--primary-amber); }
 
@@ -184,80 +120,15 @@
         .auth-view { display: none; }
         .auth-view.active { display: block; }
 
-        /* 🎰 精緻轉盤抽獎樣式 (優化版) */
-        .lottery-box {
-            text-align: center;
-            background: #fdfbf7;
-            border-radius: 12px;
-            padding: 15px 12px;
-            margin-bottom: 15px;
-            box-shadow: inset 0 0 10px rgba(140, 98, 57, 0.08);
-        }
-        .lottery-points {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--accent-orange);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
+        .lottery-box { text-align: center; background: #fdfbf7; border-radius: 12px; padding: 15px 12px; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(140, 98, 57, 0.08); }
+        .lottery-points { font-size: 15px; font-weight: 700; color: var(--accent-orange); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
-        /* 轉盤容器與指針佈局 (精簡比例) */
-        .wheel-wrapper {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 10px auto 15px auto;
-        }
-        /* 頂部中心定位指針 */
-        .wheel-pointer {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 22px solid #dc2626; /* 鮮紅指針 */
-            z-index: 10;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-        .wheel-pointer::after {
-            content: '';
-            position: absolute;
-            top: -21px;
-            left: -5px;
-            width: 10px;
-            height: 10px;
-            background: #fef08a;
-            border-radius: 50%;
-        }
-        /* Canvas 轉盤外框光暈 */
-        #wheelCanvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            box-shadow: 0 6px 20px rgba(140, 98, 57, 0.2), 0 0 0 5px #8c6239;
-            transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1);
-        }
+        .wheel-wrapper { position: relative; width: 220px; height: 220px; margin: 10px auto 15px auto; }
+        .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 22px solid #dc2626; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .wheel-pointer::after { content: ''; position: absolute; top: -21px; left: -5px; width: 10px; height: 10px; background: #fef08a; border-radius: 50%; }
+        #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 6px 20px rgba(140, 98, 57, 0.2), 0 0 0 5px #8c6239; transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1); }
 
-        .lottery-result-badge {
-            min-height: 38px;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--primary-amber);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 12px;
-            padding: 6px 10px;
-        }
+        .lottery-result-badge { min-height: 38px; font-size: 14px; font-weight: 700; color: var(--primary-amber); display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; padding: 6px 10px; }
     </style>
 </head>
 <body>
@@ -272,9 +143,7 @@
     </section>
 
     <section class="main-container">
-        
         <div class="order-form-card">
-            
             <div class="category-tabs">
                 <button class="tab-btn active" id="tabA" onclick="switchCategory('A')">
                     <i class="fa-solid fa-wheat-awn"></i> 專區 A：今日現烤預購
@@ -324,7 +193,6 @@
 
                 <div id="custom-products" class="products-grid"></div>
             </div>
-
         </div>
 
         <!-- 📝 取貨人資訊與購物清單 -->
@@ -410,10 +278,9 @@
                 </div>
             </div>
         </div>
-
     </section>
 
-    <!-- 🚀 浮動按鈕群 (含懸浮抽獎) -->
+    <!-- 🚀 浮動按鈕群 -->
     <div class="floating-action-group">
         <button class="fab-btn fab-lottery" onclick="openLotteryModal()" title="幸運抽獎">
             <i class="fa-solid fa-gift"></i>
@@ -426,7 +293,7 @@
         </button>
     </div>
 
-    <!-- 🎰 幸運抽獎 Modal (轉盤版) -->
+    <!-- 🎰 幸運抽獎 Modal -->
     <div id="lotteryModal" class="modal-overlay">
         <div class="modal-card">
             <i class="fa-solid fa-xmark modal-close" onclick="closeLotteryModal()"></i>
@@ -436,9 +303,8 @@
                 <div class="lottery-points" id="userPointsText">
                     <i class="fa-solid fa-coins"></i> 累積點數：0 點
                 </div>
-                <p style="font-size: 12px; color: #8a7c70;">（每消費滿 NT$100 累積 1 點，每 5 點可轉動一次）</p>
+                <p style="font-size: 12px; color: #8a7c70;">（每消費滿 NT$100 累積 1 點，訂單完成後發放；每 5 點可轉動一次）</p>
 
-                <!-- 🎡 旋轉轉盤核心區 -->
                 <div class="wheel-wrapper">
                     <div class="wheel-pointer"></div>
                     <canvas id="wheelCanvas" width="300" height="300"></canvas>
@@ -533,7 +399,6 @@
                     <a onclick="switchAuthView('login')"><i class="fa-solid fa-arrow-left"></i> 想起來了？返回登入</a>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -569,7 +434,6 @@
     let currentCategory = 'A';
     let isDrawing = false;
 
-    // 🎡 轉盤狀態控制變數
     let currentRotationDeg = 0; 
     let prizesArrayCache = [];  
 
@@ -671,7 +535,6 @@
         }
     }
 
-    /* 🔄 監聽 Auth 狀態 */
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             isLoggedIn = true;
@@ -926,7 +789,6 @@
         calculateCartTotal();
     }
 
-    /* 🧮 計算金額（包含優惠券折抵） */
     window.calculateCartTotal = function() {
         let subtotal = 0;
         for (let product in cart) {
@@ -951,7 +813,6 @@
         document.getElementById("grand-total-display").textContent = `NT$ ${grandTotal.toLocaleString()}`;
     }
 
-    /* 🎟️ 更新結帳選擇優惠券選單 */
     function updateCouponDropdown() {
         const couponSelect = document.getElementById("couponSelect");
         if (!couponSelect) return;
@@ -967,7 +828,6 @@
         }
     }
 
-    /* 🎰 點擊開啟抽獎 Modal 並初始化繪製轉盤 */
     window.openLotteryModal = async function() {
         if (!isLoggedIn) {
             alert("請先登入會員帳號後再開啟抽獎！");
@@ -978,7 +838,6 @@
         document.getElementById("userPointsText").innerHTML = `<i class="fa-solid fa-coins"></i> 累積點數：${currentUserProfile.points || 0} 點`;
         document.getElementById("lotteryModal").style.display = "flex";
 
-        // 載入獎項並繪製 Canvas 轉盤
         await initAndDrawWheel();
     };
 
@@ -987,7 +846,6 @@
         document.getElementById("lotteryModal").style.display = "none";
     };
 
-    /* 🎨 繪製 Canvas 扇形轉盤 */
     async function initAndDrawWheel() {
         try {
             const prizesSnap = await get(ref(db, "prizes"));
@@ -1015,7 +873,6 @@
         const radius = canvas.width / 2 - 8;
         const arcSize = (2 * Math.PI) / numPrizes;
 
-        // 配色盤（高級暖棕/金黃/奶油色交替）
         const colors = ["#8c6239", "#d97706", "#f59e0b", "#b45309", "#78350f", "#fef3c7"];
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1023,7 +880,6 @@
         for (let i = 0; i < numPrizes; i++) {
             const angle = i * arcSize;
             
-            // 1. 畫扇形
             ctx.beginPath();
             ctx.fillStyle = colors[i % colors.length];
             ctx.moveTo(centerX, centerY);
@@ -1034,20 +890,17 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // 2. 繪製文字
             ctx.save();
             ctx.fillStyle = (colors[i % colors.length] === "#fef3c7") ? "#4a3c31" : "#ffffff";
             ctx.font = "bold 13px 'Noto Sans TC', sans-serif";
             ctx.textAlign = "right";
             
-            // 旋轉至扇形中間角度
             ctx.translate(centerX, centerY);
             ctx.rotate(angle + arcSize / 2);
             ctx.fillText(prizes[i].title, radius - 15, 5);
             ctx.restore();
         }
 
-        // 3. 畫中心圓鈕裝飾
         ctx.beginPath();
         ctx.arc(centerX, centerY, 22, 0, 2 * Math.PI);
         ctx.fillStyle = "#ffffff";
@@ -1078,7 +931,6 @@
         container.innerHTML = html;
     }
 
-    /* 🎡 轉盤旋轉抽獎主邏輯 */
     window.drawLottery = async function() {
         if (isDrawing) return;
         if (!currentUserProfile || (currentUserProfile.points || 0) < 5) {
@@ -1099,35 +951,26 @@
         btn.disabled = true;
         display.textContent = "🎰 幸運轉盤旋轉中...";
 
-        // 1. 根據機率計算出目標得獎項目
         const winningPrize = selectPrizeByWeight(prizesArrayCache);
         const winningIndex = prizesArrayCache.findIndex(p => p.title === winningPrize.title);
 
-        // 2. 計算目標角度 (指針在頂部 270 度)
         const numPrizes = prizesArrayCache.length;
         const prizeArcDeg = 360 / numPrizes;
         
-        // 計算該獎項落點在 Canvas 上的中心角度
         const prizeCenterDeg = (winningIndex * prizeArcDeg) + (prizeArcDeg / 2);
-        // 轉盤旋轉時，要讓目標角度停在頂部 (270度位置)
         const targetDegreeInWheel = (270 - prizeCenterDeg + 360) % 360;
 
-        // 多轉 5~8 圈增加物理效果
         const extraRounds = 360 * (5 + Math.floor(Math.random() * 3)); 
         
-        // 確保只往前旋轉不倒退
         const currentModulo = currentRotationDeg % 360;
         const additionalDeg = (targetDegreeInWheel - currentModulo + 360) % 360;
         currentRotationDeg += extraRounds + additionalDeg;
 
-        // 3. 觸發 CSS 旋轉動畫
         canvas.style.transform = `rotate(${currentRotationDeg}deg)`;
 
-        // 4. 等待旋轉動畫完結 (CSS 設定為 4.5 秒)
         setTimeout(async () => {
             display.innerHTML = `🎉 恭喜抽中：<span style="color:#d97706;">${winningPrize.title}</span>！`;
 
-            // 扣除點數與發送優惠券至 Firebase
             let newPoints = currentUserProfile.points - 5;
             let newCoupons = currentUserProfile.coupons || [];
             newCoupons.push({
@@ -1153,7 +996,7 @@
                 isDrawing = false;
                 btn.disabled = false;
             }
-        }, 4500); // 需匹配 CSS 4.5s cubic-bezier
+        }, 4500);
     };
 
     function selectPrizeByWeight(prizes) {
@@ -1167,7 +1010,7 @@
         return prizes[0];
     }
 
-    /* 📤 送出預購訂單 */
+    /* 📤 送出預購訂單（修正為後台審核點數發放） */
     window.submitOrder = async function() {
         if (!isLoggedIn) {
             alert("請先登入會員帳號後再送出訂單！");
@@ -1215,7 +1058,7 @@
         }
 
         let finalTotal = Math.max(0, subtotal - couponDiscount);
-        let pointsEarned = Math.floor(finalTotal / 100); // NT$100 累積 1 點
+        let estimatedPoints = Math.floor(finalTotal / 100); 
 
         try {
             let isStockOk = true;
@@ -1242,21 +1085,17 @@
                 return;
             }
 
-            // 更新會員點數、總累積消費與移除已使用優惠券
+            // 更新會員優惠券（結帳即使用）
             let updatedCoupons = [...(currentUserProfile.coupons || [])];
             if (selectedCouponIdx !== "") {
                 updatedCoupons.splice(selectedCouponIdx, 1);
             }
 
-            let newTotalSpent = (currentUserProfile.totalSpent || 0) + finalTotal;
-            let newPoints = (currentUserProfile.points || 0) + pointsEarned;
-
             await update(ref(db, "users/" + currentUserUid), {
-                totalSpent: newTotalSpent,
-                points: newPoints,
                 coupons: updatedCoupons
             });
 
+            // 寫入訂單資料，設狀態為 'pending' (待完成)
             await set(push(ref(db, "orders")), { 
                 userId: currentUserUid,
                 name, 
@@ -1270,10 +1109,12 @@
                 discount: couponDiscount,
                 finalTotal: finalTotal,
                 couponUsed: couponUsedTitle,
-                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱銷" : "今日現烤")
+                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱銷" : "今日現烤"),
+                status: "pending", // pending: 待完成, completed: 已完成派點
+                createdAt: new Date().toISOString()
             });
 
-            alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n💰 結帳金額：NT$ ${finalTotal}\n🎁 獲得累積點數：${pointsEarned} 點`);
+            alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n💰 結帳金額：NT$ ${finalTotal}\n💡 預計獲得點數：${estimatedPoints} 點 (將於店家完成訂單後發放)`);
             cart = {};
             await loadUserProfile();
             if (currentCategory === 'A') fetchProductsByDate(baseDatabaseDate);
