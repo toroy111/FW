@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            /* 方案一：極簡日系燕麥／奶茶色系 */
+            /* 極簡日系燕麥／奶茶色系 */
             --bg-main: #F4F1EA;              /* 柔和燕麥白背景 */
             --bg-sidebar: #FFFFFF;           /* 側邊欄純白 */
             --bg-card: #FFFFFF;              /* 卡片純白 */
@@ -24,7 +24,7 @@
             --accent-gradient: linear-gradient(135deg, #8C7A6B 0%, #A39081 100%);
             --accent-hover: #756355;
             
-            --text-main: #2D3748;           /* 深石墨灰（軟化版純黑） */
+            --text-main: #2D3748;           /* 深石墨灰 */
             --text-muted: #718096;          /* 靜謐灰 */
             --text-sub: #A0AEC0;            /* 淺灰 */
             
@@ -98,7 +98,7 @@
         }
         .nav-item.active i { color: #ffffff; }
 
-        /* 右側主要內容區塊 (Main Content View Switcher) */
+        /* 右側主要內容區塊 */
         .main-wrapper {
             flex-grow: 1;
             padding: 36px 40px;
@@ -123,7 +123,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 卡片與表單樣式 (Warm Japandi UI) */
+        /* 卡片與表單樣式 */
         .admin-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -204,7 +204,7 @@
             box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2); 
         }
 
-        /* 表格樣式 (Modern Clean Table) */
+        /* 表格樣式 */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -283,7 +283,6 @@
         /* 操作按鈕 */
         .action-buttons { display: flex; gap: 8px; }
         
-        /* 編輯按鈕：柔和淡藍底色 */
         .btn-edit-single {
             background: #EBF8FF;
             color: #3182CE;
@@ -297,7 +296,6 @@
         }
         .btn-edit-single:hover { background: #3182CE; color: #FFFFFF; }
 
-        /* 刪除按鈕：柔和淡粉底與質感磚紅字 */
         .btn-delete-single {
             background: var(--danger-bg);
             color: var(--danger-red);
@@ -589,16 +587,16 @@
                         <label>折抵/折扣模式</label>
                         <select id="prizeDiscountType" onchange="toggleDiscountInput('new')">
                             <option value="fixed">💰 自訂折抵金額 (NT$)</option>
-                            <option value="0.95">🏷️ 總金額 95 折 (5% OFF)</option>
-                            <option value="0.9">🏷️ 總金額 9 折 (10% OFF)</option>
-                            <option value="0.85">🏷️ 總金額 85 折 (15% OFF)</option>
-                            <option value="0.8">🏷️ 總金額 8 折 (20% OFF)</option>
-                            <option value="0.7">🏷️ 總金額 7 折 (30% OFF)</option>
+                            <option value="percent">🏷️ 自訂總金額幾 % (如扣 15% / 打85折)</option>
                         </select>
                     </div>
-                    <div class="form-group" id="groupPrizeDiscount">
+                    <div class="form-group" id="groupPrizeDiscountFixed">
                         <label>自訂折抵金額 (NT$)</label>
-                        <input id="prizeDiscount" type="number" min="0" placeholder="50">
+                        <input id="prizeDiscountFixed" type="number" min="0" placeholder="50">
+                    </div>
+                    <div class="form-group" id="groupPrizeDiscountPercent" style="display: none;">
+                        <label>自訂折扣總金額幾 % (例如填 15 代表 85 折 / 扣 15%)</label>
+                        <input id="prizeDiscountPercent" type="number" min="1" max="99" placeholder="15">
                     </div>
                     <div class="form-group">
                         <label>中獎機率權重</label>
@@ -744,16 +742,16 @@
                 <label>折抵/折扣模式</label>
                 <select id="editPrizeDiscountType" onchange="toggleDiscountInput('edit')">
                     <option value="fixed">💰 自訂折抵金額 (NT$)</option>
-                    <option value="0.95">🏷️ 總金額 95 折</option>
-                    <option value="0.9">🏷️ 總金額 9 折</option>
-                    <option value="0.85">🏷️ 總金額 85 折</option>
-                    <option value="0.8">🏷️ 總金額 8 折</option>
-                    <option value="0.7">🏷️ 總金額 7 折</option>
+                    <option value="percent">🏷️ 自訂總金額幾 % (如扣 15% / 打85折)</option>
                 </select>
             </div>
-            <div class="form-group" id="editGroupPrizeDiscount" style="margin-bottom:15px;">
+            <div class="form-group" id="editGroupPrizeDiscountFixed" style="margin-bottom:15px;">
                 <label>自訂折抵金額 (NT$)</label>
-                <input id="editPrizeDiscount" type="number" min="0" placeholder="50">
+                <input id="editPrizeDiscountFixed" type="number" min="0" placeholder="50">
+            </div>
+            <div class="form-group" id="editGroupPrizeDiscountPercent" style="margin-bottom:15px; display: none;">
+                <label>自訂折扣總金額幾 % (例如填 15 代表 85 折 / 扣 15%)</label>
+                <input id="editPrizeDiscountPercent" type="number" min="1" max="99" placeholder="15">
             </div>
             <div class="form-group" style="margin-bottom:15px;">
                 <label>中獎機率權重</label>
@@ -1037,15 +1035,18 @@
             } catch (err) { alert("刪除失敗！"); }
         };
 
-        // 控制折抵金額/折扣類型的顯示狀態
+        // 切換折抵金額與%數輸入框顯示狀態
         window.toggleDiscountInput = function(mode) {
             const typeSelect = document.getElementById(mode === 'new' ? 'prizeDiscountType' : 'editPrizeDiscountType');
-            const inputGroup = document.getElementById(mode === 'new' ? 'groupPrizeDiscount' : 'editGroupPrizeDiscount');
+            const fixedGroup = document.getElementById(mode === 'new' ? 'groupPrizeDiscountFixed' : 'editGroupPrizeDiscountFixed');
+            const percentGroup = document.getElementById(mode === 'new' ? 'groupPrizeDiscountPercent' : 'editGroupPrizeDiscountPercent');
 
             if (typeSelect.value === 'fixed') {
-                inputGroup.style.display = 'flex';
+                fixedGroup.style.display = 'flex';
+                percentGroup.style.display = 'none';
             } else {
-                inputGroup.style.display = 'none';
+                fixedGroup.style.display = 'none';
+                percentGroup.style.display = 'flex';
             }
         };
 
@@ -1064,10 +1065,11 @@
                     let discountDisplay = "";
                     
                     if (p.discountType === "fixed" || !p.discountType) {
-                        discountDisplay = `NT$ ${p.discount}`;
+                        discountDisplay = `固定折抵 NT$ ${p.discount}`;
                     } else {
-                        let rate = parseFloat(p.discountType);
-                        discountDisplay = `全單 ${rate * 10} 折 (${Math.round((1 - rate) * 100)}% OFF)`;
+                        let rate = parseFloat(p.discount);
+                        let offPercent = Math.round((1 - rate) * 100);
+                        discountDisplay = `全單扣除 ${offPercent}% (${rate * 10} 折)`;
                     }
 
                     html += `
@@ -1093,9 +1095,15 @@
             let discount = 0;
 
             if (discountType === 'fixed') {
-                discount = parseInt(document.getElementById("prizeDiscount").value) || 0;
+                discount = parseInt(document.getElementById("prizeDiscountFixed").value) || 0;
             } else {
-                discount = parseFloat(discountType);
+                let percentVal = parseFloat(document.getElementById("prizeDiscountPercent").value) || 0;
+                if (percentVal <= 0 || percentVal >= 100) {
+                    alert("請填寫正確的折扣 % 數 (1-99)！");
+                    return;
+                }
+                // 將 % 轉為前台計算用的打折係數 (例：填 15% -> 0.85)
+                discount = parseFloat(((100 - percentVal) / 100).toFixed(2));
             }
 
             let prob = parseInt(document.getElementById("prizeProb").value) || 10;
@@ -1105,7 +1113,8 @@
                 await push(ref(db, "prizes"), { title, discountType, discount, prob });
                 alert("🎉 成功新增抽獎獎項！");
                 document.getElementById("prizeTitle").value = "";
-                document.getElementById("prizeDiscount").value = "";
+                document.getElementById("prizeDiscountFixed").value = "";
+                document.getElementById("prizeDiscountPercent").value = "";
                 document.getElementById("prizeDiscountType").value = "fixed";
                 window.toggleDiscountInput('new');
                 window.loadPrizes();
@@ -1119,10 +1128,14 @@
             document.getElementById("editPrizeTitle").value = p.title;
 
             const typeSelect = document.getElementById("editPrizeDiscountType");
-            typeSelect.value = p.discountType || 'fixed';
+            const dType = (p.discountType === 'fixed' || !p.discountType) ? 'fixed' : 'percent';
+            typeSelect.value = dType;
 
-            if (typeSelect.value === 'fixed') {
-                document.getElementById("editPrizeDiscount").value = p.discount || 0;
+            if (dType === 'fixed') {
+                document.getElementById("editPrizeDiscountFixed").value = p.discount || 0;
+            } else {
+                let offPercent = Math.round((1 - parseFloat(p.discount)) * 100);
+                document.getElementById("editPrizeDiscountPercent").value = offPercent;
             }
 
             window.toggleDiscountInput('edit');
@@ -1141,9 +1154,14 @@
             let discount = 0;
 
             if (discountType === 'fixed') {
-                discount = parseInt(document.getElementById("editPrizeDiscount").value) || 0;
+                discount = parseInt(document.getElementById("editPrizeDiscountFixed").value) || 0;
             } else {
-                discount = parseFloat(discountType);
+                let percentVal = parseFloat(document.getElementById("editPrizeDiscountPercent").value) || 0;
+                if (percentVal <= 0 || percentVal >= 100) {
+                    alert("請填寫正確的折扣 % 數 (1-99)！");
+                    return;
+                }
+                discount = parseFloat(((100 - percentVal) / 100).toFixed(2));
             }
 
             let prob = parseInt(document.getElementById("editPrizeProb").value) || 10;
