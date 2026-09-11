@@ -583,10 +583,21 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>獎項名稱</label>
-                        <input id="prizeTitle" placeholder="例如：折價券 50 元">
+                        <input id="prizeTitle" placeholder="例如：折價券 50 元 或 85折優惠券">
                     </div>
                     <div class="form-group">
-                        <label>折抵金額 (NT$)</label>
+                        <label>折抵/折扣模式</label>
+                        <select id="prizeDiscountType" onchange="toggleDiscountInput('new')">
+                            <option value="fixed">💰 自訂折抵金額 (NT$)</option>
+                            <option value="0.95">🏷️ 總金額 95 折 (5% OFF)</option>
+                            <option value="0.9">🏷️ 總金額 9 折 (10% OFF)</option>
+                            <option value="0.85">🏷️ 總金額 85 折 (15% OFF)</option>
+                            <option value="0.8">🏷️ 總金額 8 折 (20% OFF)</option>
+                            <option value="0.7">🏷️ 總金額 7 折 (30% OFF)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="groupPrizeDiscount">
+                        <label>自訂折抵金額 (NT$)</label>
                         <input id="prizeDiscount" type="number" min="0" placeholder="50">
                     </div>
                     <div class="form-group">
@@ -601,7 +612,7 @@
                         <thead>
                             <tr>
                                 <th>獎項名稱</th>
-                                <th>折抵金額 (NT$)</th>
+                                <th>折抵/折扣內容</th>
                                 <th>中獎權重</th>
                                 <th>操作</th>
                             </tr>
@@ -730,7 +741,18 @@
                 <input id="editPrizeTitle" type="text" placeholder="例如：折價券 50 元">
             </div>
             <div class="form-group" style="margin-bottom:15px;">
-                <label>折抵金額 (NT$)</label>
+                <label>折抵/折扣模式</label>
+                <select id="editPrizeDiscountType" onchange="toggleDiscountInput('edit')">
+                    <option value="fixed">💰 自訂折抵金額 (NT$)</option>
+                    <option value="0.95">🏷️ 總金額 95 折</option>
+                    <option value="0.9">🏷️ 總金額 9 折</option>
+                    <option value="0.85">🏷️ 總金額 85 折</option>
+                    <option value="0.8">🏷️ 總金額 8 折</option>
+                    <option value="0.7">🏷️ 總金額 7 折</option>
+                </select>
+            </div>
+            <div class="form-group" id="editGroupPrizeDiscount" style="margin-bottom:15px;">
+                <label>自訂折抵金額 (NT$)</label>
                 <input id="editPrizeDiscount" type="number" min="0" placeholder="50">
             </div>
             <div class="form-group" style="margin-bottom:15px;">
@@ -1015,6 +1037,18 @@
             } catch (err) { alert("刪除失敗！"); }
         };
 
+        // 控制折抵金額/折扣類型的顯示狀態
+        window.toggleDiscountInput = function(mode) {
+            const typeSelect = document.getElementById(mode === 'new' ? 'prizeDiscountType' : 'editPrizeDiscountType');
+            const inputGroup = document.getElementById(mode === 'new' ? 'groupPrizeDiscount' : 'editGroupPrizeDiscount');
+
+            if (typeSelect.value === 'fixed') {
+                inputGroup.style.display = 'flex';
+            } else {
+                inputGroup.style.display = 'none';
+            }
+        };
+
         window.loadPrizes = async function() {
             try {
                 const snap = await get(ref(db, "prizes"));
@@ -1027,10 +1061,19 @@
 
                 for (let pId in prizes) {
                     let p = prizes[pId];
+                    let discountDisplay = "";
+                    
+                    if (p.discountType === "fixed" || !p.discountType) {
+                        discountDisplay = `NT$ ${p.discount}`;
+                    } else {
+                        let rate = parseFloat(p.discountType);
+                        discountDisplay = `全單 ${rate * 10} 折 (${Math.round((1 - rate) * 100)}% OFF)`;
+                    }
+
                     html += `
                         <tr>
                             <td><b>${p.title}</b></td>
-                            <td>NT$ ${p.discount}</td>
+                            <td>${discountDisplay}</td>
                             <td>${p.prob}</td>
                             <td>
                                 <button class="btn-edit-single" onclick="openEditPrizeModal('${pId}')">編輯</button>
@@ -1046,15 +1089,25 @@
 
         window.savePrize = async function() {
             let title = document.getElementById("prizeTitle").value.trim();
-            let discount = parseInt(document.getElementById("prizeDiscount").value) || 0;
+            let discountType = document.getElementById("prizeDiscountType").value;
+            let discount = 0;
+
+            if (discountType === 'fixed') {
+                discount = parseInt(document.getElementById("prizeDiscount").value) || 0;
+            } else {
+                discount = parseFloat(discountType);
+            }
+
             let prob = parseInt(document.getElementById("prizeProb").value) || 10;
 
             if (!title) { alert("請填寫獎項名稱！"); return; }
             try {
-                await push(ref(db, "prizes"), { title, discount, prob });
+                await push(ref(db, "prizes"), { title, discountType, discount, prob });
                 alert("🎉 成功新增抽獎獎項！");
                 document.getElementById("prizeTitle").value = "";
                 document.getElementById("prizeDiscount").value = "";
+                document.getElementById("prizeDiscountType").value = "fixed";
+                window.toggleDiscountInput('new');
                 window.loadPrizes();
             } catch (err) { alert("新增獎項失敗！"); }
         };
@@ -1064,7 +1117,15 @@
             if (!p) return;
             document.getElementById("editPrizeId").value = prizeId;
             document.getElementById("editPrizeTitle").value = p.title;
-            document.getElementById("editPrizeDiscount").value = p.discount;
+
+            const typeSelect = document.getElementById("editPrizeDiscountType");
+            typeSelect.value = p.discountType || 'fixed';
+
+            if (typeSelect.value === 'fixed') {
+                document.getElementById("editPrizeDiscount").value = p.discount || 0;
+            }
+
+            window.toggleDiscountInput('edit');
             document.getElementById("editPrizeProb").value = p.prob;
             document.getElementById("editPrizeModal").style.display = "flex";
         };
@@ -1076,11 +1137,19 @@
         window.updatePrizeSubmit = async function() {
             let pId = document.getElementById("editPrizeId").value;
             let title = document.getElementById("editPrizeTitle").value.trim();
-            let discount = parseInt(document.getElementById("editPrizeDiscount").value) || 0;
+            let discountType = document.getElementById("editPrizeDiscountType").value;
+            let discount = 0;
+
+            if (discountType === 'fixed') {
+                discount = parseInt(document.getElementById("editPrizeDiscount").value) || 0;
+            } else {
+                discount = parseFloat(discountType);
+            }
+
             let prob = parseInt(document.getElementById("editPrizeProb").value) || 10;
 
             try {
-                await update(ref(db, "prizes/" + pId), { title, discount, prob });
+                await update(ref(db, "prizes/" + pId), { title, discountType, discount, prob });
                 alert("✅ 獎項更新成功！");
                 window.closeEditPrizeModal();
                 window.loadPrizes();
