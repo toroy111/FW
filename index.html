@@ -129,6 +129,10 @@
         #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 6px 20px rgba(140, 98, 57, 0.2), 0 0 0 5px #8c6239; transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1); }
 
         .lottery-result-badge { min-height: 38px; font-size: 14px; font-weight: 700; color: var(--primary-amber); display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; padding: 6px 10px; }
+
+        .coupon-item { display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px dashed var(--border-color); padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-size: 13px; }
+
+        footer { text-align: center; padding: 25px 15px; background: #fff; border-top: 1px solid var(--border-color); margin-top: 40px; font-size: 13px; color: #8a7c70; }
     </style>
 </head>
 <body>
@@ -873,34 +877,57 @@
         const radius = canvas.width / 2 - 8;
         const arcSize = (2 * Math.PI) / numPrizes;
 
-        const colors = ["#8c6239", "#d97706", "#f59e0b", "#b45309", "#78350f", "#fef3c7"];
+        // 🎨 高對比明亮色彩
+        const colors = [
+            "#fef08a", // 亮奶黃
+            "#fbcfe8", // 柔粉紅
+            "#bae6fd", // 天天空藍
+            "#a7f3d0", // 薄荷綠
+            "#fed7aa", // 活力亮橘
+            "#e9d5ff"  // 柔和紫
+        ];
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (let i = 0; i < numPrizes; i++) {
             const angle = i * arcSize;
             
+            // 繪製扇形
             ctx.beginPath();
             ctx.fillStyle = colors[i % colors.length];
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
             ctx.lineTo(centerX, centerY);
             ctx.fill();
-            ctx.strokeStyle = "#fff";
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 3;
             ctx.stroke();
 
+            // ✍️ 繪製高清晰度平行/水平方向文字
             ctx.save();
-            ctx.fillStyle = (colors[i % colors.length] === "#fef3c7") ? "#4a3c31" : "#ffffff";
-            ctx.font = "bold 13px 'Noto Sans TC', sans-serif";
-            ctx.textAlign = "right";
+            ctx.fillStyle = "#1e293b"; // 深色文字，高對比易讀
+            ctx.font = "bold 14px 'Noto Sans TC', sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
             
-            ctx.translate(centerX, centerY);
-            ctx.rotate(angle + arcSize / 2);
-            ctx.fillText(prizes[i].title, radius - 15, 5);
+            const midAngle = angle + arcSize / 2;
+            const textRadius = radius * 0.62;
+            const textX = centerX + Math.cos(midAngle) * textRadius;
+            const textY = centerY + Math.sin(midAngle) * textRadius;
+
+            ctx.translate(textX, textY);
+            
+            let rotateAngle = midAngle;
+            if (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2) {
+                rotateAngle += Math.PI; 
+            }
+            ctx.rotate(rotateAngle);
+
+            ctx.fillText(prizes[i].title, 0, 0);
             ctx.restore();
         }
 
+        // 中央圓點
         ctx.beginPath();
         ctx.arc(centerX, centerY, 22, 0, 2 * Math.PI);
         ctx.fillStyle = "#ffffff";
@@ -1010,7 +1037,7 @@
         return prizes[0];
     }
 
-    /* 📤 送出預購訂單（修正為後台審核點數發放） */
+    /* 📤 送出預購訂單 */
     window.submitOrder = async function() {
         if (!isLoggedIn) {
             alert("請先登入會員帳號後再送出訂單！");
@@ -1109,8 +1136,8 @@
                 discount: couponDiscount,
                 finalTotal: finalTotal,
                 couponUsed: couponUsedTitle,
-                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱銷" : "今日現烤"),
-                status: "pending", // pending: 待完成, completed: 已完成派點
+                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱销" : "今日現烤"),
+                status: "pending",
                 createdAt: new Date().toISOString()
             });
 
