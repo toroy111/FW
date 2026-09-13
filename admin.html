@@ -1033,7 +1033,7 @@
             });
         };
 
-        window.renderChatUserList = function() {
+        window.renderChatUserList = async function() {
             const userListEl = document.getElementById("chatUserList");
             const globalBadge = document.getElementById("globalChatBadge");
             let totalUnread = 0;
@@ -1042,18 +1042,20 @@
             const userKeys = Object.keys(allChatsCache);
             if (userKeys.length === 0) {
                 userListEl.innerHTML = `<li style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">尚無任何顧客訊息</li>`;
-                globalBadge.style.display = "none";
+                if (globalBadge) globalBadge.style.display = "none";
                 return;
             }
 
             // 按時間排序 (最新訊息在最上)
             userKeys.sort((a, b) => {
-                const lastA = Object.values(allChatsCache[a]).pop();
-                const lastB = Object.values(allChatsCache[b]).pop();
+                const msgsA = Object.values(allChatsCache[a] || {});
+                const msgsB = Object.values(allChatsCache[b] || {});
+                const lastA = msgsA[msgsA.length - 1];
+                const lastB = msgsB[msgsB.length - 1];
                 return (lastB?.timestamp || 0) - (lastA?.timestamp || 0);
             });
 
-            userKeys.forEach(uid => {
+            for (const uid of userKeys) {
                 const userMsgs = allChatsCache[uid] || {};
                 const msgKeys = Object.keys(userMsgs);
                 const lastMsg = userMsgs[msgKeys[msgKeys.length - 1]];
@@ -1067,30 +1069,45 @@
 
                 totalUnread += unreadCount;
 
+                // 若會員資料不在快取中，即時向 Firebase /users/UID 查詢補抓
+                if (!globalUsersCache[uid]) {
+                    try {
+                        const uSnap = await get(ref(db, `users/${uid}`));
+                        if (uSnap.exists()) globalUsersCache[uid] = uSnap.val();
+                    } catch (err) {
+                        console.error("抓取會員資料失敗:", err);
+                    }
+                }
+
                 const uInfo = globalUsersCache[uid] || {};
-                const displayName = uInfo.name || `顧客 (${uid.substring(0,6)})`;
+                const displayName = uInfo.name || uInfo.displayName || `顧客 (${uid.substring(0, 6)})`;
                 const activeClass = (uid === currentChatUserId) ? "active" : "";
                 const avatarLetter = displayName.charAt(0).toUpperCase();
+
+                // 相容兩種文字欄位 (text 或 content)
+                const displayMsgText = lastMsg ? (lastMsg.text || lastMsg.content || '') : '';
 
                 html += `
                     <li class="user-item ${activeClass}" onclick="selectChatUser('${uid}')">
                         <div class="user-avatar">${avatarLetter}</div>
                         <div class="user-info">
                             <div class="user-name">${displayName}</div>
-                            <div class="user-last-msg">${lastMsg ? lastMsg.text : ''}</div>
+                            <div class="user-last-msg">${displayMsgText}</div>
                         </div>
                         ${unreadCount > 0 ? `<div class="user-unread-badge">${unreadCount}</div>` : ''}
                     </li>
                 `;
-            });
+            }
 
             userListEl.innerHTML = html;
 
-            if (totalUnread > 0) {
-                globalBadge.textContent = totalUnread;
-                globalBadge.style.display = "inline-block";
-            } else {
-                globalBadge.style.display = "none";
+            if (globalBadge) {
+                if (totalUnread > 0) {
+                    globalBadge.textContent = totalUnread;
+                    globalBadge.style.display = "inline-block";
+                } else {
+                    globalBadge.style.display = "none";
+                }
             }
         };
 
@@ -1099,7 +1116,7 @@
             window.renderChatUserList();
 
             const uInfo = globalUsersCache[uid] || {};
-            const displayName = uInfo.name || `顧客 (${uid.substring(0,6)})`;
+            const displayName = uInfo.name || uInfo.displayName || `顧客 (${uid.substring(0, 6)})`;
             const phone = uInfo.phone ? ` (${uInfo.phone})` : "";
             document.getElementById("currentChatHeader").innerHTML = `<span><i class="fa-solid fa-user"></i> ${displayName}${phone}</span>`;
 
@@ -1134,9 +1151,12 @@
                 const senderClass = msg.sender === "admin" ? "admin" : "user";
                 const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
 
+                // 相容 text 與 content 欄位
+                const msgContent = msg.text || msg.content || '';
+
                 html += `
                     <div class="msg-bubble ${senderClass}">
-                        <div>${msg.text}</div>
+                        <div>${msgContent}</div>
                         <div class="msg-time">${timeStr}</div>
                     </div>
                 `;
