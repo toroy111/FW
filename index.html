@@ -100,6 +100,8 @@
         .floating-action-group { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 999; }
         .fab-btn { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid var(--border-color); color: var(--primary-amber); font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.25s ease; position: relative; }
         .fab-btn.logged-in { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .fab-chat { background: #059669; color: #fff; border-color: #059669; }
+        .fab-chat:hover { background: #047857; }
         
         .fab-lottery { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: 2px solid #fff; animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow {
@@ -131,6 +133,19 @@
         .lottery-result-badge { min-height: 38px; font-size: 14px; font-weight: 700; color: var(--primary-amber); display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; padding: 6px 10px; }
 
         .coupon-item { display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px dashed var(--border-color); padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-size: 13px; }
+
+        /* 💬 客服對話視窗專用樣式 */
+        .chat-box-card { max-width: 420px; height: 500px; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+        .chat-header { background: var(--primary-amber); color: #fff; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header h3 { color: #fff; margin: 0; font-size: 16px; text-align: left; }
+        .chat-body { flex-grow: 1; padding: 15px; overflow-y: auto; background: #faf8f5; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-break: break-word; }
+        .chat-msg.customer { align-self: flex-end; background: var(--primary-amber); color: #fff; border-bottom-right-radius: 2px; }
+        .chat-msg.admin { align-self: flex-start; background: #fff; color: var(--text-dark); border: 1px solid var(--border-color); border-bottom-left-radius: 2px; }
+        .chat-time { font-size: 10px; opacity: 0.7; margin-top: 4px; text-align: right; }
+        .chat-footer { padding: 12px; background: #fff; border-top: 1px solid var(--border-color); display: flex; gap: 8px; }
+        .chat-footer input { flex-grow: 1; padding: 10px 14px; border: 1px solid #e5dfd5; border-radius: 20px; outline: none; font-size: 14px; }
+        .chat-footer button { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-amber); color: white; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
 
         footer { text-align: center; padding: 25px 15px; background: #fff; border-top: 1px solid var(--border-color); margin-top: 40px; font-size: 13px; color: #8a7c70; }
     </style>
@@ -284,8 +299,11 @@
         </div>
     </section>
 
-    <!-- 🚀 浮動按鈕群 -->
+    <!-- 🚀 浮動按鈕群（客服聊天按鈕位於抽獎按鈕上方） -->
     <div class="floating-action-group">
+        <button id="chatFabBtn" class="fab-btn fab-chat" onclick="openChatModal()" title="聯絡線上客服" style="display: none;">
+            <i class="fa-solid fa-comments"></i>
+        </button>
         <button class="fab-btn fab-lottery" onclick="openLotteryModal()" title="幸運抽獎">
             <i class="fa-solid fa-gift"></i>
         </button>
@@ -295,6 +313,23 @@
         <button class="fab-btn" onclick="scrollToTop()" title="返回頂部">
             <i class="fa-solid fa-rocket"></i>
         </button>
+    </div>
+
+    <!-- 💬 客服溝通聊天室 Modal -->
+    <div id="chatModal" class="modal-overlay">
+        <div class="modal-card chat-box-card">
+            <div class="chat-header">
+                <h3><i class="fa-solid fa-headset"></i> 專屬線上客服對話</h3>
+                <i class="fa-solid fa-xmark" onclick="closeChatModal()" style="cursor: pointer; font-size: 20px;"></i>
+            </div>
+            <div id="chatMessages" class="chat-body">
+                <p style="text-align: center; color: #8a7c70; font-size: 13px; margin-top: 20px;">歡迎留言給我們，管理員將會儘速回覆您！</p>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="輸入訊息..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
 
     <!-- 🎰 幸運抽獎 Modal -->
@@ -412,7 +447,7 @@
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, get, push, set, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, get, push, set, update, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -437,6 +472,7 @@
     let currentUserProfile = null;
     let currentCategory = 'A';
     let isDrawing = false;
+    let chatListenerUnsubscribe = null;
 
     let currentRotationDeg = 0; 
     let prizesArrayCache = [];  
@@ -630,6 +666,7 @@
         const loginNotice = document.getElementById("loginNotice");
         const userInfoFields = document.getElementById("userInfoFields");
         const loginFabBtn = document.getElementById("loginFabBtn");
+        const chatFabBtn = document.getElementById("chatFabBtn");
         const loginFormBlock = document.getElementById("loginFormBlock");
         const loggedInBlock = document.getElementById("loggedInBlock");
         const userWelcomeText = document.getElementById("userWelcomeText");
@@ -637,6 +674,7 @@
         if (isLoggedIn) {
             loginNotice.style.display = "none";
             userInfoFields.style.display = "grid";
+            if (chatFabBtn) chatFabBtn.style.display = "flex";
             loginFabBtn.classList.add("logged-in");
             loginFabBtn.innerHTML = '<i class="fa-solid fa-user-check"></i>';
             if (loginFormBlock) loginFormBlock.style.display = "none";
@@ -649,12 +687,84 @@
         } else {
             loginNotice.style.display = "block";
             userInfoFields.style.display = "none";
+            if (chatFabBtn) chatFabBtn.style.display = "none";
             loginFabBtn.classList.remove("logged-in");
             loginFabBtn.innerHTML = '<i class="fa-solid fa-user"></i>';
             if (loginFormBlock) loginFormBlock.style.display = "block";
             if (loggedInBlock) loggedInBlock.style.display = "none";
         }
     }
+
+    /* 💬 客服聊天室相關功能 */
+    window.openChatModal = function() {
+        if (!isLoggedIn) {
+            alert("請先登入會員帳號！");
+            openLoginModal('login');
+            return;
+        }
+        document.getElementById("chatModal").style.display = "flex";
+        listenToChatMessages();
+    };
+
+    window.closeChatModal = function() {
+        document.getElementById("chatModal").style.display = "none";
+    };
+
+    function listenToChatMessages() {
+        if (!currentUserUid) return;
+        const messagesRef = ref(db, `chats/${currentUserUid}/messages`);
+        
+        onValue(messagesRef, (snapshot) => {
+            const data = snapshot.val();
+            const container = document.getElementById("chatMessages");
+            if (!data) {
+                container.innerHTML = `<p style="text-align: center; color: #8a7c70; font-size: 13px; margin-top: 20px;">歡迎留言給我們，管理員將會儘速回覆您！</p>`;
+                return;
+            }
+
+            let html = "";
+            Object.values(data).forEach(msg => {
+                const isCustomer = msg.sender === 'customer';
+                const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                html += `
+                    <div class="chat-msg ${isCustomer ? 'customer' : 'admin'}">
+                        <div>${msg.text}</div>
+                        <div class="chat-time">${timeStr}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        });
+    }
+
+    window.sendChatMessage = async function() {
+        const input = document.getElementById("chatInput");
+        const text = input.value.trim();
+        if (!text || !currentUserUid) return;
+
+        input.value = "";
+        const timestamp = new Date().toISOString();
+        const userName = (currentUserProfile && currentUserProfile.name) || "會員";
+
+        const chatRef = ref(db, `chats/${currentUserUid}`);
+        const messagesRef = ref(db, `chats/${currentUserUid}/messages`);
+
+        // 寫入對話內容
+        await push(messagesRef, {
+            sender: "customer",
+            text: text,
+            timestamp: timestamp
+        });
+
+        // 更新聊天室頭資訊（供後台列表展示）
+        await update(chatRef, {
+            userName: userName,
+            lastMessage: text,
+            lastTimestamp: timestamp,
+            unreadByAdmin: true
+        });
+    };
 
     async function loadDates() {
         try {
@@ -877,14 +987,13 @@
         const radius = canvas.width / 2 - 8;
         const arcSize = (2 * Math.PI) / numPrizes;
 
-        // 🎨 高對比明亮色彩
         const colors = [
-            "#fef08a", // 亮奶黃
-            "#fbcfe8", // 柔粉紅
-            "#bae6fd", // 天天空藍
-            "#a7f3d0", // 薄荷綠
-            "#fed7aa", // 活力亮橘
-            "#e9d5ff"  // 柔和紫
+            "#fef08a",
+            "#fbcfe8",
+            "#bae6fd",
+            "#a7f3d0",
+            "#fed7aa",
+            "#e9d5ff"
         ];
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -892,7 +1001,6 @@
         for (let i = 0; i < numPrizes; i++) {
             const angle = i * arcSize;
             
-            // 繪製扇形
             ctx.beginPath();
             ctx.fillStyle = colors[i % colors.length];
             ctx.moveTo(centerX, centerY);
@@ -903,9 +1011,8 @@
             ctx.lineWidth = 3;
             ctx.stroke();
 
-            // ✍️ 繪製高清晰度平行/水平方向文字
             ctx.save();
-            ctx.fillStyle = "#1e293b"; // 深色文字，高對比易讀
+            ctx.fillStyle = "#1e293b";
             ctx.font = "bold 14px 'Noto Sans TC', sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
@@ -927,7 +1034,6 @@
             ctx.restore();
         }
 
-        // 中央圓點
         ctx.beginPath();
         ctx.arc(centerX, centerY, 22, 0, 2 * Math.PI);
         ctx.fillStyle = "#ffffff";
@@ -1112,7 +1218,6 @@
                 return;
             }
 
-            // 更新會員優惠券（結帳即使用）
             let updatedCoupons = [...(currentUserProfile.coupons || [])];
             if (selectedCouponIdx !== "") {
                 updatedCoupons.splice(selectedCouponIdx, 1);
@@ -1122,7 +1227,6 @@
                 coupons: updatedCoupons
             });
 
-            // 寫入訂單資料，設狀態為 'pending' (待完成)
             await set(push(ref(db, "orders")), { 
                 userId: currentUserUid,
                 name, 
@@ -1136,7 +1240,7 @@
                 discount: couponDiscount,
                 finalTotal: finalTotal,
                 couponUsed: couponUsedTitle,
-                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱销" : "今日現烤"),
+                category: currentCategory === 'C' ? "接單烘焙" : (currentCategory === 'B' ? "經典熱銷" : "今日現烤"),
                 status: "pending",
                 createdAt: new Date().toISOString()
             });
