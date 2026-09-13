@@ -81,6 +81,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
         .nav-item i { font-size: 16px; width: 20px; text-align: center; color: var(--text-muted); }
         .nav-item:hover {
@@ -97,6 +98,18 @@
             box-shadow: 0 4px 12px rgba(140, 122, 107, 0.25);
         }
         .nav-item.active i { color: #ffffff; }
+
+        /* 未讀提示 Badge */
+        .nav-badge {
+            background-color: var(--danger-red);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: auto;
+            display: none;
+        }
 
         /* 右側主要內容區塊 (Main Content View Switcher) */
         .main-wrapper {
@@ -283,7 +296,6 @@
         /* 操作按鈕 */
         .action-buttons { display: flex; gap: 8px; }
         
-        /* 編輯按鈕：柔和淡藍底色 */
         .btn-edit-single {
             background: #EBF8FF;
             color: #3182CE;
@@ -297,7 +309,6 @@
         }
         .btn-edit-single:hover { background: #3182CE; color: #FFFFFF; }
 
-        /* 刪除按鈕：柔和淡粉底與質感磚紅字 */
         .btn-delete-single {
             background: var(--danger-bg);
             color: var(--danger-red);
@@ -380,6 +391,157 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
         .btn-cancel { padding: 10px 20px; background: #EDF2F7; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 500; color: var(--text-main); }
         .btn-cancel:hover { background: #E2E8F0; }
+
+        /* ---------------------------------------------------- */
+        /* 客服聊天室專用樣式 (Chat Dashboard) */
+        /* ---------------------------------------------------- */
+        .chat-container {
+            display: flex;
+            height: calc(100vh - 160px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+        .chat-sidebar {
+            width: 320px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            background: #FAFAFA;
+        }
+        .chat-sidebar-header {
+            padding: 16px 20px;
+            font-weight: 700;
+            font-size: 15px;
+            border-bottom: 1px solid var(--border-color);
+            background: #F4F1EA;
+            color: var(--text-main);
+        }
+        .user-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            list-style: none;
+        }
+        .user-item {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        .user-item:hover { background-color: #F0ECE1; }
+        .user-item.active { background-color: #E6DFD3; border-left: 4px solid var(--accent-primary); }
+        .user-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .user-info { flex-grow: 1; overflow: hidden; }
+        .user-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        .user-last-msg { font-size: 12px; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        .user-unread-badge {
+            background-color: var(--danger-red);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 2px 6px;
+            position: absolute;
+            right: 14px;
+            top: 14px;
+        }
+
+        .chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: #FFFFFF;
+        }
+        .chat-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FAF8F5;
+        }
+        .chat-body {
+            flex-grow: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #FAF8F5;
+        }
+        .chat-empty {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .msg-bubble {
+            max-width: 65%;
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+        }
+        .msg-bubble.user {
+            align-self: flex-start;
+            background-color: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px;
+            color: var(--text-main);
+        }
+        .msg-bubble.admin {
+            align-self: flex-end;
+            background: var(--accent-gradient);
+            color: #FFFFFF;
+            border-bottom-right-radius: 2px;
+        }
+        .msg-bubble .msg-time {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.75;
+            text-align: right;
+        }
+
+        .chat-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            background: #FFFFFF;
+        }
+        .chat-footer input {
+            flex-grow: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+        .chat-footer input:focus { border-color: var(--accent-primary); }
     </style>
 </head>
 <body>
@@ -394,6 +556,11 @@
             <li class="nav-item active" onclick="switchTab(event, 'dashboard')">
                 <i class="fa-solid fa-chart-pie"></i>
                 <span>總覽 Dashboard</span>
+            </li>
+            <li class="nav-item" onclick="switchTab(event, 'chat')">
+                <i class="fa-solid fa-comments"></i>
+                <span>客服訊息中心</span>
+                <span id="globalChatBadge" class="nav-badge">0</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'products')">
                 <i class="fa-solid fa-plus-circle"></i>
@@ -443,7 +610,41 @@
             </div>
         </div>
 
-        <!-- 2. 商品發布上架 -->
+        <!-- 2. 客服訊息中心 (Chat Center) -->
+        <div id="section-chat" class="content-section">
+            <div class="header-top">
+                <h1>線上客服與顧客對話窗口</h1>
+            </div>
+            <div class="chat-container">
+                <!-- 左側：顧客帳號清單 -->
+                <div class="chat-sidebar">
+                    <div class="chat-sidebar-header">
+                        <i class="fa-solid fa-users-viewfinder"></i> 顧客訊息對話列表
+                    </div>
+                    <ul class="user-list" id="chatUserList">
+                        <li style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">載入中...</li>
+                    </ul>
+                </div>
+
+                <!-- 右側：當前對話視窗 -->
+                <div class="chat-main">
+                    <div class="chat-header" id="currentChatHeader">
+                        <span><i class="fa-solid fa-comment-dots"></i> 請選擇左側顧客展開對話</span>
+                    </div>
+                    <div class="chat-body" id="chatMessages">
+                        <div class="chat-empty">
+                            <p>👈 請點擊左側顧客帳號開始對話</p>
+                        </div>
+                    </div>
+                    <div class="chat-footer">
+                        <input type="text" id="adminMsgInput" placeholder="輸入回覆訊息..." onkeydown="if(event.key==='Enter') sendAdminMessage()">
+                        <button class="btn-add" onclick="sendAdminMessage()"><i class="fa-solid fa-paper-plane"></i> 發送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 商品發布上架 -->
         <div id="section-products" class="content-section">
             <div class="header-top">
                 <h1>發布商品至前台</h1>
@@ -506,7 +707,7 @@
             </div>
         </div>
 
-        <!-- 3. 庫存與販售明細 -->
+        <!-- 4. 庫存與販售明細 -->
         <div id="section-inventory" class="content-section">
             <div class="header-top">
                 <h1>庫存與販售明細</h1>
@@ -521,7 +722,7 @@
             </div>
         </div>
 
-        <!-- 4. 預購訂單管理 -->
+        <!-- 5. 預購訂單管理 -->
         <div id="section-orders" class="content-section">
             <div class="header-top">
                 <h1>專區 A & B 顧客預購訂單</h1>
@@ -547,7 +748,7 @@
             </div>
         </div>
 
-        <!-- 5. 接單烘焙訂單 -->
+        <!-- 6. 接單烘焙訂單 -->
         <div id="section-customOrders" class="content-section">
             <div class="header-top">
                 <h1>接單烘焙顧客訂單</h1>
@@ -573,7 +774,7 @@
             </div>
         </div>
 
-        <!-- 6. 抽獎獎項設定 -->
+        <!-- 7. 抽獎獎項設定 -->
         <div id="section-prizes" class="content-section">
             <div class="header-top">
                 <h1>抽獎獎項設定管理</h1>
@@ -626,7 +827,7 @@
             </div>
         </div>
 
-        <!-- 7. 會員點數管理 -->
+        <!-- 8. 會員點數管理 -->
         <div id="section-users" class="content-section">
             <div class="header-top">
                 <h1>註冊客人資訊與累積點數</h1>
@@ -653,7 +854,7 @@
             </div>
         </div>
 
-        <!-- 8. 系統備份與維護 -->
+        <!-- 9. 系統備份與維護 -->
         <div id="section-settings" class="content-section">
             <div class="header-top">
                 <h1>系統數據備份與危險操作控制</h1>
@@ -770,7 +971,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, update, get, remove, push, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, update, get, remove, push, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgeP2a6Z-TqJaZ5F0j_2UoXVQ_WE3sckw",
@@ -793,6 +994,10 @@
         let editUploadedImageUrlString = "";
         let currentInvFilter = "A";
 
+        /* 聊天室狀態變更 */
+        let currentChatUserId = null;
+        let allChatsCache = {};
+
         /* 左側選單切換控制 */
         window.switchTab = function(evt, tabName) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -811,8 +1016,163 @@
             await window.loadOrders();    
             await window.loadUsers();
             await window.loadPrizes();
+            window.initChatListener();
         };
 
+        /* ---------------------------------------------------- */
+        /* 客服聊天室邏輯 (按不同顧客帳號 userId 分離對話) */
+        /* ---------------------------------------------------- */
+        window.initChatListener = function() {
+            const chatRef = ref(db, "chats");
+            onValue(chatRef, (snapshot) => {
+                allChatsCache = snapshot.exists() ? snapshot.val() : {};
+                window.renderChatUserList();
+                if (currentChatUserId) {
+                    window.renderMessagesForUser(currentChatUserId);
+                }
+            });
+        };
+
+        window.renderChatUserList = function() {
+            const userListEl = document.getElementById("chatUserList");
+            const globalBadge = document.getElementById("globalChatBadge");
+            let totalUnread = 0;
+            let html = "";
+
+            const userKeys = Object.keys(allChatsCache);
+            if (userKeys.length === 0) {
+                userListEl.innerHTML = `<li style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">尚無任何顧客訊息</li>`;
+                globalBadge.style.display = "none";
+                return;
+            }
+
+            // 按時間排序 (最新訊息在最上)
+            userKeys.sort((a, b) => {
+                const lastA = Object.values(allChatsCache[a]).pop();
+                const lastB = Object.values(allChatsCache[b]).pop();
+                return (lastB?.timestamp || 0) - (lastA?.timestamp || 0);
+            });
+
+            userKeys.forEach(uid => {
+                const userMsgs = allChatsCache[uid] || {};
+                const msgKeys = Object.keys(userMsgs);
+                const lastMsg = userMsgs[msgKeys[msgKeys.length - 1]];
+
+                // 計算未讀 (sender === 'user' 且 read !== true)
+                let unreadCount = 0;
+                msgKeys.forEach(mKey => {
+                    const m = userMsgs[mKey];
+                    if (m.sender === "user" && !m.read) unreadCount++;
+                });
+
+                totalUnread += unreadCount;
+
+                const uInfo = globalUsersCache[uid] || {};
+                const displayName = uInfo.name || `顧客 (${uid.substring(0,6)})`;
+                const activeClass = (uid === currentChatUserId) ? "active" : "";
+                const avatarLetter = displayName.charAt(0).toUpperCase();
+
+                html += `
+                    <li class="user-item ${activeClass}" onclick="selectChatUser('${uid}')">
+                        <div class="user-avatar">${avatarLetter}</div>
+                        <div class="user-info">
+                            <div class="user-name">${displayName}</div>
+                            <div class="user-last-msg">${lastMsg ? lastMsg.text : ''}</div>
+                        </div>
+                        ${unreadCount > 0 ? `<div class="user-unread-badge">${unreadCount}</div>` : ''}
+                    </li>
+                `;
+            });
+
+            userListEl.innerHTML = html;
+
+            if (totalUnread > 0) {
+                globalBadge.textContent = totalUnread;
+                globalBadge.style.display = "inline-block";
+            } else {
+                globalBadge.style.display = "none";
+            }
+        };
+
+        window.selectChatUser = function(uid) {
+            currentChatUserId = uid;
+            window.renderChatUserList();
+
+            const uInfo = globalUsersCache[uid] || {};
+            const displayName = uInfo.name || `顧客 (${uid.substring(0,6)})`;
+            const phone = uInfo.phone ? ` (${uInfo.phone})` : "";
+            document.getElementById("currentChatHeader").innerHTML = `<span><i class="fa-solid fa-user"></i> ${displayName}${phone}</span>`;
+
+            // 標示該顧客訊息為已讀
+            const userMsgs = allChatsCache[uid] || {};
+            let updates = {};
+            for (let mId in userMsgs) {
+                if (userMsgs[mId].sender === "user" && !userMsgs[mId].read) {
+                    updates[`chats/${uid}/${mId}/read`] = true;
+                }
+            }
+            if (Object.keys(updates).length > 0) {
+                update(ref(db), updates);
+            }
+
+            window.renderMessagesForUser(uid);
+        };
+
+        window.renderMessagesForUser = function(uid) {
+            const chatBody = document.getElementById("chatMessages");
+            const userMsgs = allChatsCache[uid] || {};
+            let html = "";
+
+            const msgKeys = Object.keys(userMsgs);
+            if (msgKeys.length === 0) {
+                chatBody.innerHTML = `<div class="chat-empty"><p>尚無對話紀錄</p></div>`;
+                return;
+            }
+
+            msgKeys.forEach(mId => {
+                const msg = userMsgs[mId];
+                const senderClass = msg.sender === "admin" ? "admin" : "user";
+                const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+
+                html += `
+                    <div class="msg-bubble ${senderClass}">
+                        <div>${msg.text}</div>
+                        <div class="msg-time">${timeStr}</div>
+                    </div>
+                `;
+            });
+
+            chatBody.innerHTML = html;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        };
+
+        window.sendAdminMessage = async function() {
+            if (!currentChatUserId) {
+                alert("請先選擇要回覆的顧客！");
+                return;
+            }
+            const inputEl = document.getElementById("adminMsgInput");
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            const msgData = {
+                sender: "admin",
+                text: text,
+                timestamp: Date.now(),
+                read: true
+            };
+
+            try {
+                await push(ref(db, `chats/${currentChatUserId}`), msgData);
+                inputEl.value = "";
+            } catch (err) {
+                alert("訊息發送失敗！");
+            }
+        };
+
+        /* ---------------------------------------------------- */
+        /* 商品與庫存管理 */
+        /* ---------------------------------------------------- */
         window.toggleSectionForm = function() {
             const section = document.getElementById("section").value;
             const groupDate = document.getElementById("group-date");
@@ -1027,6 +1387,7 @@
                 }
 
                 usersTbody.innerHTML = count > 0 ? html : `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">尚無任何註冊客人資料</td></tr>`;
+                window.renderChatUserList(); // 重新整理聊天名稱
             } catch (err) { console.error("載入會員失敗", err); }
         };
 
@@ -1039,7 +1400,6 @@
             } catch (err) { alert("刪除失敗！"); }
         };
 
-        // 控制折抵金額/折扣類型的顯示狀態
         window.toggleDiscountInput = function(mode) {
             const typeSelect = document.getElementById(mode === 'new' ? 'prizeDiscountType' : 'editPrizeDiscountType');
             const inputGroup = document.getElementById(mode === 'new' ? 'groupPrizeDiscount' : 'editGroupPrizeDiscount');
@@ -1303,7 +1663,6 @@
 
             const ws = XLSX.utils.json_to_sheet(exportData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "預購訂單總表");
             XLSX.writeFile(wb, `焰麥麵包訂單紀錄_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
