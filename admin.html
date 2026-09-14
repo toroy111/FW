@@ -38,6 +38,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; color: var(--text-main); }
         body { background-color: var(--bg-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
+        /* 側邊導覽列 (電腦版預設) */
         .sidebar {
             width: 270px;
             background-color: var(--bg-sidebar);
@@ -48,6 +49,7 @@
             padding: 24px 18px;
             box-shadow: 2px 0 16px rgba(0,0,0,0.02);
             z-index: 10;
+            transition: all 0.3s ease;
         }
 
         .brand-logo {
@@ -77,6 +79,7 @@
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            white-space: nowrap;
         }
         .nav-item i { font-size: 16px; width: 20px; text-align: center; color: var(--text-muted); }
         .nav-item:hover { background-color: #F7F5F0; color: var(--accent-primary); transform: translateX(4px); }
@@ -106,9 +109,10 @@
             padding: 36px 40px;
             overflow-y: auto;
             max-height: 100vh;
+            width: 100%;
         }
 
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
         .header-top h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-main); }
 
         .content-section { display: none; }
@@ -176,6 +180,7 @@
             font-weight: 600;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(140, 122, 107, 0.2);
@@ -188,26 +193,26 @@
         .btn-delete-orders { background: var(--warning-gradient); box-shadow: 0 4px 12px rgba(221, 107, 32, 0.2); }
         .btn-delete-products { background: linear-gradient(135deg, #E53E3E 0%, #C53030 100%); box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2); }
 
-        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card); }
+        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card); -webkit-overflow-scrolling: touch; }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 800px; }
         .admin-table th { background: #F8F9FA; color: var(--text-muted); font-weight: 600; padding: 16px 16px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
         .admin-table td { padding: 16px 16px; text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
         .admin-table tbody tr:last-child td { border-bottom: none; }
         .admin-table tbody tr:hover { background-color: #FAF8F5; }
 
-        .category-tabs { display: flex; gap: 10px; margin-bottom: 22px; }
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
         .tab-btn { background: var(--bg-input); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
         .tab-btn:hover { color: var(--text-main); border-color: var(--border-color-light); }
         .tab-btn.active { background: var(--accent-gradient); color: #fff; border-color: transparent; font-weight: 600; box-shadow: 0 4px 12px rgba(140, 122, 107, 0.25); }
 
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--border-color); background: #FAFAFA; margin-bottom: 10px; border-radius: 10px; transition: all 0.2s; }
-        .item-row:hover { border-color: var(--border-color-light); background: #FFFFFF; transform: translateX(2px); }
-        .stock-badge { font-size: 12px; background: #EFECE6; padding: 4px 12px; border-radius: 20px; color: var(--text-main); margin-left: 12px; }
-        .section-tag { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-right: 8px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--border-color); background: #FAFAFA; margin-bottom: 10px; border-radius: 10px; transition: all 0.2s; flex-wrap: wrap; gap: 10px; }
+        .item-row:hover { border-color: var(--border-color-light); background: #FFFFFF; }
+        .stock-badge { font-size: 12px; background: #EFECE6; padding: 4px 12px; border-radius: 20px; color: var(--text-main); margin-left: 6px; display: inline-block; margin-top: 4px; }
+        .section-tag { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-right: 8px; display: inline-block; }
         .tag-a { background: #EBF8FF; color: #3182CE; border: 1px solid #BEE3F8; }
         .tag-b { background: #FFFAF0; color: #DD6B20; border: 1px solid #FEEBC8; }
 
-        .action-buttons { display: flex; gap: 8px; }
+        .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn-edit-single { background: #EBF8FF; color: #3182CE; border: 1px solid #BEE3F8; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-edit-single:hover { background: #3182CE; color: #FFFFFF; }
 
@@ -217,24 +222,25 @@
         .btn-complete-order { background: var(--success-gradient); color: white; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; box-shadow: 0 2px 8px rgba(56, 161, 105, 0.2); }
         .btn-complete-order:hover { filter: brightness(1.05); transform: translateY(-1px); }
 
-        .badge-completed { background: #F0FFF4; color: #38A169; border: 1px solid #C6F6D5; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .badge-completed { background: #F0FFF4; color: #38A169; border: 1px solid #C6F6D5; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-block; }
 
-        .file-upload-wrapper { display: flex; align-items: center; gap: 14px; }
+        .file-upload-wrapper { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
         .file-upload-btn { background: var(--bg-input); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: 0.2s; }
         .file-upload-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
         .image-preview-thumbnail { width: 46px; height: 46px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); display: none; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 55, 72, 0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-content { background: var(--bg-card); border-radius: 16px; padding: 30px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); animation: fadeIn 0.25s ease-out; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 55, 72, 0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-content { background: var(--bg-card); border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); animation: fadeIn 0.25s ease-out; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 22px; }
         .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
         .modal-close:hover { color: var(--text-main); }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
         .btn-cancel { padding: 10px 20px; background: #EDF2F7; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 500; color: var(--text-main); }
         .btn-cancel:hover { background: #E2E8F0; }
 
-        .chat-container { display: flex; height: calc(100vh - 160px); background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-        .chat-sidebar { width: 320px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: #FAFAFA; }
+        /* 聊天室響應式調整 */
+        .chat-container { display: flex; height: calc(100vh - 180px); min-height: 450px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); position: relative; }
+        .chat-sidebar { width: 300px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: #FAFAFA; flex-shrink: 0; }
         .chat-sidebar-header { padding: 16px 20px; font-weight: 700; font-size: 15px; border-bottom: 1px solid var(--border-color); background: #F4F1EA; color: var(--text-main); }
         .user-list { flex-grow: 1; overflow-y: auto; list-style: none; }
         .user-item { padding: 14px 18px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 12px; position: relative; }
@@ -246,24 +252,46 @@
         .user-last-msg { font-size: 12px; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
         .user-unread-badge { background-color: var(--danger-red); color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 2px 6px; position: absolute; right: 14px; top: 14px; }
 
-        .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: #FFFFFF; }
-        .chat-header { padding: 16px 24px; border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: space-between; background: #FAF8F5; }
-        .chat-body { flex-grow: 1; padding: 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #FAF8F5; }
-        .chat-empty { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; }
+        .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: #FFFFFF; min-width: 0; }
+        .chat-header { padding: 16px 24px; border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: space-between; background: #FAF8F5; gap: 10px; }
+        .chat-body { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #FAF8F5; }
+        .chat-empty { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; text-align: center; padding: 20px; }
 
-        .msg-bubble { max-width: 65%; padding: 10px 16px; border-radius: 14px; font-size: 14px; line-height: 1.5; position: relative; word-wrap: break-word; }
+        .msg-bubble { max-width: 80%; padding: 10px 16px; border-radius: 14px; font-size: 14px; line-height: 1.5; position: relative; word-wrap: break-word; }
+        @media(min-width: 768px) { .msg-bubble { max-width: 65%; } }
         .msg-bubble.user { align-self: flex-start; background-color: #FFFFFF; border: 1px solid var(--border-color); border-bottom-left-radius: 2px; color: var(--text-main); }
         .msg-bubble.admin { align-self: flex-end; background: var(--accent-gradient); color: #FFFFFF; border-bottom-right-radius: 2px; }
         .msg-bubble .msg-time { font-size: 10px; margin-top: 4px; opacity: 0.75; text-align: right; }
 
-        .chat-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; background: #FFFFFF; }
-        .chat-footer input { flex-grow: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; }
+        .chat-footer { padding: 14px 16px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: #FFFFFF; }
+        .chat-footer input { flex-grow: 1; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; min-width: 0; }
         .chat-footer input:focus { border-color: var(--accent-primary); }
+
+        .back-to-list-btn { display: none; background: none; border: none; font-size: 15px; color: var(--accent-primary); cursor: pointer; font-weight: 600; align-items: center; gap: 5px; }
+
+        /* 行動裝置響應式斷點 (螢幕小於 992px) */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; padding: 12px 16px; flex-direction: row; align-items: center; justify-content: space-between; overflow-x: auto; position: sticky; top: 0; }
+            .brand-logo { border-bottom: none; margin-bottom: 0; padding: 4px; font-size: 18px; }
+            .brand-logo span { display: none; } /* 手機版隱藏文字，保留圖示更簡潔 */
+            .nav-menu { flex-direction: row; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+            .nav-item { padding: 8px 12px; font-size: 13px; border-radius: 8px; }
+            .nav-item:hover { transform: none; }
+            .main-wrapper { padding: 20px 16px; max-height: none; }
+            
+            /* 手機聊天室切換檢視 */
+            .chat-container { height: calc(100vh - 140px); }
+            .chat-sidebar { width: 100%; position: absolute; height: 100%; z-index: 5; transition: transform 0.3s ease; }
+            .chat-sidebar.mobile-hidden { transform: translateX(-100%); }
+            .chat-main { width: 100%; height: 100%; }
+            .back-to-list-btn { display: inline-flex; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 左側導覽列 -->
+    <!-- 左側 / 上方導覽列 -->
     <div class="sidebar">
         <div class="brand-logo">
             <i class="fa-solid fa-cookie-bite"></i>
@@ -272,36 +300,36 @@
         <ul class="nav-menu">
             <li class="nav-item active" onclick="switchTab(event, 'dashboard')">
                 <i class="fa-solid fa-chart-pie"></i>
-                <span>總覽 Dashboard</span>
+                <span>總覽</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'chat')">
                 <i class="fa-solid fa-comments"></i>
-                <span>客服訊息中心</span>
+                <span>客服</span>
                 <span id="globalChatBadge" class="nav-badge">0</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'products')">
                 <i class="fa-solid fa-plus-circle"></i>
-                <span>商品發布上架</span>
+                <span>上架</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'inventory')">
                 <i class="fa-solid fa-boxes-stacked"></i>
-                <span>庫存與販售明細</span>
+                <span>庫存</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'orders')">
                 <i class="fa-solid fa-list-check"></i>
-                <span>預購訂單管理</span>
+                <span>訂單</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'prizes')">
                 <i class="fa-solid fa-gift"></i>
-                <span>抽獎獎項設定</span>
+                <span>抽獎</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'users')">
                 <i class="fa-solid fa-users"></i>
-                <span>會員點數管理</span>
+                <span>會員</span>
             </li>
             <li class="nav-item" onclick="switchTab(event, 'settings')">
                 <i class="fa-solid fa-gears"></i>
-                <span>系統備份與維護</span>
+                <span>設定</span>
             </li>
         </ul>
     </div>
@@ -329,7 +357,7 @@
                 <h1>線上客服與顧客對話窗口</h1>
             </div>
             <div class="chat-container">
-                <div class="chat-sidebar">
+                <div class="chat-sidebar" id="chatSidebarPanel">
                     <div class="chat-sidebar-header">
                         <i class="fa-solid fa-users-viewfinder"></i> 顧客訊息對話列表
                     </div>
@@ -340,6 +368,7 @@
 
                 <div class="chat-main">
                     <div class="chat-header" id="currentChatHeader">
+                        <button class="back-to-list-btn" onclick="backToChatList()"><i class="fa-solid fa-chevron-left"></i> 返回列表</button>
                         <span><i class="fa-solid fa-comment-dots"></i> 請選擇左側顧客展開對話</span>
                     </div>
                     <div class="chat-body" id="chatMessages">
@@ -979,8 +1008,13 @@
 
         window.selectChatUser = function(uid, userName) {
             activeChatUserId = uid;
-            document.getElementById("currentChatHeader").innerHTML = `<span><i class="fa-solid fa-user-gear"></i> 與 <b>${userName}</b> 的對話窗口</span>`;
+            document.getElementById("currentChatHeader").querySelector("span").innerHTML = `<i class="fa-solid fa-user-gear"></i> 與 <b>${userName}</b> 的對話`;
             
+            // 手機版點擊後隱藏左側選單，顯示聊天內容
+            if (window.innerWidth <= 992) {
+                document.getElementById("chatSidebarPanel").classList.add("mobile-hidden");
+            }
+
             update(ref(db, `chats/${uid}`), { unreadByAdmin: false });
 
             const msgRef = ref(db, `chats/${uid}/messages`);
@@ -1003,6 +1037,10 @@
                 body.innerHTML = html;
                 body.scrollTop = body.scrollHeight;
             });
+        };
+
+        window.backToChatList = function() {
+            document.getElementById("chatSidebarPanel").classList.remove("mobile-hidden");
         };
 
         window.sendAdminMessage = async function() {
@@ -1114,7 +1152,7 @@
                         <td>${u.phone || '-'}</td>
                         <td><b style="color:var(--warning-orange);">${u.points || 0} 點</b></td>
                         <td>
-                            <button class="btn-edit-single" onclick="openUserModal('${uid}')"><i class="fa-solid fa-pen-to-square"></i> 查看詳情與優惠券</button>
+                            <button class="btn-edit-single" onclick="openUserModal('${uid}')"><i class="fa-solid fa-pen-to-square"></i> 詳情與優惠券</button>
                         </td>
                     </tr>
                 `;
