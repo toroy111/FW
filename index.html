@@ -849,6 +849,38 @@
         calculateCartTotal();
     }
 
+    window.calculateCartTotal = function() {
+    let subtotal = 0;
+    for (let product in cart) {
+        let qty = cart[product];
+        let price = (currentProductsDataSnapshot[product] && currentProductsDataSnapshot[product].price) || 0;
+        subtotal += price * qty;
+    }
+
+    let discount = 0;
+    const couponSelect = document.getElementById("couponSelect");
+    if (couponSelect && couponSelect.value) {
+        const selectedIdx = couponSelect.value;
+        if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons[selectedIdx]) {
+            let coupon = currentUserProfile.coupons[selectedIdx];
+            let rawDiscount = coupon.discount || 0;
+
+            // 判斷若 discount 小於 1 且大於 0（例如 0.9、0.85），則視為比例折扣（9折、8.5折）
+            if (rawDiscount > 0 && rawDiscount < 1) {
+                discount = Math.round(subtotal * (1 - rawDiscount)); // 計算省下的金額
+            } else {
+                discount = rawDiscount; // 若大於 1 則視為固定折抵金額（例如折抵 50 元）
+            }
+        }
+    }
+
+    let grandTotal = Math.max(0, subtotal - discount);
+
+    document.getElementById("raw-subtotal-display").textContent = `NT$ ${subtotal.toLocaleString()}`;
+    document.getElementById("discount-display").textContent = `- NT$ ${discount.toLocaleString()}`;
+    document.getElementById("grand-total-display").textContent = `NT$ ${grandTotal.toLocaleString()}`;
+}
+
     function updateCouponDropdown() {
     const couponSelect = document.getElementById("couponSelect");
     if (!couponSelect) return;
@@ -865,21 +897,6 @@
         });
     }
 }
-
-    function updateCouponDropdown() {
-        const couponSelect = document.getElementById("couponSelect");
-        if (!couponSelect) return;
-        
-        couponSelect.innerHTML = `<option value="">不使用優惠券（保留至下次）</option>`;
-        if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons.length > 0) {
-            currentUserProfile.coupons.forEach((coupon, idx) => {
-                let opt = document.createElement("option");
-                opt.value = idx;
-                opt.textContent = `🎟️ ${coupon.title} (折抵 NT$ ${coupon.discount})`;
-                couponSelect.appendChild(opt);
-            });
-        }
-    }
 
     window.openLotteryModal = async function() {
         if (!isLoggedIn) {
@@ -1047,7 +1064,7 @@
             let newCoupons = currentUserProfile.coupons || [];
             newCoupons.push({
                 title: winningPrize.title,
-                discount: Number(winningPrize.discount) || 0,
+                discount: winningPrize.discount || 0,
                 obtainedAt: new Date().toISOString()
             });
 
@@ -1114,10 +1131,8 @@
 
         if (selectedCouponIdx !== "") {
             let coupon = currentUserProfile.coupons[selectedCouponIdx];
-            if (coupon) {
-                couponDiscount = Number(coupon.discount) || 0;
-                couponUsedTitle = coupon.title || "";
-            }
+            couponDiscount = coupon.discount || 0;
+            couponUsedTitle = coupon.title;
         }
 
         let finalTotal = Math.max(0, subtotal - couponDiscount);
@@ -1150,7 +1165,7 @@
 
             let updatedCoupons = [...(currentUserProfile.coupons || [])];
             if (selectedCouponIdx !== "") {
-                updatedCoupons.splice(Number(selectedCouponIdx), 1);
+                updatedCoupons.splice(selectedCouponIdx, 1);
             }
 
             await update(ref(db, "users/" + currentUserUid), {
