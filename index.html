@@ -96,18 +96,13 @@
         .btn-submit { width: 100%; padding: 12px; background: var(--primary-amber); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.18); }
         .btn-submit:hover { background: #6f4e2d; }
 
-        .floating-action-group { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 999; }
-        .fab-btn { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid var(--border-color); color: var(--primary-amber); font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.25s ease; position: relative; }
+        /* 🚀 調整後的浮動按鈕群樣式（縮小尺寸並微調位置） */
+        .floating-action-group { position: fixed; bottom: 20px; right: 10px; display: flex; flex-direction: column; gap: 8px; z-index: 999; }
+        .fab-btn { width: 42px; height: 42px; border-radius: 50%; background: #fff; border: 1px solid var(--border-color); color: var(--primary-amber); font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.12); transition: all 0.25s ease; position: relative; opacity: 0.9; }
+        .fab-btn:hover { opacity: 1; transform: scale(1.05); }
         .fab-btn.logged-in { background: #2563eb; color: #fff; border-color: #2563eb; }
         .fab-chat { background: #059669; color: #fff; border-color: #059669; }
         .fab-chat:hover { background: #047857; }
-        
-        .fab-lottery { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: 2px solid #fff; animation: pulse-glow 2s infinite; }
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); transform: scale(1); }
-            50% { box-shadow: 0 0 0 12px rgba(217, 119, 6, 0); transform: scale(1.08); }
-            100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); transform: scale(1); }
-        }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); padding: 16px; }
         .modal-card { background: #fff; padding: 20px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; max-height: 85vh; overflow-y: auto; }
@@ -120,18 +115,6 @@
 
         .auth-view { display: none; }
         .auth-view.active { display: block; }
-
-        .lottery-box { text-align: center; background: #fdfbf7; border-radius: 12px; padding: 15px 12px; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(140, 98, 57, 0.08); }
-        .lottery-points { font-size: 15px; font-weight: 700; color: var(--accent-orange); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-
-        .wheel-wrapper { position: relative; width: 220px; height: 220px; margin: 10px auto 15px auto; }
-        .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 22px solid #dc2626; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-        .wheel-pointer::after { content: ''; position: absolute; top: -21px; left: -5px; width: 10px; height: 10px; background: #fef08a; border-radius: 50%; }
-        #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 6px 20px rgba(140, 98, 57, 0.2), 0 0 0 5px #8c6239; transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1); }
-
-        .lottery-result-badge { min-height: 38px; font-size: 14px; font-weight: 700; color: var(--primary-amber); display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; padding: 6px 10px; }
-
-        .coupon-item { display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px dashed var(--border-color); padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-size: 13px; }
 
         /* 💬 客服對話視窗專用樣式 */
         .chat-box-card { max-width: 420px; height: 500px; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
@@ -232,14 +215,6 @@
                         </select>
                     </div>
 
-                    <!-- 🎟️ 優惠券折抵選單 -->
-                    <div class="form-group full-width">
-                        <label><i class="fa-solid fa-ticket"></i> 使用優惠券折抵</label>
-                        <select id="couponSelect" onchange="calculateCartTotal()">
-                            <option value="">不使用優惠券（保留至下次）</option>
-                        </select>
-                    </div>
-
                     <div class="form-group full-width">
                         <label>訂單備註（選填）</label>
                         <textarea id="note" placeholder="例如：切片、不要包裝袋，或有其他特殊需求請填寫於此..."></textarea>
@@ -264,7 +239,6 @@
                 </table>
                 <div class="cart-total-bar">
                     <div style="font-size: 13px; color: #8a7c70;">商品小計：<span id="raw-subtotal-display" style="float:right; font-weight:bold;">NT$ 0</span></div>
-                    <div style="font-size: 13px; color: #dc2626;" id="coupon-discount-row">優惠券折抵：<span id="discount-display" style="float:right; font-weight:bold;">- NT$ 0</span></div>
                     <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">最終結帳金額：<span class="total-amount" id="grand-total-display">NT$ 0</span></div>
                     <button class="btn-submit" onclick="submitOrder()"><i class="fa-solid fa-paper-plane"></i> 送出預購訂單</button>
                 </div>
@@ -276,9 +250,6 @@
     <div class="floating-action-group">
         <button id="chatFabBtn" class="fab-btn fab-chat" onclick="openChatModal()" title="聯絡線上客服" style="display: none;">
             <i class="fa-solid fa-comments"></i>
-        </button>
-        <button class="fab-btn fab-lottery" onclick="openLotteryModal()" title="幸運抽獎">
-            <i class="fa-solid fa-gift"></i>
         </button>
         <button id="loginFabBtn" class="fab-btn" onclick="handleAuthClick()" title="會員登入">
             <i class="fa-solid fa-user"></i>
@@ -301,41 +272,6 @@
             <div class="chat-footer">
                 <input type="text" id="chatInput" placeholder="輸入訊息..." onkeydown="if(event.key==='Enter') sendChatMessage()">
                 <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🎰 幸運抽獎 Modal -->
-    <div id="lotteryModal" class="modal-overlay">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark modal-close" onclick="closeLotteryModal()"></i>
-            <h3><i class="fa-solid fa-award"></i> 幸運大轉盤</h3>
-            
-            <div class="lottery-box">
-                <div class="lottery-points" id="userPointsText">
-                    <i class="fa-solid fa-coins"></i> 累積點數：0 點
-                </div>
-                <p style="font-size: 12px; color: #8a7c70;">（每消費滿 NT$100 累積 1 點，訂單完成後發放；每 5 點可轉動一次）</p>
-
-                <div class="wheel-wrapper">
-                    <div class="wheel-pointer"></div>
-                    <canvas id="wheelCanvas" width="300" height="300"></canvas>
-                </div>
-
-                <div class="lottery-result-badge" id="lotteryResultDisplay">
-                    🎁 點擊下方按鈕開始轉盤抽獎！
-                </div>
-
-                <button class="btn-submit" style="background: linear-gradient(135deg, #f59e0b, #d97706);" id="startDrawBtn" onclick="drawLottery()">
-                    <i class="fa-solid fa-arrows-spin"></i> 消耗 5 點開始抽獎
-                </button>
-            </div>
-            
-            <div class="coupons-list">
-                <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;"><i class="fa-solid fa-wallet"></i> 我的優惠券匣</h4>
-                <div id="myCouponsContainer">
-                    <p style="font-size: 12px; color: #a39589;">尚無可使用的優惠券</p>
-                </div>
             </div>
         </div>
     </div>
@@ -444,10 +380,6 @@
     let currentUserUid = null;
     let currentUserProfile = null;
     let currentCategory = 'A';
-    let isDrawing = false;
-
-    let currentRotationDeg = 0; 
-    let prizesArrayCache = [];  
 
     const weekDayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
@@ -540,672 +472,444 @@
         if (!currentUserUid) return;
         try {
             let userSnap = await get(ref(db, "users/" + currentUserUid));
-            currentUserProfile = userSnap.exists() ? userSnap.val() : { name: "", phone: "", points: 0, totalSpent: 0, coupons: [] };
+            currentUserProfile = userSnap.exists() ? userSnap.val() : { name: "", phone: "", points: 0, totalSpent: 0 };
             if (currentUserProfile.points === undefined) currentUserProfile.points = 0;
-            if (!currentUserProfile.coupons) currentUserProfile.coupons = [];
-            
-            updateCouponDropdown();
-            renderMyCoupons();
         } catch (err) { console.error("載入會員檔失敗:", err); }
     }
 
-    window.scrollToTop = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    window.handleAuthClick = async function() { openLoginModal('login'); };
-    window.openLoginModal = function(view = 'login') { switchAuthView(view); document.getElementById("loginModal").style.display = "flex"; };
-    window.closeLoginModal = function() { document.getElementById("loginModal").style.display = "none"; };
+    window.scrollToTop = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.openLoginModal = function(view = 'login') {
+        document.getElementById('loginModal').style.display = 'flex';
+        switchAuthView(view);
+    };
+
+    window.closeLoginModal = function() {
+        document.getElementById('loginModal').style.display = 'none';
+    };
 
     window.switchAuthView = function(viewName) {
         document.querySelectorAll('.auth-view').forEach(el => el.classList.remove('active'));
-        if (viewName === 'login') document.getElementById('viewLogin').classList.add('active');
-        if (viewName === 'register') document.getElementById('viewRegister').classList.add('active');
-        if (viewName === 'forgot') document.getElementById('viewForgot').classList.add('active');
-    };
-
-    window.performLogin = async function() {
-        let acc = document.getElementById("loginAcc").value.trim();
-        let pwd = document.getElementById("loginPwd").value.trim();
-        if (!acc || !pwd) { alert("請填寫帳號與密碼！"); return; }
-        if (acc === "admin" || acc === "admin@yamai.com") {
-            if (pwd !== "admin123") { alert("❌ 管理員密碼錯誤！"); return; }
-            alert("🔑 管理員身分驗證成功！即將進入後台管理系統...");
-            closeLoginModal();
-            window.location.href = "admin.html";
-            return;
+        if (viewName === 'login') {
+            document.getElementById('viewLogin').classList.add('active');
+        } else if (viewName === 'register') {
+            document.getElementById('viewRegister').classList.add('active');
+        } else if (viewName === 'forgot') {
+            document.getElementById('viewForgot').classList.add('active');
         }
-        try {
-            await signInWithEmailAndPassword(auth, acc, pwd);
-            alert("🎉 登入成功！");
-            closeLoginModal();
-        } catch (authError) { alert("❌ 登入失敗，請確認帳號密碼！"); }
     };
 
-    window.performLogout = async function() {
-        try { await signOut(auth); alert("👋 已成功登出。"); closeLoginModal(); } 
-        catch (err) { alert("❌ 登出失敗！"); }
-    };
-
-    window.performRegister = async function() {
-        let name = document.getElementById("regName").value.trim();
-        let email = document.getElementById("regEmail").value.trim();
-        let phone = document.getElementById("regPhone").value.trim();
-        let pwd = document.getElementById("regPwd").value.trim();
-        if (!name || !email || !phone || !pwd) { alert("請填寫所有欄位！"); return; }
-        try {
-            let userCred = await createUserWithEmailAndPassword(auth, email, pwd);
-            await set(ref(db, "users/" + userCred.user.uid), {
-                name, email, phone, createdAt: new Date().toISOString(), points: 0, totalSpent: 0, coupons: []
-            });
-            alert("🎉 帳號創建成功！");
-            closeLoginModal();
-        } catch (err) { alert("❌ 註冊失敗，請重試！"); }
-    };
-
-    window.performForgotPassword = async function() {
-        let email = document.getElementById("forgotEmail").value.trim();
-        if (!email) { alert("請輸入電子信箱！"); return; }
-        try {
-            await sendPasswordResetEmail(auth, email);
-            alert(`📧 重設密碼郵件已發送至 ${email}！`);
-            switchAuthView('login');
-        } catch (err) { alert("❌ 發送失敗！"); }
+    window.handleAuthClick = function() {
+        if (isLoggedIn) {
+            openLoginModal('login');
+        } else {
+            openLoginModal('login');
+        }
     };
 
     function updateLoginUI() {
-        const loginNotice = document.getElementById("loginNotice");
-        const userInfoFields = document.getElementById("userInfoFields");
-        const loginFabBtn = document.getElementById("loginFabBtn");
-        const chatFabBtn = document.getElementById("chatFabBtn");
-        const loginFormBlock = document.getElementById("loginFormBlock");
-        const loggedInBlock = document.getElementById("loggedInBlock");
-        const userWelcomeText = document.getElementById("userWelcomeText");
+        const loginNotice = document.getElementById('loginNotice');
+        const userInfoFields = document.getElementById('userInfoFields');
+        const loginFabBtn = document.getElementById('loginFabBtn');
+        const chatFabBtn = document.getElementById('chatFabBtn');
+        const loginFormBlock = document.getElementById('loginFormBlock');
+        const loggedInBlock = document.getElementById('loggedInBlock');
+        const userWelcomeText = document.getElementById('userWelcomeText');
 
         if (isLoggedIn) {
-            loginNotice.style.display = "none";
-            userInfoFields.style.display = "grid";
-            if (chatFabBtn) chatFabBtn.style.display = "flex";
-            loginFabBtn.classList.add("logged-in");
-            loginFabBtn.innerHTML = '<i class="fa-solid fa-user-check"></i>';
-            if (loginFormBlock) loginFormBlock.style.display = "none";
-            if (loggedInBlock) loggedInBlock.style.display = "block";
+            loginNotice.style.display = 'none';
+            userInfoFields.style.display = 'grid';
+            loginFabBtn.classList.add('logged-in');
+            loginFabBtn.title = "會員中心";
+            chatFabBtn.style.display = 'flex';
+
+            loginFormBlock.style.display = 'none';
+            loggedInBlock.style.display = 'block';
             if (currentUserProfile) {
-                if (currentUserProfile.name) document.getElementById("name").value = currentUserProfile.name;
-                if (currentUserProfile.phone) document.getElementById("phone").value = currentUserProfile.phone;
-                if (userWelcomeText) userWelcomeText.textContent = `親愛的 ${currentUserProfile.name || '會員'} 您好！`;
+                userWelcomeText.innerHTML = `歡迎回來，<b>${currentUserProfile.name || '會員'}</b>！<br><span style="font-size: 13px; color: #8a7c70;">累積點數：${currentUserProfile.points || 0} 點</span>`;
+                if (currentUserProfile.name && !document.getElementById('name').value) {
+                    document.getElementById('name').value = currentUserProfile.name;
+                }
+                if (currentUserProfile.phone && !document.getElementById('phone').value) {
+                    document.getElementById('phone').value = currentUserProfile.phone;
+                }
             }
         } else {
-            loginNotice.style.display = "block";
-            userInfoFields.style.display = "none";
-            if (chatFabBtn) chatFabBtn.style.display = "none";
-            loginFabBtn.classList.remove("logged-in");
-            loginFabBtn.innerHTML = '<i class="fa-solid fa-user"></i>';
-            if (loginFormBlock) loginFormBlock.style.display = "block";
-            if (loggedInBlock) loggedInBlock.style.display = "none";
+            loginNotice.style.display = 'block';
+            userInfoFields.style.display = 'none';
+            loginFabBtn.classList.remove('logged-in');
+            loginFabBtn.title = "會員登入";
+            chatFabBtn.style.display = 'none';
+
+            loginFormBlock.style.display = 'block';
+            loggedInBlock.style.display = 'none';
         }
     }
 
-    /* 💬 客服聊天室相關功能 */
-    window.openChatModal = function() {
-        if (!isLoggedIn) {
-            alert("請先登入會員帳號！");
-            openLoginModal('login');
-            return;
+    window.performLogin = async function() {
+        const email = document.getElementById('loginAcc').value.trim();
+        const pwd = document.getElementById('loginPwd').value;
+        if (!email || !pwd) { alert('請完整填寫信箱與密碼！'); return; }
+
+        try {
+            await signInWithEmailAndPassword(auth, email, pwd);
+            alert('🎉 登入成功！');
+            closeLoginModal();
+        } catch (err) {
+            alert('❌ 登入失敗：' + err.message);
         }
-        document.getElementById("chatModal").style.display = "flex";
-        listenToChatMessages();
+    };
+
+    window.performRegister = async function() {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const pwd = document.getElementById('regPwd').value;
+
+        if (!name || !email || !phone || !pwd) { alert('請填寫所有註冊欄位！'); return; }
+        if (pwd.length < 6) { alert('密碼長度至少需要 6 位數！'); return; }
+
+        try {
+            const res = await createUserWithEmailAndPassword(auth, email, pwd);
+            const uid = res.user.uid;
+            await set(ref(db, "users/" + uid), {
+                name: name,
+                email: email,
+                phone: phone,
+                points: 0,
+                totalSpent: 0
+            });
+            alert('🎉 註冊成功並已自動登入！');
+            closeLoginModal();
+        } catch (err) {
+            alert('❌ 註冊失敗：' + err.message);
+        }
+    };
+
+    window.performForgotPassword = async function() {
+        const email = document.getElementById('forgotEmail').value.trim();
+        if (!email) { alert('請輸入註冊的電子信箱！'); return; }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert('✉️ 密碼重設信已發送至您的信箱，請前往查收！');
+            switchAuthView('login');
+        } catch (err) {
+            alert('❌ 發送失敗：' + err.message);
+        }
+    };
+
+    window.performLogout = async function() {
+        try {
+            await signOut(auth);
+            alert('已成功登出！');
+            closeLoginModal();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    window.openChatModal = function() {
+        if (!isLoggedIn) { alert('請先登入會員以使用線上客服！'); openLoginModal(); return; }
+        document.getElementById('chatModal').style.display = 'flex';
+        loadChatMessages();
     };
 
     window.closeChatModal = function() {
-        document.getElementById("chatModal").style.display = "none";
+        document.getElementById('chatModal').style.display = 'none';
     };
 
-    function listenToChatMessages() {
+    function loadChatMessages() {
         if (!currentUserUid) return;
-        const messagesRef = ref(db, `chats/${currentUserUid}/messages`);
-        
-        onValue(messagesRef, (snapshot) => {
+        const msgRef = ref(db, `chats/${currentUserUid}/messages`);
+        onValue(msgRef, (snapshot) => {
             const data = snapshot.val();
-            const container = document.getElementById("chatMessages");
+            const body = document.getElementById('chatMessages');
             if (!data) {
-                container.innerHTML = `<p style="text-align: center; color: #8a7c70; font-size: 13px; margin-top: 20px;">歡迎留言給我們，管理員將會儘速回覆您！</p>`;
+                body.innerHTML = `<p style="text-align: center; color: #8a7c70; font-size: 13px; margin-top: 20px;">歡迎留言給我們，管理員將會儘速回覆您！</p>`;
                 return;
             }
-
             let html = "";
-            Object.values(data).forEach(msg => {
-                const isCustomer = msg.sender === 'customer';
-                const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            Object.values(data).forEach(m => {
+                const isAdmin = m.sender === 'admin';
+                const timeStr = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 html += `
-                    <div class="chat-msg ${isCustomer ? 'customer' : 'admin'}">
-                        <div>${msg.text}</div>
+                    <div class="chat-msg ${isAdmin ? 'admin' : 'customer'}">
+                        <div>${m.text}</div>
                         <div class="chat-time">${timeStr}</div>
                     </div>
                 `;
             });
-            container.innerHTML = html;
-            container.scrollTop = container.scrollHeight;
+            body.innerHTML = html;
+            body.scrollTop = body.scrollHeight;
         });
     }
 
     window.sendChatMessage = async function() {
-        const input = document.getElementById("chatInput");
+        const input = document.getElementById('chatInput');
         const text = input.value.trim();
         if (!text || !currentUserUid) return;
 
         input.value = "";
         const timestamp = new Date().toISOString();
-        const userName = (currentUserProfile && currentUserProfile.name) || "會員";
 
-        const chatRef = ref(db, `chats/${currentUserUid}`);
-        const messagesRef = ref(db, `chats/${currentUserUid}/messages`);
-
-        await push(messagesRef, {
-            sender: "customer",
+        await push(ref(db, `chats/${currentUserUid}/messages`), {
+            sender: "user",
             text: text,
             timestamp: timestamp
         });
 
-        await update(chatRef, {
-            userName: userName,
+        await update(ref(db, `chats/${currentUserUid}`), {
+            userName: currentUserProfile ? currentUserProfile.name : '會員',
             lastMessage: text,
             lastTimestamp: timestamp,
             unreadByAdmin: true
         });
     };
 
-    async function loadDates() {
+    async function fetchProductsForDate(targetDate) {
+        const container = document.getElementById("products");
+        container.innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">載入中...</p>`;
+
+        try {
+            const snapshot = await get(ref(db, "products/" + targetDate));
+            const data = snapshot.val();
+
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">📅 當日 (${targetDate}) 尚無上架品項！請切換其他日期或至專區 B 選購。</p>`;
+                return;
+            }
+
+            let html = "";
+            for (let product in data) {
+                let p = data[product];
+                currentProductsDataSnapshot[product] = { price: p.price, total: p.total, sold: p.sold || 0 };
+
+                let remain = (p.total || 0) - (p.sold || 0);
+                let isSoldOut = remain <= 0;
+
+                html += `
+                    <div class="product-card" style="${isSoldOut ? 'opacity: 0.65;' : ''}">
+                        <div class="badge-tag fresh">今日現烤</div>
+                        <img class="product-img" src="${p.img || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80'}">
+                        <div class="product-info">
+                            <h3>${product}</h3>
+                            <p class="product-desc">${p.desc || "每日新鮮烘焙出爐。"}</p>
+                            <div class="product-status">
+                                ${isSoldOut ? '<span style="color:red; font-weight:bold;">[ 已售罄 😭 ]</span>' : `🔥 剩餘可預訂：${remain} 個`}
+                            </div>
+                            <div class="product-price-row">
+                                <span class="price">NT$ ${p.price || 0}</span>
+                                ${isSoldOut ? '<span style="color:#9c8e82; font-size:13px;">已完售</span>' : 
+                                    `<div class="qty-control">
+                                        <button class="qty-btn" onclick="updateQty('${product}', -1)">-</button>
+                                        <input class="qty-input" id="qty_${product}" type="text" value="${cart[product] || 0}" readonly>
+                                        <button class="qty-btn" onclick="updateQty('${product}', 1)">+</button>
+                                    </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding: 20px;">載入失敗，請檢查網路連線！</p>`;
+        }
+    }
+
+    async function initAvailableDates() {
         try {
             const snapshot = await get(ref(db, "products"));
             const data = snapshot.val();
-            const select = document.getElementById("dateSelect");
-            
-            if (!data || Object.keys(data).length === 0) {
-                document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">目前後台尚未上架任何生產排程喔！</p>`;
+            const dateSelect = document.getElementById("dateSelect");
+            dateSelect.innerHTML = "";
+
+            if (!data) {
+                dateSelect.innerHTML = `<option value="">目前無可預訂日期</option>`;
+                document.getElementById("products").innerHTML = `<p style="color: #a39589; grid-column: 1 / -1; text-align: center; padding: 20px;">後台尚無上架任何預購日期商品。</p>`;
                 return;
             }
-            
-            select.innerHTML = ""; 
-            let sortedDates = Object.keys(data).sort();
-            let baseDateStr = sortedDates[0]; 
-            let baseDate = new Date(baseDateStr);
 
-            for (let i = 0; i <= 3; i++) {
-                let nextDate = new Date(baseDate);
-                nextDate.setDate(baseDate.getDate() + i);
-                let formattedDate = nextDate.toISOString().split('T')[0];
-                let dayOfWeekText = weekDayNames[nextDate.getDay()];
+            let dates = Object.keys(data).sort();
+            baseDatabaseDate = dates[0];
 
+            dates.forEach((d, idx) => {
+                let dateObj = new Date(d);
+                let dayName = !isNaN(dateObj.getDay()) ? weekDayNames[dateObj.getDay()] : "";
                 let opt = document.createElement("option");
-                opt.value = formattedDate;
-                opt.setAttribute("data-base", baseDateStr); 
-                opt.textContent = i === 0 ? `📅 販售當日：${formattedDate} (${dayOfWeekText})` : `📅 其他時間：${formattedDate} (${dayOfWeekText})`;
-                select.appendChild(opt);
-            }
+                opt.value = d;
+                opt.textContent = `${d} (${dayName})`;
+                if (idx === 0) opt.selected = true;
+                dateSelect.appendChild(opt);
+            });
 
-            select.value = select.options[0].value;
-            fetchProductsByDate(baseDateStr); 
-            baseDatabaseDate = baseDateStr;
-        } catch (err) { console.error("載入日期失敗", err); }
+            dateSelect.onchange = function() {
+                cart = {}; 
+                renderCart();
+                fetchProductsForDate(this.value);
+            };
+
+            fetchProductsForDate(baseDatabaseDate);
+        } catch (err) {
+            console.error(err);
+        }
     }
 
-    async function fetchProductsByDate(dbDate) {
-        if (!dbDate) return;
-        const snapshot = await get(ref(db, "products/" + dbDate));
-        const data = snapshot.val();
-        
-        for (let k in data) { currentProductsDataSnapshot[k] = data[k]; }
+    window.updateQty = function(productName, delta) {
+        let currentQty = cart[productName] || 0;
+        let info = currentProductsDataSnapshot[productName];
+        if (!info) return;
 
-        if (!data || Object.keys(data).length === 0) {
-            document.getElementById("products").innerHTML = `<p style="color: red; grid-column: 1 / -1; text-align: center; padding:20px;">⚠️ 該日期目前暫無安排生產排程！</p>`;
+        let remain = info.total - info.sold;
+        let newQty = currentQty + delta;
+
+        if (newQty < 0) newQty = 0;
+        if (currentCategory === 'A' && newQty > remain) {
+            alert(`庫存不足！最多只能預訂 ${remain} 個`);
             return;
         }
 
-        let html = "";
-        for (let product in data) {
-            let p = data[product];
-            let remain = (p.total || 0) - (p.sold || 0);
-            if (remain < 0) remain = 0;
-            let isSoldOut = remain <= 0;
-
-            html += `
-                <div class="product-card" style="${isSoldOut ? 'opacity: 0.65;' : ''}">
-                    <div class="badge-tag fresh">✨ 今日現烤</div>
-                    <img class="product-img" src="${p.img || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80'}">
-                    <div class="product-info">
-                        <h3>${product}</h3>
-                        <p class="product-desc">${p.desc || "新鮮天然手作，限量烘焙售完為止。"}</p>
-                        <div class="product-status">
-                            ${isSoldOut ? '<span style="color:red; font-weight:700;">[ 已售罄 😭 ]</span>' : `庫存剩餘：<span style="color:green; font-weight:700;">${remain}</span> 個`}
-                        </div>
-                        <div class="product-price-row">
-                            <span class="price">NT$ ${p.price || 0}</span>
-                            ${isSoldOut ? '<span style="color:#9c8e82; font-size:13px;">補貨中</span>' : 
-                                `<div class="qty-control">
-                                    <button class="qty-btn" onclick="updateQty('${product}', -1)">-</button>
-                                    <input class="qty-input" id="qty_${product}" type="text" value="${cart[product] || 0}" readonly>
-                                    <button class="qty-btn" onclick="updateQty('${product}', 1)">+</button>
-                                </div>`
-                            }
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        document.getElementById("products").innerHTML = html;
-    }
-
-    document.getElementById("dateSelect").addEventListener("change", (e) => {
-        let dbDate = e.target.options[e.target.selectedIndex].getAttribute("data-base");
-        baseDatabaseDate = dbDate;
-        fetchProductsByDate(dbDate);
-    });
-
-    window.updateQty = function(product, delta) {
-        let pData = currentProductsDataSnapshot[product];
-        if (!pData) return;
-
-        let remain = pData.total - pData.sold;
-        let currentVal = cart[product] || 0;
-        let newVal = currentVal + delta;
-
-        if (newVal < 0) newVal = 0;
-        if (newVal > remain) {
-            alert(`抱歉！${product} 剩餘庫存為 ${remain} 個！`);
-            return;
+        if (newQty === 0) {
+            delete cart[productName];
+        } else {
+            cart[productName] = newQty;
         }
 
-        if (newVal === 0) delete cart[product];
-        else cart[product] = newVal;
-
-        const inputNode = document.getElementById(`qty_${product}`);
-        if (inputNode) inputNode.value = newVal;
+        let inputEl = document.getElementById(`qty_${productName}`);
+        if (inputEl) inputEl.value = newQty;
 
         renderCart();
-    }
+    };
 
     function renderCart() {
         const tbody = document.getElementById("cart-items-tbody");
-        if (Object.keys(cart).length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #9c8e82; padding: 20px 0;">尚未選擇任何商品項目</td></tr>`;
-            calculateCartTotal();
-            return;
-        }
-
         let html = "";
-        for (let product in cart) {
-            let qty = cart[product];
-            let price = currentProductsDataSnapshot[product].price || 0;
-            let subtotal = price * qty;
+        let rawSubtotal = 0;
+        let hasItems = false;
 
-            html += `
-                <tr>
-                    <td><b>${product}</b></td>
-                    <td style="text-align: center; font-weight: 500;">× ${qty}</td>
-                    <td style="text-align: right; color:var(--accent-orange); font-weight:700;">NT$ ${subtotal}</td>
-                </tr>
-            `;
+        for (let p in cart) {
+            let qty = cart[p];
+            if (qty > 0 && currentProductsDataSnapshot[p]) {
+                hasItems = true;
+                let price = currentProductsDataSnapshot[p].price;
+                let sub = price * qty;
+                rawSubtotal += sub;
+
+                html += `
+                    <tr>
+                        <td><b>${p}</b><br><small style="color:#8a7c70;">NT$ ${price} × ${qty}</small></td>
+                        <td style="text-align: center;">${qty}</td>
+                        <td style="text-align: right; font-weight:bold;">NT$ ${sub}</td>
+                    </tr>
+                `;
+            }
         }
 
-        tbody.innerHTML = html;
-        calculateCartTotal();
+        if (!hasItems) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #9c8e82; padding: 20px 0;">尚未選擇任何商品項目</td></tr>`;
+        } else {
+            tbody.innerHTML = html;
+        }
+
+        document.getElementById("raw-subtotal-display").textContent = `NT$ ${rawSubtotal}`;
+        document.getElementById("grand-total-display").textContent = `NT$ ${rawSubtotal}`;
     }
 
     window.calculateCartTotal = function() {
-    let subtotal = 0;
-    for (let product in cart) {
-        let qty = cart[product];
-        let price = (currentProductsDataSnapshot[product] && currentProductsDataSnapshot[product].price) || 0;
-        subtotal += price * qty;
-    }
-
-    let discount = 0;
-    const couponSelect = document.getElementById("couponSelect");
-    if (couponSelect && couponSelect.value) {
-        const selectedIdx = couponSelect.value;
-        if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons[selectedIdx]) {
-            let coupon = currentUserProfile.coupons[selectedIdx];
-            let rawDiscount = coupon.discount || 0;
-
-            // 判斷若 discount 小於 1 且大於 0（例如 0.9、0.85），則視為比例折扣（9折、8.5折）
-            if (rawDiscount > 0 && rawDiscount < 1) {
-                discount = Math.round(subtotal * (1 - rawDiscount)); // 計算省下的金額
-            } else {
-                discount = rawDiscount; // 若大於 1 則視為固定折抵金額（例如折抵 50 元）
-            }
-        }
-    }
-
-    let grandTotal = Math.max(0, subtotal - discount);
-
-    document.getElementById("raw-subtotal-display").textContent = `NT$ ${subtotal.toLocaleString()}`;
-    document.getElementById("discount-display").textContent = `- NT$ ${discount.toLocaleString()}`;
-    document.getElementById("grand-total-display").textContent = `NT$ ${grandTotal.toLocaleString()}`;
-}
-
-    function updateCouponDropdown() {
-    const couponSelect = document.getElementById("couponSelect");
-    if (!couponSelect) return;
-    
-    couponSelect.innerHTML = `<option value="">不使用優惠券（保留至下次）</option>`;
-    if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons.length > 0) {
-        currentUserProfile.coupons.forEach((coupon, idx) => {
-            let opt = document.createElement("option");
-            opt.value = idx;
-            let val = coupon.discount || 0;
-            let desc = (val > 0 && val < 1) ? `享 ${val * 10} 折優惠` : `折抵 NT$ ${val}`;
-            opt.textContent = `🎟️ ${coupon.title} (${desc})`;
-            couponSelect.appendChild(opt);
-        });
-    }
-}
-
-    window.openLotteryModal = async function() {
-        if (!isLoggedIn) {
-            alert("請先登入會員帳號後再開啟抽獎！");
-            openLoginModal('login');
-            return;
-        }
-        await loadUserProfile();
-        document.getElementById("userPointsText").innerHTML = `<i class="fa-solid fa-coins"></i> 累積點數：${currentUserProfile.points || 0} 點`;
-        document.getElementById("lotteryModal").style.display = "flex";
-
-        await initAndDrawWheel();
+        renderCart();
     };
 
-    window.closeLotteryModal = function() {
-        if (isDrawing) return;
-        document.getElementById("lotteryModal").style.display = "none";
-    };
-
-    async function initAndDrawWheel() {
-        try {
-            const prizesSnap = await get(ref(db, "prizes"));
-            const prizesData = prizesSnap.val();
-            
-            if (!prizesData || Object.keys(prizesData).length === 0) {
-                document.getElementById("lotteryResultDisplay").textContent = "⚠️ 後台尚未設定獎項";
-                return;
-            }
-
-            prizesArrayCache = Object.values(prizesData);
-            drawWheelCanvas(prizesArrayCache);
-        } catch (err) {
-            console.error("載入轉盤獎項失敗", err);
-        }
-    }
-
-    function drawWheelCanvas(prizes) {
-        const canvas = document.getElementById("wheelCanvas");
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        const numPrizes = prizes.length;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = canvas.width / 2 - 8;
-        const arcSize = (2 * Math.PI) / numPrizes;
-
-        const colors = [
-            "#fef08a",
-            "#fbcfe8",
-            "#bae6fd",
-            "#a7f3d0",
-            "#fed7aa",
-            "#e9d5ff"
-        ];
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (let i = 0; i < numPrizes; i++) {
-            const angle = i * arcSize;
-            
-            ctx.beginPath();
-            ctx.fillStyle = colors[i % colors.length];
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
-            ctx.lineTo(centerX, centerY);
-            ctx.fill();
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 3;
-            ctx.stroke();
-
-            ctx.save();
-            ctx.fillStyle = "#1e293b";
-            ctx.font = "bold 14px 'Noto Sans TC', sans-serif";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            
-            const midAngle = angle + arcSize / 2;
-            const textRadius = radius * 0.62;
-            const textX = centerX + Math.cos(midAngle) * textRadius;
-            const textY = centerY + Math.sin(midAngle) * textRadius;
-
-            ctx.translate(textX, textY);
-            
-            let rotateAngle = midAngle;
-            if (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2) {
-                rotateAngle += Math.PI; 
-            }
-            ctx.rotate(rotateAngle);
-
-            ctx.fillText(prizes[i].title, 0, 0);
-            ctx.restore();
-        }
-
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 22, 0, 2 * Math.PI);
-        ctx.fillStyle = "#ffffff";
-        ctx.fill();
-        ctx.strokeStyle = "#8c6239";
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    }
-
-    function renderMyCoupons() {
-        const container = document.getElementById("myCouponsContainer");
-        if (!container) return;
-
-        if (!currentUserProfile || !currentUserProfile.coupons || currentUserProfile.coupons.length === 0) {
-            container.innerHTML = `<p style="font-size: 12px; color: #a39589;">尚無可使用的優惠券</p>`;
-            return;
-        }
-
-        let html = "";
-        currentUserProfile.coupons.forEach((c) => {
-            html += `
-                <div class="coupon-item">
-                    <span><b>${c.title}</b> (折抵 NT$ ${c.discount})</span>
-                    <span style="font-size: 11px; color: var(--accent-orange); font-weight: bold;">可於結帳使用</span>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    window.drawLottery = async function() {
-        if (isDrawing) return;
-        if (!currentUserProfile || (currentUserProfile.points || 0) < 5) {
-            alert("您的點數不足 5 點，無法進行抽獎！請購買商品累積點數。");
-            return;
-        }
-
-        if (prizesArrayCache.length === 0) {
-            alert("目前後台尚未設定抽獎獎項！");
-            return;
-        }
-
-        isDrawing = true;
-        const btn = document.getElementById("startDrawBtn");
-        const canvas = document.getElementById("wheelCanvas");
-        const display = document.getElementById("lotteryResultDisplay");
-        
-        btn.disabled = true;
-        display.textContent = "🎰 幸運轉盤旋轉中...";
-
-        const winningPrize = selectPrizeByWeight(prizesArrayCache);
-        const winningIndex = prizesArrayCache.findIndex(p => p.title === winningPrize.title);
-
-        const numPrizes = prizesArrayCache.length;
-        const prizeArcDeg = 360 / numPrizes;
-        
-        const prizeCenterDeg = (winningIndex * prizeArcDeg) + (prizeArcDeg / 2);
-        const targetDegreeInWheel = (270 - prizeCenterDeg + 360) % 360;
-
-        const extraRounds = 360 * (5 + Math.floor(Math.random() * 3)); 
-        
-        const currentModulo = currentRotationDeg % 360;
-        const additionalDeg = (targetDegreeInWheel - currentModulo + 360) % 360;
-        currentRotationDeg += extraRounds + additionalDeg;
-
-        canvas.style.transform = `rotate(${currentRotationDeg}deg)`;
-
-        setTimeout(async () => {
-            display.innerHTML = `🎉 恭喜抽中：<span style="color:#d97706;">${winningPrize.title}</span>！`;
-
-            let newPoints = currentUserProfile.points - 5;
-            let newCoupons = currentUserProfile.coupons || [];
-            newCoupons.push({
-                title: winningPrize.title,
-                discount: winningPrize.discount || 0,
-                obtainedAt: new Date().toISOString()
-            });
-
-            try {
-                await update(ref(db, "users/" + currentUserUid), {
-                    points: newPoints,
-                    coupons: newCoupons
-                });
-
-                currentUserProfile.points = newPoints;
-                currentUserProfile.coupons = newCoupons;
-                document.getElementById("userPointsText").innerHTML = `<i class="fa-solid fa-coins"></i> 累積點數：${newPoints} 點`;
-                renderMyCoupons();
-                updateCouponDropdown();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                isDrawing = false;
-                btn.disabled = false;
-            }
-        }, 4500);
-    };
-
-    function selectPrizeByWeight(prizes) {
-        let totalWeight = prizes.reduce((acc, p) => acc + (parseInt(p.prob) || 10), 0);
-        let randomNum = Math.random() * totalWeight;
-        for (let p of prizes) {
-            let weight = parseInt(p.prob) || 10;
-            if (randomNum < weight) return p;
-            randomNum -= weight;
-        }
-        return prizes[0];
-    }
-
-    /* 📤 送出預購訂單 */
     window.submitOrder = async function() {
         if (!isLoggedIn) {
-            alert("請先登入會員帳號後再送出訂單！");
+            alert("請先登入會員帳號後再送出預購訂單！");
             openLoginModal('login');
             return;
         }
 
-        let name = document.getElementById("name").value.trim();
-        let phone = document.getElementById("phone").value.trim();
-        let date = document.getElementById("dateSelect").value; 
-        let time = document.getElementById("timeSelect").value;         
-        let location = document.getElementById("locationSelect").value; 
-        let note = document.getElementById("note").value.trim();
+        let hasItems = Object.keys(cart).length > 0;
+        if (!hasItems) { alert("購物車目前沒有任何商品！"); return; }
 
-        if (!name || !phone || !date) { alert("請填寫完整的取貨資訊！"); return; }
-        if (Object.keys(cart).length === 0) { alert("請先挑選商品！"); return; }
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const date = document.getElementById("dateSelect").value;
+        const time = document.getElementById("timeSelect").value;
+        const location = document.getElementById("locationSelect").value;
+        const note = document.getElementById("note").value.trim();
 
-        let subtotal = 0;
-        for (let product in cart) {
-            let qty = cart[product];
-            let price = (currentProductsDataSnapshot[product] && currentProductsDataSnapshot[product].price) || 0;
-            subtotal += price * qty;
+        if (!name || !phone) { alert("請填寫顧客姓名與聯絡電話！"); return; }
+
+        let rawSubtotal = 0;
+        for (let p in cart) {
+            if (currentProductsDataSnapshot[p]) {
+                rawSubtotal += currentProductsDataSnapshot[p].price * cart[p];
+            }
         }
 
-        let couponDiscount = 0;
-        let couponUsedTitle = "";
-        const couponSelect = document.getElementById("couponSelect");
-        let selectedCouponIdx = couponSelect.value;
-
-        if (selectedCouponIdx !== "") {
-            let coupon = currentUserProfile.coupons[selectedCouponIdx];
-            couponDiscount = coupon.discount || 0;
-            couponUsedTitle = coupon.title;
-        }
-
-        let finalTotal = Math.max(0, subtotal - couponDiscount);
-        let estimatedPoints = Math.floor(finalTotal / 100); 
+        let finalTotal = rawSubtotal;
 
         try {
-            let isStockOk = true;
-
             if (currentCategory === 'A') {
-                const dbProductRef = ref(db, "products/" + baseDatabaseDate);
-                await runTransaction(dbProductRef, (currentProducts) => {
-                    if (currentProducts) {
-                        for (let p in cart) {
-                            if (currentProducts[p]) {
-                                let remain = currentProducts[p].total - currentProducts[p].sold;
-                                if (cart[p] > remain) { isStockOk = false; return; }
-                                currentProducts[p].sold += cart[p];
-                            }
+                const prodRef = ref(db, `products/${date}`);
+                const snap = await get(prodRef);
+                if (snap.exists()) {
+                    let remoteData = snap.val();
+                    for (let p in cart) {
+                        let currentSold = remoteData[p] && remoteData[p].sold ? remoteData[p].sold : 0;
+                        let currentTotal = remoteData[p] && remoteData[p].total ? remoteData[p].total : 0;
+                        if ((currentSold + cart[p]) > currentTotal) {
+                            alert(`很抱歉！商品「${p}」剛剛已被其他顧客預訂完畢，庫存不足。`);
+                            fetchProductsForDate(date);
+                            return;
                         }
                     }
-                    return currentProducts;
-                });
+                    for (let p in cart) {
+                        let currentSold = remoteData[p] && remoteData[p].sold ? remoteData[p].sold : 0;
+                        await update(ref(db, `products/${date}/${p}`), { sold: currentSold + cart[p] });
+                    }
+                }
+            } else {
+                const prodRef = ref(db, `classic_products`);
+                const snap = await get(prodRef);
+                if (snap.exists()) {
+                    let remoteData = snap.val();
+                    for (let p in cart) {
+                        let currentSold = remoteData[p] && remoteData[p].sold ? remoteData[p].sold : 0;
+                        await update(ref(db, `classic_products/${p}`), { sold: currentSold + cart[p] });
+                    }
+                }
             }
 
-            if (!isStockOk) {
-                alert("庫存發生變動，請重新調整數量！");
-                fetchProductsByDate(baseDatabaseDate);
-                return;
-            }
-
-            let updatedCoupons = [...(currentUserProfile.coupons || [])];
-            if (selectedCouponIdx !== "") {
-                updatedCoupons.splice(selectedCouponIdx, 1);
-            }
-
-            await update(ref(db, "users/" + currentUserUid), {
+            const newOrderRef = push(ref(db, "orders"));
+            await set(newOrderRef, {
+                userId: currentUserUid,
                 name: name,
                 phone: phone,
-                coupons: updatedCoupons
-            });
-
-            await set(push(ref(db, "orders")), { 
-                userId: currentUserUid,
-                userName: name,
-                name, 
-                phone, 
-                date, 
-                time, 
-                location, 
-                items: cart, 
-                note,
-                subtotal: subtotal,
-                discount: couponDiscount,
+                date: currentCategory === 'A' ? date : '經典熱銷專區(3天內出貨)',
+                time: time,
+                location: location,
+                items: cart,
+                subtotal: rawSubtotal,
                 finalTotal: finalTotal,
-                couponUsed: couponUsedTitle,
-                category: currentCategory === 'B' ? "經典熱銷" : "今日現烤",
-                status: "pending",
-                createdAt: new Date().toISOString()
+                note: note,
+                category: currentCategory === 'A' ? '專區A' : '專區B',
+                status: 'pending',
+                timestamp: new Date().toISOString()
             });
 
-            alert(`🎉 預購成功！\n📅 取貨日期：${date}\n📍 地點：${location}\n💰 結帳金額：NT$ ${finalTotal}\n💡 預計獲得點數：${estimatedPoints} 點 (將於店家完成訂單後發放)`);
+            alert(`🎉 預購訂單送出成功！\n最終結帳金額：NT$ ${finalTotal}\n感謝您的訂購！`);
             cart = {};
-            await loadUserProfile();
-            if (currentCategory === 'A') fetchProductsByDate(baseDatabaseDate);
-            else fetchClassicProducts();
             renderCart();
+            if (currentCategory === 'A') fetchProductsForDate(date);
+            else fetchClassicProducts();
         } catch (err) {
-            console.error(err);
-            alert("連線有誤，請再試一次。");
+            alert("❌ 訂單送出失敗，請稍後再試：" + err.message);
         }
-    }
+    };
 
-    loadDates();
-</script>
+    initAvailableDates();
+    </script>
 </body>
 </html>
