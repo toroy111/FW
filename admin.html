@@ -467,11 +467,17 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>獎項名稱</label>
-                        <input id="prizeTitle" placeholder="例如：折價券 NT$ 50">
+                        <input id="prizeTitle" placeholder="例如：折價券或折扣">
                     </div>
                     <div class="form-group">
-                        <label>折抵金額 (NT$)</label>
-                        <input id="prizeDiscount" type="number" min="0" placeholder="例如：50">
+                        <label>折抵類型與數值</label>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="prizeDiscountType" style="width: 140px;" onchange="toggleDiscountInput()">
+                                <option value="amount">固定金額 (NT$)</option>
+                                <option value="percent">訂單總金額折數</option>
+                            </select>
+                            <input id="prizeDiscountValue" type="number" min="0" step="any" placeholder="例如：50">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>抽中機率權重 (數值越大機率越高)</label>
@@ -487,7 +493,7 @@
                         <thead>
                             <tr>
                                 <th>獎項名稱</th>
-                                <th>折抵面額</th>
+                                <th>折抵內容</th>
                                 <th>機率權重</th>
                                 <th>操作</th>
                             </tr>
@@ -956,6 +962,17 @@
             });
         };
 
+        // 抽獎獎項相關 JavaScript
+        window.toggleDiscountInput = function() {
+            const type = document.getElementById("prizeDiscountType").value;
+            const input = document.getElementById("prizeDiscountValue");
+            if (type === "amount") {
+                input.placeholder = "例如：50";
+            } else {
+                input.placeholder = "例如：0.85 (85折) 或 9";
+            }
+        };
+
         async function loadPrizes() {
             const snap = await get(ref(db, "prizes"));
             const data = snap.val();
@@ -965,10 +982,17 @@
             let html = "";
             Object.keys(data).forEach(id => {
                 let p = data[id];
+                let discountText = "";
+                if (p.discountType === 'percent' || (p.discount && p.discount < 1 && p.discount > 0)) {
+                    discountText = `訂單總金額 ${p.discount} 折`;
+                } else {
+                    discountText = `NT$ ${p.discount || 0}`;
+                }
+
                 html += `
                     <tr>
                         <td><b>${p.title}</b></td>
-                        <td>NT$ ${p.discount || 0}</td>
+                        <td>${discountText}</td>
                         <td>${p.prob || 10}</td>
                         <td><button class="btn-delete-single" onclick="deletePrize('${id}')"><i class="fa-solid fa-trash"></i> 刪除</button></td>
                     </tr>
@@ -979,14 +1003,22 @@
 
         window.addPrize = async function() {
             const title = document.getElementById("prizeTitle").value.trim();
-            const discount = parseInt(document.getElementById("prizeDiscount").value) || 0;
+            const discountType = document.getElementById("prizeDiscountType").value;
+            const discountVal = parseFloat(document.getElementById("prizeDiscountValue").value) || 0;
             const prob = parseInt(document.getElementById("prizeProb").value) || 10;
+            
             if (!title) { alert("請填寫獎項名稱！"); return; }
 
-            await push(ref(db, "prizes"), { title, discount, prob });
+            await push(ref(db, "prizes"), { 
+                title, 
+                discountType, 
+                discount: discountVal, 
+                prob 
+            });
+            
             alert("🎉 獎項新增成功！");
             document.getElementById("prizeTitle").value = "";
-            document.getElementById("prizeDiscount").value = "";
+            document.getElementById("prizeDiscountValue").value = "";
             loadPrizes();
         };
 
