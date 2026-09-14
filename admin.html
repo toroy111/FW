@@ -11,35 +11,33 @@
 
     <style>
         :root {
-            /* 方案一：極簡日系燕麥／奶茶色系 */
-            --bg-main: #F4F1EA;              /* 柔和燕麥白背景 */
-            --bg-sidebar: #FFFFFF;           /* 側邊欄純白 */
-            --bg-card: #FFFFFF;              /* 卡片純白 */
-            --bg-card-hover: #FAF8F5;        /* 卡片懸浮極淺奶茶色 */
-            --bg-input: #FAFAFA;             /* 輸入框微灰白底 */
-            --border-color: #E2E8F0;         /* 細緻輕柔灰邊框 */
-            --border-color-light: #CBD5E0;   /* 深一點的邊框 Accent */
+            --bg-main: #F4F1EA;
+            --bg-sidebar: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #FAF8F5;
+            --bg-input: #FAFAFA;
+            --border-color: #E2E8F0;
+            --border-color-light: #CBD5E0;
             
-            --accent-primary: #8C7A6B;        /* 暖大地奶茶色 */
+            --accent-primary: #8C7A6B;
             --accent-gradient: linear-gradient(135deg, #8C7A6B 0%, #A39081 100%);
             --accent-hover: #756355;
             
-            --text-main: #2D3748;           /* 深石墨灰（軟化版純黑） */
-            --text-muted: #718096;          /* 靜謐灰 */
-            --text-sub: #A0AEC0;            /* 淺灰 */
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --text-sub: #A0AEC0;
             
-            --danger-red: #E53E3E;          /* 質感磚紅 */
-            --danger-bg: #FFF5F5;           /* 淡粉底色 */
-            --success-green: #38A169;       /* 質感抹茶綠 */
+            --danger-red: #E53E3E;
+            --danger-bg: #FFF5F5;
+            --success-green: #38A169;
             --success-gradient: linear-gradient(135deg, #48BB78 0%, #38A169 100%);
-            --warning-orange: #DD6B20;      /* 暖橘 */
+            --warning-orange: #DD6B20;
             --warning-gradient: linear-gradient(135deg, #ED8936 0%, #DD6B20 100%);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; color: var(--text-main); }
         body { background-color: var(--bg-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* 左側導覽列 (Sidebar Layout) */
         .sidebar {
             width: 270px;
             background-color: var(--bg-sidebar);
@@ -64,10 +62,7 @@
             margin-bottom: 24px;
             letter-spacing: 0.5px;
         }
-        .brand-logo i {
-            color: var(--accent-primary);
-            font-size: 24px;
-        }
+        .brand-logo i { color: var(--accent-primary); font-size: 24px; }
 
         .nav-menu { display: flex; flex-direction: column; gap: 6px; list-style: none; }
         .nav-item {
@@ -84,11 +79,7 @@
             position: relative;
         }
         .nav-item i { font-size: 16px; width: 20px; text-align: center; color: var(--text-muted); }
-        .nav-item:hover {
-            background-color: #F7F5F0;
-            color: var(--accent-primary);
-            transform: translateX(4px);
-        }
+        .nav-item:hover { background-color: #F7F5F0; color: var(--accent-primary); transform: translateX(4px); }
         .nav-item:hover i { color: var(--accent-primary); }
         
         .nav-item.active {
@@ -99,7 +90,6 @@
         }
         .nav-item.active i { color: #ffffff; }
 
-        /* 未讀提示 Badge */
         .nav-badge {
             background-color: var(--danger-red);
             color: white;
@@ -111,7 +101,6 @@
             display: none;
         }
 
-        /* 右側主要內容區塊 (Main Content View Switcher) */
         .main-wrapper {
             flex-grow: 1;
             padding: 36px 40px;
@@ -119,15 +108,9 @@
             max-height: 100vh;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .header-top h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-main); }
 
-        /* 切換分頁 */
         .content-section { display: none; }
         .content-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
 
@@ -136,7 +119,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 卡片與表單樣式 (Warm Japandi UI) */
         .admin-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -146,10 +128,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .admin-card:hover {
-            border-color: var(--border-color-light);
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
-        }
+        .admin-card:hover { border-color: var(--border-color-light); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05); }
         .admin-card h3 {
             font-size: 18px;
             font-weight: 600;
@@ -186,7 +165,6 @@
             box-shadow: 0 0 0 3px rgba(140, 122, 107, 0.15);
         }
 
-        /* 按鈕樣式 */
         .btn-add, .btn-tool {
             padding: 11px 22px;
             background: var(--accent-gradient);
@@ -203,188 +181,52 @@
             box-shadow: 0 4px 12px rgba(140, 122, 107, 0.2);
         }
         .btn-add i, .btn-tool i { color: white; }
-        .btn-add:hover, .btn-tool:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(140, 122, 107, 0.3);
-            filter: brightness(1.05);
-        }
+        .btn-add:hover, .btn-tool:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(140, 122, 107, 0.3); filter: brightness(1.05); }
 
         .btn-excel { background: var(--success-gradient); box-shadow: 0 4px 12px rgba(56, 161, 105, 0.2); }
         .btn-refresh { background: var(--accent-gradient); }
         .btn-delete-orders { background: var(--warning-gradient); box-shadow: 0 4px 12px rgba(221, 107, 32, 0.2); }
-        .btn-delete-products { 
-            background: linear-gradient(135deg, #E53E3E 0%, #C53030 100%); 
-            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2); 
-        }
+        .btn-delete-products { background: linear-gradient(135deg, #E53E3E 0%, #C53030 100%); box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2); }
 
-        /* 表格樣式 (Modern Clean Table) */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--bg-card);
-        }
+        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card); }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 800px; }
-        .admin-table th {
-            background: #F8F9FA;
-            color: var(--text-muted);
-            font-weight: 600;
-            padding: 16px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 13px;
-        }
-        .admin-table td {
-            padding: 16px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-main);
-            vertical-align: middle;
-        }
+        .admin-table th { background: #F8F9FA; color: var(--text-muted); font-weight: 600; padding: 16px 16px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        .admin-table td { padding: 16px 16px; text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
         .admin-table tbody tr:last-child td { border-bottom: none; }
         .admin-table tbody tr:hover { background-color: #FAF8F5; }
 
-        /* 分頁切換鈕 */
         .category-tabs { display: flex; gap: 10px; margin-bottom: 22px; }
-        .tab-btn {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .tab-btn { background: var(--bg-input); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
         .tab-btn:hover { color: var(--text-main); border-color: var(--border-color-light); }
-        .tab-btn.active {
-            background: var(--accent-gradient);
-            color: #fff;
-            border-color: transparent;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(140, 122, 107, 0.25);
-        }
+        .tab-btn.active { background: var(--accent-gradient); color: #fff; border-color: transparent; font-weight: 600; box-shadow: 0 4px 12px rgba(140, 122, 107, 0.25); }
 
-        /* 庫存列表項目 */
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            border: 1px solid var(--border-color);
-            background: #FAFAFA;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            transition: all 0.2s;
-        }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--border-color); background: #FAFAFA; margin-bottom: 10px; border-radius: 10px; transition: all 0.2s; }
         .item-row:hover { border-color: var(--border-color-light); background: #FFFFFF; transform: translateX(2px); }
-        .stock-badge {
-            font-size: 12px;
-            background: #EFECE6;
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: var(--text-main);
-            margin-left: 12px;
-        }
+        .stock-badge { font-size: 12px; background: #EFECE6; padding: 4px 12px; border-radius: 20px; color: var(--text-main); margin-left: 12px; }
         .section-tag { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-right: 8px; }
         .tag-a { background: #EBF8FF; color: #3182CE; border: 1px solid #BEE3F8; }
         .tag-b { background: #FFFAF0; color: #DD6B20; border: 1px solid #FEEBC8; }
         .tag-c { background: #F0FFF4; color: #38A169; border: 1px solid #C6F6D5; }
 
-        /* 操作按鈕 */
         .action-buttons { display: flex; gap: 8px; }
-        
-        .btn-edit-single {
-            background: #EBF8FF;
-            color: #3182CE;
-            border: 1px solid #BEE3F8;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-        }
+        .btn-edit-single { background: #EBF8FF; color: #3182CE; border: 1px solid #BEE3F8; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-edit-single:hover { background: #3182CE; color: #FFFFFF; }
 
-        .btn-delete-single {
-            background: var(--danger-bg);
-            color: var(--danger-red);
-            border: 1px solid #FED7D7;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-        }
+        .btn-delete-single { background: var(--danger-bg); color: var(--danger-red); border: 1px solid #FED7D7; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-delete-single:hover { background: var(--danger-red); color: white; }
 
-        .btn-complete-order {
-            background: var(--success-gradient);
-            color: white;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(56, 161, 105, 0.2);
-        }
+        .btn-complete-order { background: var(--success-gradient); color: white; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; box-shadow: 0 2px 8px rgba(56, 161, 105, 0.2); }
         .btn-complete-order:hover { filter: brightness(1.05); transform: translateY(-1px); }
 
-        .badge-completed {
-            background: #F0FFF4;
-            color: #38A169;
-            border: 1px solid #C6F6D5;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+        .badge-completed { background: #F0FFF4; color: #38A169; border: 1px solid #C6F6D5; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
 
-        /* 檔案上傳樣式 */
         .file-upload-wrapper { display: flex; align-items: center; gap: 14px; }
-        .file-upload-btn {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            transition: 0.2s;
-        }
+        .file-upload-btn { background: var(--bg-input); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: 0.2s; }
         .file-upload-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
         .image-preview-thumbnail { width: 46px; height: 46px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); display: none; }
 
-        /* Modal 彈出視窗 */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(45, 55, 72, 0.4);
-            backdrop-filter: blur(4px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            animation: fadeIn 0.25s ease-out;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 55, 72, 0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: var(--bg-card); border-radius: 16px; padding: 30px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); animation: fadeIn 0.25s ease-out; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 22px; }
         .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
         .modal-close:hover { color: var(--text-main); }
@@ -392,155 +234,31 @@
         .btn-cancel { padding: 10px 20px; background: #EDF2F7; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: 500; color: var(--text-main); }
         .btn-cancel:hover { background: #E2E8F0; }
 
-        /* ---------------------------------------------------- */
-        /* 客服聊天室專用樣式 (Chat Dashboard) */
-        /* ---------------------------------------------------- */
-        .chat-container {
-            display: flex;
-            height: calc(100vh - 160px);
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-        }
-        .chat-sidebar {
-            width: 320px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            background: #FAFAFA;
-        }
-        .chat-sidebar-header {
-            padding: 16px 20px;
-            font-weight: 700;
-            font-size: 15px;
-            border-bottom: 1px solid var(--border-color);
-            background: #F4F1EA;
-            color: var(--text-main);
-        }
-        .user-list {
-            flex-grow: 1;
-            overflow-y: auto;
-            list-style: none;
-        }
-        .user-item {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-        }
+        .chat-container { display: flex; height: calc(100vh - 160px); background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .chat-sidebar { width: 320px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: #FAFAFA; }
+        .chat-sidebar-header { padding: 16px 20px; font-weight: 700; font-size: 15px; border-bottom: 1px solid var(--border-color); background: #F4F1EA; color: var(--text-main); }
+        .user-list { flex-grow: 1; overflow-y: auto; list-style: none; }
+        .user-item { padding: 14px 18px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 12px; position: relative; }
         .user-item:hover { background-color: #F0ECE1; }
         .user-item.active { background-color: #E6DFD3; border-left: 4px solid var(--accent-primary); }
-        .user-avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: var(--accent-gradient);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-gradient); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; flex-shrink: 0; }
         .user-info { flex-grow: 1; overflow: hidden; }
         .user-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
         .user-last-msg { font-size: 12px; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
-        .user-unread-badge {
-            background-color: var(--danger-red);
-            color: white;
-            font-size: 10px;
-            font-weight: 700;
-            border-radius: 10px;
-            padding: 2px 6px;
-            position: absolute;
-            right: 14px;
-            top: 14px;
-        }
+        .user-unread-badge { background-color: var(--danger-red); color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 2px 6px; position: absolute; right: 14px; top: 14px; }
 
-        .chat-main {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            background: #FFFFFF;
-        }
-        .chat-header {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 700;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #FAF8F5;
-        }
-        .chat-body {
-            flex-grow: 1;
-            padding: 20px 24px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #FAF8F5;
-        }
-        .chat-empty {
-            display: flex;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 15px;
-        }
+        .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: #FFFFFF; }
+        .chat-header { padding: 16px 24px; border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: space-between; background: #FAF8F5; }
+        .chat-body { flex-grow: 1; padding: 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #FAF8F5; }
+        .chat-empty { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; }
 
-        .msg-bubble {
-            max-width: 65%;
-            padding: 10px 16px;
-            border-radius: 14px;
-            font-size: 14px;
-            line-height: 1.5;
-            position: relative;
-            word-wrap: break-word;
-        }
-        .msg-bubble.user {
-            align-self: flex-start;
-            background-color: #FFFFFF;
-            border: 1px solid var(--border-color);
-            border-bottom-left-radius: 2px;
-            color: var(--text-main);
-        }
-        .msg-bubble.admin {
-            align-self: flex-end;
-            background: var(--accent-gradient);
-            color: #FFFFFF;
-            border-bottom-right-radius: 2px;
-        }
-        .msg-bubble .msg-time {
-            font-size: 10px;
-            margin-top: 4px;
-            opacity: 0.75;
-            text-align: right;
-        }
+        .msg-bubble { max-width: 65%; padding: 10px 16px; border-radius: 14px; font-size: 14px; line-height: 1.5; position: relative; word-wrap: break-word; }
+        .msg-bubble.user { align-self: flex-start; background-color: #FFFFFF; border: 1px solid var(--border-color); border-bottom-left-radius: 2px; color: var(--text-main); }
+        .msg-bubble.admin { align-self: flex-end; background: var(--accent-gradient); color: #FFFFFF; border-bottom-right-radius: 2px; }
+        .msg-bubble .msg-time { font-size: 10px; margin-top: 4px; opacity: 0.75; text-align: right; }
 
-        .chat-footer {
-            padding: 16px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 12px;
-            background: #FFFFFF;
-        }
-        .chat-footer input {
-            flex-grow: 1;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            outline: none;
-            font-size: 14px;
-        }
+        .chat-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; background: #FFFFFF; }
+        .chat-footer input { flex-grow: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; }
         .chat-footer input:focus { border-color: var(--accent-primary); }
     </style>
 </head>
@@ -610,13 +328,12 @@
             </div>
         </div>
 
-        <!-- 2. 客服訊息中心 (Chat Center) -->
+        <!-- 2. 客服訊息中心 -->
         <div id="section-chat" class="content-section">
             <div class="header-top">
                 <h1>線上客服與顧客對話窗口</h1>
             </div>
             <div class="chat-container">
-                <!-- 左側：顧客帳號清單 -->
                 <div class="chat-sidebar">
                     <div class="chat-sidebar-header">
                         <i class="fa-solid fa-users-viewfinder"></i> 顧客訊息對話列表
@@ -626,7 +343,6 @@
                     </ul>
                 </div>
 
-                <!-- 右側：當前對話視窗 -->
                 <div class="chat-main">
                     <div class="chat-header" id="currentChatHeader">
                         <span><i class="fa-solid fa-comment-dots"></i> 請選擇左側顧客展開對話</span>
@@ -784,43 +500,33 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>獎項名稱</label>
-                        <input id="prizeTitle" placeholder="例如：折價券 50 元 或 9折優惠券">
+                        <input id="prizeTitle" placeholder="例如：折價券 NT$ 50">
                     </div>
                     <div class="form-group">
-                        <label>折抵/折扣模式</label>
-                        <select id="prizeDiscountType" onchange="toggleDiscountInput('new')">
-                            <option value="fixed">💰 自訂折抵金額 (NT$)</option>
-                            <option value="0.95">🏷️ 總金額 95 折 (5% OFF)</option>
-                            <option value="0.9">🏷️ 總金額 9 折 (10% OFF)</option>
-                            <option value="0.85">🏷️ 總金額 85 折 (15% OFF)</option>
-                            <option value="0.8">🏷️ 總金額 8 折 (20% OFF)</option>
-                            <option value="0.75">🏷️ 總金額 75 折 (25% OFF)</option>
-                            <option value="0.7">🏷️ 總金額 7 折 (30% OFF)</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="groupPrizeDiscount">
-                        <label>自訂折抵金額 (NT$)</label>
-                        <input id="prizeDiscount" type="number" min="0" placeholder="50">
+                        <label>折抵金額 (NT$)</label>
+                        <input id="prizeDiscount" type="number" min="0" placeholder="例如：50">
                     </div>
                     <div class="form-group">
-                        <label>中獎機率權重</label>
-                        <input id="prizeProb" type="number" min="1" value="10" placeholder="10">
+                        <label>抽中機率權重 (數值越大機率越高)</label>
+                        <input id="prizeProb" type="number" min="1" value="10">
                     </div>
                 </div>
-                <button class="btn-add" onclick="savePrize()" style="margin-bottom: 20px;"><i class="fa-solid fa-plus-circle"></i> 新增抽獎獎項</button>
-
+                <button class="btn-add" onclick="addPrize()"><i class="fa-solid fa-plus"></i> 新增獎項</button>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fa-solid fa-list-ul"></i> 當前運作獎項列表</h3>
                 <div class="table-responsive">
                     <table class="admin-table">
                         <thead>
                             <tr>
                                 <th>獎項名稱</th>
-                                <th>折抵/折扣內容</th>
-                                <th>中獎權重</th>
+                                <th>折抵面額</th>
+                                <th>機率權重</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody id="prizesTableBody">
-                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">尚無任何獎項設定</td></tr>
+                            <tr><td colspan="4" style="text-align:center; color: var(--text-muted);">載入中...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -830,7 +536,7 @@
         <!-- 8. 會員點數管理 -->
         <div id="section-users" class="content-section">
             <div class="header-top">
-                <h1>註冊客人資訊與累積點數</h1>
+                <h1>會員點數與權限管理</h1>
             </div>
             <div class="admin-card">
                 <div class="table-responsive">
@@ -838,16 +544,14 @@
                         <thead>
                             <tr>
                                 <th>會員姓名</th>
-                                <th>聯絡電話</th>
-                                <th>電子郵件 (Email)</th>
-                                <th>總消費金額</th>
-                                <th>累積點數</th>
-                                <th>持有優惠券數量</th>
-                                <th>操作</th>
+                                <th>Email</th>
+                                <th>電話</th>
+                                <th>目前累積點數</th>
+                                <th>手動調整點數</th>
                             </tr>
                         </thead>
-                        <tbody id="users">
-                            <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">尚無任何註冊客人資料</td></tr>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="5" style="text-align:center; color: var(--text-muted);">載入中...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -857,121 +561,58 @@
         <!-- 9. 系統備份與維護 -->
         <div id="section-settings" class="content-section">
             <div class="header-top">
-                <h1>系統數據備份與危險操作控制</h1>
+                <h1>系統備份與維護中心</h1>
             </div>
             <div class="admin-card">
-                <h3><i class="fa-solid fa-triangle-exclamation"></i> 危險資料刪除控制</h3>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button class="btn-tool btn-delete-orders" onclick="deleteDataSelection('orders')"><i class="fa-solid fa-user-minus"></i> 刪除所有顧客訂購資料</button>
-                    <button class="btn-tool btn-delete-products" onclick="deleteDataSelection('products')"><i class="fa-solid fa-box-archive"></i> 刪除已上架麵包庫存資料</button>
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger-red);"></i> 危險操作與數據維護</h3>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn-tool btn-delete-orders" onclick="clearAllOrders()"><i class="fa-solid fa-trash-can"></i> 清除所有歷史訂單</button>
+                    <button class="btn-tool btn-delete-products" onclick="clearAllProducts()"><i class="fa-solid fa-dumpster"></i> 清空全部商品與排程</button>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- 商品 Modal 編輯視窗 -->
+    <!-- 編輯商品 Modal 彈出視窗 -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>編輯商品明細</h3>
+                <h3 style="border:none; margin:0; padding:0;"><i class="fa-solid fa-pen-to-square"></i> 編輯商品資訊</h3>
                 <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <input type="hidden" id="editDate">
-            <input type="hidden" id="editOldName">
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>歸屬專區</label>
-                <select id="editProductSection">
-                    <option value="A">🌾 專區 A：今日現烤預購</option>
-                    <option value="B">🔥 專區 B：經典熱銷</option>
-                    <option value="C">👨‍🍳 接單烘焙：專屬客製烘焙</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>麵包類別</label>
-                <select id="editProductCategory">
-                    <option value="吐司類">🍞 吐司類</option>
-                    <option value="歐式麵包">🥖 歐式麵包</option>
-                    <option value="甜麵包">🥐 甜麵包</option>
-                    <option value="鹹麵包">🍕 鹹麵包</option>
-                    <option value="常溫糕點">🧁 常溫糕點</option>
-                    <option value="其他">🌾 其他</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>麵包名稱</label>
-                <input id="editProductName" type="text">
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>單個售價 (NT$)</label>
-                <input id="editProductPrice" type="number" min="0">
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>準備生產總量</label>
-                <input id="editProductTotal" type="number" min="0">
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>更新商品圖片 (留空則保持原圖)</label>
-                <div class="file-upload-wrapper">
-                    <label for="editImageFileInput" class="file-upload-btn"><i class="fa-solid fa-image"></i> 重新選擇圖片</label>
-                    <input type="file" id="editImageFileInput" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'edit')">
-                    <img id="editPreviewThumb" class="image-preview-thumbnail" style="display:block;">
-                    <span id="editUploadStatusText" style="font-size: 13px; color: var(--text-muted);">維持原圖</span>
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+                <input type="hidden" id="editCategoryType">
+                <input type="hidden" id="editDateKey">
+                <input type="hidden" id="editProductKey">
+                
+                <div class="form-group">
+                    <label>商品名稱</label>
+                    <input id="editProductName" readonly style="background:#edf2f7;">
                 </div>
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>內容物說明與內文文字</label>
-                <textarea id="editProductDesc" style="height:80px;"></textarea>
+                <div class="form-group">
+                    <label>單個售價 (NT$)</label>
+                    <input id="editPrice" type="number" min="0">
+                </div>
+                <div class="form-group">
+                    <label>準備生產總量</label>
+                    <input id="editTotal" type="number" min="0">
+                </div>
+                <div class="form-group">
+                    <label>內容說明</label>
+                    <textarea id="editDesc" rows="3"></textarea>
+                </div>
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeEditModal()">取消</button>
-                <button class="btn-add" onclick="updateProductSubmit()">儲存變更</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 抽獎獎項 Modal 編輯視窗 -->
-    <div id="editPrizeModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>編輯抽獎獎項</h3>
-                <button class="modal-close" onclick="closeEditPrizeModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <input type="hidden" id="editPrizeId">
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>獎項名稱</label>
-                <input id="editPrizeTitle" type="text" placeholder="例如：折價券 50 元">
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>折抵/折扣模式</label>
-                <select id="editPrizeDiscountType" onchange="toggleDiscountInput('edit')">
-                    <option value="fixed">💰 自訂折抵金額 (NT$)</option>
-                    <option value="0.95">🏷️ 總金額 95 折</option>
-                    <option value="0.9">🏷️ 總金額 9 折</option>
-                    <option value="0.85">🏷️ 總金額 85 折</option>
-                    <option value="0.8">🏷️ 總金額 8 折</option>
-                    <option value="0.75">🏷️ 總金額 75 折</option>
-                    <option value="0.7">🏷️ 總金額 7 折</option>
-                </select>
-            </div>
-            <div class="form-group" id="editGroupPrizeDiscount" style="margin-bottom:15px;">
-                <label>自訂折抵金額 (NT$)</label>
-                <input id="editPrizeDiscount" type="number" min="0" placeholder="50">
-            </div>
-            <div class="form-group" style="margin-bottom:15px;">
-                <label>中獎機率權重</label>
-                <input id="editPrizeProb" type="number" min="1" placeholder="10">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeEditPrizeModal()">取消</button>
-                <button class="btn-add" onclick="updatePrizeSubmit()">儲存變更</button>
+                <button class="btn-add" onclick="saveProductEdit()"><i class="fa-solid fa-floppy-disk"></i> 儲存變更</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, update, get, remove, push, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, get, set, update, remove, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgeP2a6Z-TqJaZ5F0j_2UoXVQ_WE3sckw",
@@ -986,764 +627,462 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let globalProductsCache = {}; 
-        let globalOrdersCache = {}; 
+        let currentBase64Image = "";
+        let currentEditBase64Image = "";
+        let globalOrdersCache = [];
         let globalUsersCache = {};
-        let globalPrizesCache = {};
-        let uploadedImageUrlString = ""; 
-        let editUploadedImageUrlString = "";
-        let currentInvFilter = "A";
+        let activeChatUserId = null;
+        let currentInventoryCategory = 'A';
 
-        /* 聊天室狀態變更 */
-        let currentChatUserId = null;
-        let allChatsCache = {};
+        // 分頁切換
+        window.switchTab = function(event, tabId) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
 
-        /* 左側選單切換控制 */
-        window.switchTab = function(evt, tabName) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-
-            if (evt && evt.currentTarget) {
-                evt.currentTarget.classList.add('active');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
             }
-            const target = document.getElementById(`section-${tabName}`);
-            if (target) target.classList.add('active');
+            const sec = document.getElementById('section-' + tabId);
+            if (sec) sec.classList.add('active');
+
+            if (tabId === 'inventory') filterInventory(currentInventoryCategory);
+            if (tabId === 'orders' || tabId === 'customOrders') loadOrders();
+            if (tabId === 'prizes') loadPrizes();
+            if (tabId === 'users') loadUsers();
+            if (tabId === 'chat') initChatDashboard();
         };
 
-        window.initBackend = async function() {
-            window.toggleSectionForm();
-            await window.loadInventory(); 
-            await window.loadOrders();    
-            await window.loadUsers();
-            await window.loadPrizes();
-            window.initChatListener();
-        };
-
-        /* ---------------------------------------------------- */
-        /* 客服聊天室邏輯 (按不同顧客帳號 userId 分離對話) */
-        /* ---------------------------------------------------- */
-        window.initChatListener = function() {
-            const chatRef = ref(db, "chats");
-            onValue(chatRef, (snapshot) => {
-                allChatsCache = snapshot.exists() ? snapshot.val() : {};
-                window.renderChatUserList();
-                if (currentChatUserId) {
-                    window.renderMessagesForUser(currentChatUserId);
-                }
-            });
-        };
-
-        window.renderChatUserList = async function() {
-            const userListEl = document.getElementById("chatUserList");
-            const globalBadge = document.getElementById("globalChatBadge");
-            let totalUnread = 0;
-            let html = "";
-
-            const userKeys = Object.keys(allChatsCache);
-            if (userKeys.length === 0) {
-                userListEl.innerHTML = `<li style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">尚無任何顧客訊息</li>`;
-                if (globalBadge) globalBadge.style.display = "none";
-                return;
-            }
-
-            // 按時間排序 (最新訊息在最上)
-            userKeys.sort((a, b) => {
-                const msgsA = Object.values(allChatsCache[a] || {});
-                const msgsB = Object.values(allChatsCache[b] || {});
-                const lastA = msgsA[msgsA.length - 1];
-                const lastB = msgsB[msgsB.length - 1];
-                return (lastB?.timestamp || 0) - (lastA?.timestamp || 0);
-            });
-
-            for (const uid of userKeys) {
-                const userMsgs = allChatsCache[uid] || {};
-                const msgKeys = Object.keys(userMsgs);
-                const lastMsg = userMsgs[msgKeys[msgKeys.length - 1]];
-
-                // 計算未讀 (sender === 'user' 且 read !== true)
-                let unreadCount = 0;
-                msgKeys.forEach(mKey => {
-                    const m = userMsgs[mKey];
-                    if (m.sender === "user" && !m.read) unreadCount++;
-                });
-
-                totalUnread += unreadCount;
-
-                // 若會員資料不在快取中，即時向 Firebase /users/UID 查詢補抓
-                if (!globalUsersCache[uid]) {
-                    try {
-                        const uSnap = await get(ref(db, `users/${uid}`));
-                        if (uSnap.exists()) globalUsersCache[uid] = uSnap.val();
-                    } catch (err) {
-                        console.error("抓取會員資料失敗:", err);
-                    }
-                }
-
-                const uInfo = globalUsersCache[uid] || {};
-                const displayName = uInfo.name || uInfo.displayName || `顧客 (${uid.substring(0, 6)})`;
-                const activeClass = (uid === currentChatUserId) ? "active" : "";
-                const avatarLetter = displayName.charAt(0).toUpperCase();
-
-                // 相容兩種文字欄位 (text 或 content)
-                const displayMsgText = lastMsg ? (lastMsg.text || lastMsg.content || '') : '';
-
-                html += `
-                    <li class="user-item ${activeClass}" onclick="selectChatUser('${uid}')">
-                        <div class="user-avatar">${avatarLetter}</div>
-                        <div class="user-info">
-                            <div class="user-name">${displayName}</div>
-                            <div class="user-last-msg">${displayMsgText}</div>
-                        </div>
-                        ${unreadCount > 0 ? `<div class="user-unread-badge">${unreadCount}</div>` : ''}
-                    </li>
-                `;
-            }
-
-            userListEl.innerHTML = html;
-
-            if (globalBadge) {
-                if (totalUnread > 0) {
-                    globalBadge.textContent = totalUnread;
-                    globalBadge.style.display = "inline-block";
-                } else {
-                    globalBadge.style.display = "none";
-                }
-            }
-        };
-
-        window.selectChatUser = function(uid) {
-            currentChatUserId = uid;
-            window.renderChatUserList();
-
-            const uInfo = globalUsersCache[uid] || {};
-            const displayName = uInfo.name || uInfo.displayName || `顧客 (${uid.substring(0, 6)})`;
-            const phone = uInfo.phone ? ` (${uInfo.phone})` : "";
-            document.getElementById("currentChatHeader").innerHTML = `<span><i class="fa-solid fa-user"></i> ${displayName}${phone}</span>`;
-
-            // 標示該顧客訊息為已讀
-            const userMsgs = allChatsCache[uid] || {};
-            let updates = {};
-            for (let mId in userMsgs) {
-                if (userMsgs[mId].sender === "user" && !userMsgs[mId].read) {
-                    updates[`chats/${uid}/${mId}/read`] = true;
-                }
-            }
-            if (Object.keys(updates).length > 0) {
-                update(ref(db), updates);
-            }
-
-            window.renderMessagesForUser(uid);
-        };
-
-        window.renderMessagesForUser = function(uid) {
-            const chatBody = document.getElementById("chatMessages");
-            const userMsgs = allChatsCache[uid] || {};
-            let html = "";
-
-            const msgKeys = Object.keys(userMsgs);
-            if (msgKeys.length === 0) {
-                chatBody.innerHTML = `<div class="chat-empty"><p>尚無對話紀錄</p></div>`;
-                return;
-            }
-
-            msgKeys.forEach(mId => {
-                const msg = userMsgs[mId];
-                const senderClass = msg.sender === "admin" ? "admin" : "user";
-                const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-
-                // 相容 text 與 content 欄位
-                const msgContent = msg.text || msg.content || '';
-
-                html += `
-                    <div class="msg-bubble ${senderClass}">
-                        <div>${msgContent}</div>
-                        <div class="msg-time">${timeStr}</div>
-                    </div>
-                `;
-            });
-
-            chatBody.innerHTML = html;
-            chatBody.scrollTop = chatBody.scrollHeight;
-        };
-
-        window.sendAdminMessage = async function() {
-            if (!currentChatUserId) {
-                alert("請先選擇要回覆的顧客！");
-                return;
-            }
-            const inputEl = document.getElementById("adminMsgInput");
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            const msgData = {
-                sender: "admin",
-                text: text,
-                timestamp: Date.now(),
-                read: true
-            };
-
-            try {
-                await push(ref(db, `chats/${currentChatUserId}`), msgData);
-                inputEl.value = "";
-            } catch (err) {
-                alert("訊息發送失敗！");
-            }
-        };
-
-        /* ---------------------------------------------------- */
-        /* 商品與庫存管理 */
-        /* ---------------------------------------------------- */
         window.toggleSectionForm = function() {
-            const section = document.getElementById("section").value;
-            const groupDate = document.getElementById("group-date");
-            const groupPrice = document.getElementById("group-price");
-            const groupQty = document.getElementById("group-qty");
-
-            if (section === 'B' || section === 'C') {
-                groupDate.style.display = 'none';
-                groupPrice.style.display = 'none';
-                groupQty.style.display = 'none';
+            const sec = document.getElementById("section").value;
+            const dateGroup = document.getElementById("group-date");
+            if (sec === "A") {
+                dateGroup.style.display = "flex";
             } else {
-                groupDate.style.display = 'flex';
-                groupPrice.style.display = 'flex';
-                groupQty.style.display = 'flex';
+                dateGroup.style.display = "none";
             }
         };
 
-        window.filterInventory = function(filter) {
-            currentInvFilter = filter;
-            document.querySelectorAll('.category-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (filter === 'A') document.getElementById('tabInvA').classList.add('active');
-            if (filter === 'B') document.getElementById('tabInvB').classList.add('active');
-            if (filter === 'C') document.getElementById('tabInvC').classList.add('active');
-            window.renderInventoryTable();
-        };
-
-        window.loadInventory = async function() {
-            try {
-                const prodSnap = await get(ref(db, "products"));
-                const classicSnap = await get(ref(db, "classic_products"));
-                
-                globalProductsCache = {
-                    daily: prodSnap.exists() ? prodSnap.val() : {},
-                    classic: classicSnap.exists() ? classicSnap.val() : {}
-                };
-
-                window.renderInventoryTable();
-            } catch (err) { console.error("載入庫存失敗", err); }
-        };
-
-        window.renderInventoryTable = function() {
-            const container = document.getElementById("inventory");
-            let html = "";
-
-            if (currentInvFilter === 'A') {
-                const dailyData = globalProductsCache.daily || {};
-                if (Object.keys(dailyData).length === 0) {
-                    container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">專區 A 尚無上架品項</p>`;
-                    return;
-                }
-                for (let dateKey in dailyData) {
-                    html += `<div style="margin-bottom: 15px;"><h4 style="color:var(--accent-primary); margin-bottom:10px;">📅 日期：${dateKey}</h4>`;
-                    let prods = dailyData[dateKey];
-                    for (let pName in prods) {
-                        let item = prods[pName];
-                        let remain = (item.total || 0) - (item.sold || 0);
-                        html += `
-                            <div class="item-row">
-                                <div>
-                                    <span class="section-tag tag-a">專區 A</span>
-                                    <b>${pName}</b> - NT$ ${item.price}
-                                    <span class="stock-badge">總量: ${item.total} | 已售: ${item.sold || 0} | 剩餘: <b>${remain}</b></span>
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn-edit-single" onclick="openEditModal('A', '${dateKey}', '${pName}')">編輯</button>
-                                    <button class="btn-delete-single" onclick="deleteSingleProduct('A', '${dateKey}', '${pName}')">刪除</button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    html += `</div>`;
-                }
-            } else {
-                const classicData = globalProductsCache.classic || {};
-                const sectionTagText = currentInvFilter === 'B' ? "專區 B" : "接單烘焙";
-                const tagClass = currentInvFilter === 'B' ? "tag-b" : "tag-c";
-
-                if (Object.keys(classicData).length === 0) {
-                    container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">尚無品項</p>`;
-                    return;
-                }
-
-                for (let pName in classicData) {
-                    let item = classicData[pName];
-                    html += `
-                        <div class="item-row">
-                            <div>
-                                <span class="section-tag ${tagClass}">${sectionTagText}</span>
-                                <b>${pName}</b> - NT$ ${item.price}
-                                <span class="stock-badge">經典熱銷款</span>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn-edit-single" onclick="openEditModal('${currentInvFilter}', 'classic', '${pName}')">編輯</button>
-                                <button class="btn-delete-single" onclick="deleteSingleProduct('${currentInvFilter}', 'classic', '${pName}')">刪除</button>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            container.innerHTML = html;
-        };
-
-        window.loadOrders = async function() {
-            try {
-                const snap = await get(ref(db, "orders"));
-                const orders = snap.exists() ? snap.val() : {};
-                globalOrdersCache = orders;
-
-                const ordersTbody = document.getElementById("orders");
-                const customOrdersTbody = document.getElementById("customBakeOrders");
-
-                let ordersHtml = "";
-                let customOrdersHtml = "";
-                let orderCount = 0;
-                let customCount = 0;
-
-                for (let orderId in orders) {
-                    let o = orders[orderId];
-                    let itemsStr = "";
-                    if (o.items) {
-                        for (let pName in o.items) {
-                            itemsStr += `${pName} × ${o.items[pName]} ; `;
-                        }
-                    }
-
-                    let isCompleted = o.status === "completed";
-                    let actionBtnHtml = isCompleted ? 
-                        `<span class="badge-completed"><i class="fa-solid fa-circle-check"></i> 已完成</span>` : 
-                        `<button class="btn-complete-order" onclick="completeOrderAndGrantPoints('${orderId}')">完成訂單並派點</button>`;
-
-                    actionBtnHtml += ` <button class="btn-delete-single" onclick="deleteSingleOrder('${orderId}')">刪除</button>`;
-
-                    let rowHtml = `
-                        <tr>
-                            <td><b>${o.name || '未填寫'}</b></td>
-                            <td>${o.phone || ''}</td>
-                            <td>${o.date || ''} ${o.time || ''}</td>
-                            <td>${itemsStr}</td>
-                            <td><b style="color:var(--success-green);">NT$ ${o.finalTotal || 0}</b></td>
-                            <td>${actionBtnHtml}</td>
-                        </tr>
-                    `;
-
-                    if (o.category === "接單烘焙") {
-                        customOrdersHtml += rowHtml;
-                        customCount++;
-                    } else {
-                        ordersHtml += rowHtml;
-                        orderCount++;
-                    }
-                }
-
-                ordersTbody.innerHTML = orderCount > 0 ? ordersHtml : `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚無任何預購訂單資料</td></tr>`;
-                customOrdersTbody.innerHTML = customCount > 0 ? customOrdersHtml : `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚無任何接單烘焙訂單資料</td></tr>`;
-
-            } catch (err) { console.error("載入訂單失敗", err); }
-        };
-
-        window.completeOrderAndGrantPoints = async function(orderId) {
-            const order = globalOrdersCache[orderId];
-            if (!order) return;
-
-            const finalTotal = order.finalTotal || 0;
-            const pointsToEarn = Math.floor(finalTotal / 100);
-            const userId = order.userId;
-
-            if (!confirm(`確定完成此筆訂單並派發 ${pointsToEarn} 點嗎？`)) return;
-
-            try {
-                await update(ref(db, "orders/" + orderId), { status: "completed", completedAt: new Date().toISOString() });
-                if (userId) {
-                    await runTransaction(ref(db, "users/" + userId), (currentUser) => {
-                        if (currentUser) {
-                            currentUser.points = (currentUser.points || 0) + pointsToEarn;
-                            currentUser.totalSpent = (currentUser.totalSpent || 0) + finalTotal;
-                        }
-                        return currentUser;
-                    });
-                }
-                alert("✅ 已完成派點！");
-                await window.loadOrders();
-                await window.loadUsers();
-            } catch (err) { alert("派點失敗！"); }
-        };
-
-        window.loadUsers = async function() {
-            try {
-                const snap = await get(ref(db, "users"));
-                const users = snap.exists() ? snap.val() : {};
-                globalUsersCache = users;
-
-                const usersTbody = document.getElementById("users");
-                let html = "";
-                let count = 0;
-
-                for (let uid in users) {
-                    let u = users[uid];
-                    let couponCount = (u.coupons && Array.isArray(u.coupons)) ? u.coupons.length : 0;
-                    html += `
-                        <tr>
-                            <td><b>${u.name || '未名稱'}</b></td>
-                            <td>${u.phone || '未填寫'}</td>
-                            <td>${u.email || '未填寫'}</td>
-                            <td>NT$ ${(u.totalSpent || 0).toLocaleString()}</td>
-                            <td><b style="color:var(--warning-orange);">${u.points || 0} 點</b></td>
-                            <td>${couponCount} 張</td>
-                            <td><button class="btn-delete-single" onclick="deleteUser('${uid}')">刪除</button></td>
-                        </tr>
-                    `;
-                    count++;
-                }
-
-                usersTbody.innerHTML = count > 0 ? html : `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">尚無任何註冊客人資料</td></tr>`;
-                window.renderChatUserList(); // 重新整理聊天名稱
-            } catch (err) { console.error("載入會員失敗", err); }
-        };
-
-        window.deleteUser = async function(uid) {
-            if (!confirm("確定要刪除該會員帳號嗎？")) return;
-            try {
-                await remove(ref(db, "users/" + uid));
-                alert("已成功刪除！");
-                window.loadUsers();
-            } catch (err) { alert("刪除失敗！"); }
-        };
-
-        window.toggleDiscountInput = function(mode) {
-            const typeSelect = document.getElementById(mode === 'new' ? 'prizeDiscountType' : 'editPrizeDiscountType');
-            const inputGroup = document.getElementById(mode === 'new' ? 'groupPrizeDiscount' : 'editGroupPrizeDiscount');
-
-            if (typeSelect.value === 'fixed') {
-                inputGroup.style.display = 'flex';
-            } else {
-                inputGroup.style.display = 'none';
-            }
-        };
-
-        window.loadPrizes = async function() {
-            try {
-                const snap = await get(ref(db, "prizes"));
-                const prizes = snap.exists() ? snap.val() : {};
-                globalPrizesCache = prizes;
-
-                const tbody = document.getElementById("prizesTableBody");
-                let html = "";
-                let count = 0;
-
-                for (let pId in prizes) {
-                    let p = prizes[pId];
-                    let discountDisplay = "";
-                    
-                    if (p.discountType === "fixed" || !p.discountType) {
-                        discountDisplay = `固定折抵 NT$ ${p.discount}`;
-                    } else {
-                        let rate = parseFloat(p.discount);
-                        let discountText = (rate * 10).toString().replace('.', '點');
-                        let offPercent = Math.round((1 - rate) * 100);
-                        discountDisplay = `全單 ${discountText} 折 (${offPercent}% OFF)`;
-                    }
-
-                    html += `
-                        <tr>
-                            <td><b>${p.title}</b></td>
-                            <td>${discountDisplay}</td>
-                            <td>${p.prob}</td>
-                            <td>
-                                <button class="btn-edit-single" onclick="openEditPrizeModal('${pId}')">編輯</button>
-                                <button class="btn-delete-single" onclick="deletePrize('${pId}')">刪除</button>
-                            </td>
-                        </tr>
-                    `;
-                    count++;
-                }
-                tbody.innerHTML = count > 0 ? html : `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">尚無任何獎項設定</td></tr>`;
-            } catch (err) { console.error("載入獎項失敗", err); }
-        };
-
-        window.savePrize = async function() {
-            let title = document.getElementById("prizeTitle").value.trim();
-            let discountType = document.getElementById("prizeDiscountType").value;
-            let discount = 0;
-
-            if (discountType === 'fixed') {
-                discount = parseInt(document.getElementById("prizeDiscount").value) || 0;
-            } else {
-                discount = parseFloat(discountType);
-            }
-
-            let prob = parseInt(document.getElementById("prizeProb").value) || 10;
-
-            if (!title) { alert("請填寫獎項名稱！"); return; }
-            try {
-                await push(ref(db, "prizes"), { title, discountType, discount, prob });
-                alert("🎉 成功新增抽獎獎項！");
-                document.getElementById("prizeTitle").value = "";
-                document.getElementById("prizeDiscount").value = "";
-                document.getElementById("prizeDiscountType").value = "fixed";
-                window.toggleDiscountInput('new');
-                window.loadPrizes();
-            } catch (err) { alert("新增獎項失敗！"); }
-        };
-
-        window.openEditPrizeModal = function(prizeId) {
-            const p = globalPrizesCache[prizeId];
-            if (!p) return;
-            document.getElementById("editPrizeId").value = prizeId;
-            document.getElementById("editPrizeTitle").value = p.title;
-
-            const typeSelect = document.getElementById("editPrizeDiscountType");
-            typeSelect.value = p.discountType || 'fixed';
-
-            if (typeSelect.value === 'fixed') {
-                document.getElementById("editPrizeDiscount").value = p.discount || 0;
-            }
-
-            window.toggleDiscountInput('edit');
-            document.getElementById("editPrizeProb").value = p.prob;
-            document.getElementById("editPrizeModal").style.display = "flex";
-        };
-
-        window.closeEditPrizeModal = function() {
-            document.getElementById("editPrizeModal").style.display = "none";
-        };
-
-        window.updatePrizeSubmit = async function() {
-            let pId = document.getElementById("editPrizeId").value;
-            let title = document.getElementById("editPrizeTitle").value.trim();
-            let discountType = document.getElementById("editPrizeDiscountType").value;
-            let discount = 0;
-
-            if (discountType === 'fixed') {
-                discount = parseInt(document.getElementById("editPrizeDiscount").value) || 0;
-            } else {
-                discount = parseFloat(discountType);
-            }
-
-            let prob = parseInt(document.getElementById("editPrizeProb").value) || 10;
-
-            try {
-                await update(ref(db, "prizes/" + pId), { title, discountType, discount, prob });
-                alert("✅ 獎項更新成功！");
-                window.closeEditPrizeModal();
-                window.loadPrizes();
-            } catch (err) { alert("更新失敗！"); }
-        };
-
-        window.deletePrize = async function(prizeId) {
-            if (!confirm("確定要刪除此獎項嗎？")) return;
-            try {
-                await remove(ref(db, "prizes/" + prizeId));
-                alert("已刪除！");
-                window.loadPrizes();
-            } catch (err) { alert("刪除失敗！"); }
-        };
-
-        window.saveProduct = async function() {
-            let section = document.getElementById("section").value;
-            let date = document.getElementById("date").value;
-            let category = document.getElementById("category").value;
-            let product = document.getElementById("product").value.trim();
-            let price = parseInt(document.getElementById("price").value) || 0;
-            let qty = parseInt(document.getElementById("qty").value) || 0;
-            let desc = document.getElementById("description").value.trim();
-
-            if (!product) { alert("請填寫商品名稱！"); return; }
-
-            if (section === 'A') {
-                if (!date) { alert("請填寫專區 A 的販售日期！"); return; }
-                try {
-                    await update(ref(db, `products/${date}/${product}`), {
-                        category, price, total: qty, sold: 0, desc, img: uploadedImageUrlString
-                    });
-                    alert("🎉 專區 A 商品發布成功！");
-                } catch (err) { alert("發布失敗！"); }
-            } else {
-                try {
-                    await update(ref(db, `classic_products/${product}`), {
-                        category, price: 0, total: 999, sold: 0, desc, img: uploadedImageUrlString
-                    });
-                    alert(`🎉 商品發布成功！`);
-                } catch (err) { alert("發布失敗！"); }
-            }
-
-            document.getElementById("product").value = "";
-            document.getElementById("price").value = "";
-            document.getElementById("qty").value = "";
-            document.getElementById("description").value = "";
-            window.loadInventory();
-        };
-
-        window.deleteSingleProduct = async function(sec, dateKey, pName) {
-            if (!confirm(`確定要刪除 ${pName} 嗎？`)) return;
-            try {
-                if (sec === 'A') await remove(ref(db, `products/${dateKey}/${pName}`));
-                else await remove(ref(db, `classic_products/${pName}`));
-                alert("已刪除該商品！");
-                window.loadInventory();
-            } catch (err) { alert("刪除失敗！"); }
-        };
-
-        window.deleteSingleOrder = async function(orderId) {
-            if (!confirm("確定要刪除這筆訂單嗎？")) return;
-            try {
-                await remove(ref(db, "orders/" + orderId));
-                alert("已刪除訂單！");
-                window.loadOrders();
-            } catch (err) { alert("刪除失敗！"); }
-        };
-
-        window.deleteDataSelection = async function(type) {
-            if (type === 'orders') {
-                if (!confirm("⚠️ 確定要刪除「所有顧客訂購資料」嗎？")) return;
-                try {
-                    await remove(ref(db, "orders"));
-                    alert("已清空所有顧客訂購資料！");
-                    window.loadOrders();
-                } catch (err) { alert("刪除失敗！"); }
-            } else if (type === 'products') {
-                if (!confirm("⚠️ 確定要刪除「所有已上架麵包庫存資料」嗎？")) return;
-                try {
-                    await remove(ref(db, "products"));
-                    await remove(ref(db, "classic_products"));
-                    alert("已清空所有商品庫存資料！");
-                    window.loadInventory();
-                } catch (err) { alert("刪除失敗！"); }
-            }
-        };
-
-        window.handleFileSelect = function(e, mode) {
-            const file = e.target.files[0];
+        window.handleFileSelect = function(event, mode = 'new') {
+            const file = event.target.files[0];
             if (!file) return;
 
-            const statusText = document.getElementById(mode === 'new' ? 'uploadStatusText' : 'editUploadStatusText');
-            const thumb = document.getElementById(mode === 'new' ? 'previewThumb' : 'editPreviewThumb');
-
-            statusText.textContent = "⏳ 圖片上傳中...";
-
             const reader = new FileReader();
-            reader.onload = function(evt) {
-                thumb.src = evt.target.result;
-                thumb.style.display = "block";
-                
-                let formData = new FormData();
-                formData.append("image", file);
-
-                fetch("https://api.imgbb.com/1/upload?key=e08e6f1f2a3ed147321013cb4841203f", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(resData => {
-                    if (resData.success) {
-                        if (mode === 'new') uploadedImageUrlString = resData.data.url;
-                        else editUploadedImageUrlString = resData.data.url;
-                        statusText.textContent = "✅ 上傳成功！";
-                    } else { statusText.textContent = "❌ 上傳失敗！"; }
-                })
-                .catch(() => { statusText.textContent = "❌ 上傳失敗！"; });
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 400;
+                    const scale = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scale;
+                    
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const resizedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+                    if (mode === 'new') {
+                        currentBase64Image = resizedBase64;
+                        document.getElementById("previewThumb").src = resizedBase64;
+                        document.getElementById("previewThumb").style.display = "block";
+                        document.getElementById("uploadStatusText").textContent = file.name;
+                    }
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         };
 
-        window.exportToExcel = function() {
-            if (Object.keys(globalOrdersCache).length === 0) {
-                alert("目前尚無訂單可導出！");
-                return;
-            }
+        window.saveProduct = async function() {
+            const section = document.getElementById("section").value;
+            const date = document.getElementById("date").value;
+            const category = document.getElementById("category").value;
+            const product = document.getElementById("product").value.trim();
+            const price = parseInt(document.getElementById("price").value) || 0;
+            const qty = parseInt(document.getElementById("qty").value) || 0;
+            const desc = document.getElementById("description").value.trim();
 
-            let exportData = [];
-            for (let id in globalOrdersCache) {
-                let o = globalOrdersCache[id];
-                let itemsText = "";
-                if (o.items) {
-                    for (let p in o.items) itemsText += `${p}x${o.items[p]}; `;
+            if (!product) { alert("請填寫商品名稱！"); return; }
+
+            try {
+                if (section === "A") {
+                    if (!date) { alert("請選擇販售日期！"); return; }
+                    await update(ref(db, `products/${date}/${product}`), {
+                        price, total: qty, sold: 0, desc, category, img: currentBase64Image
+                    });
+                } else {
+                    const nodeName = section === "B" ? "classic_products" : "custom_products";
+                    await update(ref(db, `${nodeName}/${product}`), {
+                        price, total: qty, sold: 0, desc, category, img: currentBase64Image
+                    });
                 }
-                exportData.push({
-                    "訂購類別": o.category || "預購",
-                    "訂購人姓名": o.name || "",
-                    "聯絡電話": o.phone || "",
-                    "取貨日期": o.date || "",
-                    "取貨時段": o.time || "",
-                    "訂購明細": itemsText,
-                    "結帳金額": o.finalTotal || 0,
-                    "訂單狀態": o.status === "completed" ? "已完成(已派點)" : "待處理"
-                });
-            }
-
-            const ws = XLSX.utils.json_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.writeFile(wb, `焰麥麵包訂單紀錄_${new Date().toISOString().split('T')[0]}.xlsx`);
+                alert("🎉 商品發布成功！");
+                document.getElementById("product").value = "";
+                document.getElementById("price").value = "";
+                document.getElementById("qty").value = "";
+                document.getElementById("description").value = "";
+                document.getElementById("previewThumb").style.display = "none";
+                document.getElementById("uploadStatusText").textContent = "尚未選擇檔案";
+                currentBase64Image = "";
+            } catch (err) { alert("❌ 發布失敗！"); }
         };
 
-        window.openEditModal = function(sec, dateKey, pName) {
-            document.getElementById("editDate").value = dateKey;
-            document.getElementById("editOldName").value = pName;
-            document.getElementById("editProductName").value = pName;
-            document.getElementById("editProductSection").value = sec;
+        window.filterInventory = async function(cat) {
+            currentInventoryCategory = cat;
+            document.querySelectorAll('#section-inventory .tab-btn').forEach(btn => btn.classList.remove('active'));
+            if (cat === 'A') document.getElementById('tabInvA').classList.add('active');
+            if (cat === 'B') document.getElementById('tabInvB').classList.add('active');
+            if (cat === 'C') document.getElementById('tabInvC').classList.add('active');
 
-            let item = sec === 'A' ? globalProductsCache.daily[dateKey][pName] : globalProductsCache.classic[pName];
-            if (item) {
-                document.getElementById("editProductPrice").value = item.price || 0;
-                document.getElementById("editProductTotal").value = item.total || 0;
-                document.getElementById("editProductDesc").value = item.desc || "";
-                document.getElementById("editProductCategory").value = item.category || "吐司類";
-            }
+            const container = document.getElementById("inventory");
+            container.innerHTML = "載入中...";
+
+            try {
+                let html = "";
+                if (cat === 'A') {
+                    const snap = await get(ref(db, "products"));
+                    const data = snap.val();
+                    if (!data) { container.innerHTML = "<p style='color:var(--text-muted); padding:10px;'>專區 A 尚無任何上架商品</p>"; return; }
+                    
+                    for (let d in data) {
+                        html += `<h4 style="margin: 15px 0 8px 0; font-weight:700;"><i class="fa-regular fa-calendar"></i> 生產日期：${d}</h4>`;
+                        for (let p in data[d]) {
+                            let item = data[d][p];
+                            let remain = (item.total || 0) - (item.sold || 0);
+                            html += `
+                                <div class="item-row">
+                                    <div>
+                                        <span class="section-tag tag-a">今日現烤</span>
+                                        <b>${p}</b> (NT$ ${item.price})
+                                        <span class="stock-badge">總量: ${item.total || 0} | 已售: ${item.sold || 0} | 剩餘: ${remain}</span>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="btn-edit-single" onclick="openEditModal('A', '${d}', '${p}', ${item.price}, ${item.total}, '${item.desc || ''}')"><i class="fa-solid fa-pen"></i> 編輯</button>
+                                        <button class="btn-delete-single" onclick="deleteProduct('A', '${d}', '${p}')"><i class="fa-solid fa-trash"></i> 刪除</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                } else {
+                    const path = cat === 'B' ? "classic_products" : "custom_products";
+                    const snap = await get(ref(db, path));
+                    const data = snap.val();
+                    if (!data) { container.innerHTML = `<p style='color:var(--text-muted); padding:10px;'>目前尚無任何品項</p>`; return; }
+
+                    for (let p in data) {
+                        let item = data[p];
+                        let remain = (item.total || 999) - (item.sold || 0);
+                        let tag = cat === 'B' ? '<span class="section-tag tag-b">經典熱銷</span>' : '<span class="section-tag tag-c">接單烘焙</span>';
+                        html += `
+                            <div class="item-row">
+                                <div>
+                                    ${tag}
+                                    <b>${p}</b> (NT$ ${item.price})
+                                    <span class="stock-badge">已售: ${item.sold || 0}</span>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn-edit-single" onclick="openEditModal('${cat}', '', '${p}', ${item.price}, ${item.total || 999}, '${item.desc || ''}')"><i class="fa-solid fa-pen"></i> 編輯</button>
+                                    <button class="btn-delete-single" onclick="deleteProduct('${cat}', '', '${p}')"><i class="fa-solid fa-trash"></i> 刪除</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                container.innerHTML = html || "<p style='color:var(--text-muted); padding:10px;'>目前無資料</p>";
+            } catch (err) { console.error(err); }
+        };
+
+        window.openEditModal = function(cat, dateKey, pName, price, total, desc) {
+            document.getElementById("editCategoryType").value = cat;
+            document.getElementById("editDateKey").value = dateKey;
+            document.getElementById("editProductKey").value = pName;
+            document.getElementById("editProductName").value = pName;
+            document.getElementById("editPrice").value = price;
+            document.getElementById("editTotal").value = total;
+            document.getElementById("editDesc").value = desc;
             document.getElementById("editModal").style.display = "flex";
         };
 
-        window.closeEditModal = function() {
-            document.getElementById("editModal").style.display = "none";
-        };
+        window.closeEditModal = function() { document.getElementById("editModal").style.display = "none"; };
 
-        window.updateProductSubmit = async function() {
-            let sec = document.getElementById("editProductSection").value;
-            let dateKey = document.getElementById("editDate").value;
-            let oldName = document.getElementById("editOldName").value;
-            let newName = document.getElementById("editProductName").value.trim();
-            let price = parseInt(document.getElementById("editProductPrice").value) || 0;
-            let total = parseInt(document.getElementById("editProductTotal").value) || 0;
-            let desc = document.getElementById("editProductDesc").value.trim();
-            let category = document.getElementById("editProductCategory").value;
-
-            if (!newName) { alert("請填寫商品名稱！"); return; }
+        window.saveProductEdit = async function() {
+            const cat = document.getElementById("editCategoryType").value;
+            const dateKey = document.getElementById("editDateKey").value;
+            const pName = document.getElementById("editProductKey").value;
+            const price = parseInt(document.getElementById("editPrice").value) || 0;
+            const total = parseInt(document.getElementById("editTotal").value) || 0;
+            const desc = document.getElementById("editDesc").value.trim();
 
             try {
-                let imgUrl = editUploadedImageUrlString;
-                if (!imgUrl) {
-                    let oldItem = (sec === 'A') ? globalProductsCache.daily[dateKey][oldName] : globalProductsCache.classic[oldName];
-                    imgUrl = oldItem ? oldItem.img : "";
-                }
-
-                if (sec === 'A') {
-                    if (oldName !== newName) await remove(ref(db, `products/${dateKey}/${oldName}`));
-                    await update(ref(db, `products/${dateKey}/${newName}`), {
-                        category, price, total, desc, img: imgUrl
-                    });
-                } else {
-                    if (oldName !== newName) await remove(ref(db, `classic_products/${oldName}`));
-                    await update(ref(db, `classic_products/${newName}`), {
-                        category, price, total, desc, img: imgUrl
-                    });
-                }
-
-                alert("✅ 商品編輯成功！");
-                window.closeEditModal();
-                window.loadInventory();
-            } catch (err) { alert("編輯失敗！"); }
+                let targetRef = cat === 'A' ? ref(db, `products/${dateKey}/${pName}`) : ref(db, `${cat === 'B' ? 'classic_products' : 'custom_products'}/${pName}`);
+                await update(targetRef, { price, total, desc });
+                alert("🎉 商品更新成功！");
+                closeEditModal();
+                filterInventory(cat);
+            } catch (err) { alert("❌ 更新失敗！"); }
         };
 
-        window.initBackend();
+        window.deleteProduct = async function(cat, dateKey, pName) {
+            if (!confirm(`確定要刪除商品「${pName}」嗎？`)) return;
+            try {
+                let targetRef = cat === 'A' ? ref(db, `products/${dateKey}/${pName}`) : ref(db, `${cat === 'B' ? 'classic_products' : 'custom_products'}/${pName}`);
+                await remove(targetRef);
+                alert("已刪除！");
+                filterInventory(cat);
+            } catch (err) { alert("❌ 刪除失敗！"); }
+        };
+
+        async function loadOrders() {
+            try {
+                const snap = await get(ref(db, "orders"));
+                const data = snap.val();
+                const normalTbody = document.getElementById("orders");
+                const customTbody = document.getElementById("customBakeOrders");
+
+                if (!data) {
+                    normalTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚無任何預購訂單資料</td></tr>`;
+                    customTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚無任何接單烘焙訂單資料</td></tr>`;
+                    return;
+                }
+
+                globalOrdersCache = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+
+                let normalHtml = "";
+                let customHtml = "";
+
+                globalOrdersCache.reverse().forEach(o => {
+                    let itemsSummary = [];
+                    for (let p in o.items) { itemsSummary.push(`${p} × ${o.items[p]}`); }
+
+                    let statusBadge = o.status === 'completed' 
+                        ? `<span class="badge-completed">已完成 (已發點)</span>` 
+                        : `<button class="btn-complete-order" onclick="completeOrder('${o.id}', '${o.userId}', ${o.finalTotal || o.subtotal || 0})"><i class="fa-solid fa-circle-check"></i> 完成訂單並派點</button>`;
+
+                    let row = `
+                        <tr>
+                            <td><b>${o.name || o.userName || '顧客'}</b></td>
+                            <td>${o.phone || '-'}</td>
+                            <td>${o.date} <br><small style="color:var(--text-muted);">${o.time || ''}</small></td>
+                            <td>${itemsSummary.join(', ')}</td>
+                            <td><b>NT$ ${o.finalTotal || o.subtotal || 0}</b></td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+
+                    if (o.category === "接單烘焙") customHtml += row;
+                    else normalHtml += row;
+                });
+
+                normalTbody.innerHTML = normalHtml || `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚無預購訂單</td></tr>`;
+                customTbody.innerHTML = customHtml || `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚無接單烘焙訂單</td></tr>`;
+            } catch (err) { console.error("載入訂單失敗", err); }
+        }
+
+        window.completeOrder = async function(orderId, userId, amount) {
+            if (!confirm("確定標記此訂單為完成並自動派發點數嗎？")) return;
+            try {
+                await update(ref(db, `orders/${orderId}`), { status: "completed" });
+                
+                if (userId) {
+                    const pointsToAdd = Math.floor(amount / 100);
+                    const userSnap = await get(ref(db, `users/${userId}`));
+                    if (userSnap.exists()) {
+                        let curPoints = userSnap.val().points || 0;
+                        await update(ref(db, `users/${userId}`), { points: curPoints + pointsToAdd });
+                    }
+                }
+                alert("🎉 訂單完成！點數已發送。");
+                loadOrders();
+            } catch (err) { alert("❌ 操作失敗！"); }
+        };
+
+        /* 💬 客服訊息中心邏輯 */
+        function initChatDashboard() {
+            const chatListRef = ref(db, "chats");
+            onValue(chatListRef, (snapshot) => {
+                const data = snapshot.val();
+                const listContainer = document.getElementById("chatUserList");
+                const badge = document.getElementById("globalChatBadge");
+                if (!data) {
+                    listContainer.innerHTML = `<li style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">尚無訊息</li>`;
+                    if (badge) badge.style.display = "none";
+                    return;
+                }
+
+                let listHtml = "";
+                let unreadCount = 0;
+
+                Object.keys(data).forEach(uid => {
+                    const userChat = data[uid];
+                    if (userChat.unreadByAdmin) unreadCount++;
+                    const activeClass = uid === activeChatUserId ? "active" : "";
+                    const initial = (userChat.userName || "會").charAt(0);
+
+                    listHtml += `
+                        <li class="user-item ${activeClass}" onclick="selectChatUser('${uid}', '${userChat.userName || '會員'}')">
+                            <div class="user-avatar">${initial}</div>
+                            <div class="user-info">
+                                <div class="user-name">${userChat.userName || '匿名會員'}</div>
+                                <div class="user-last-msg">${userChat.lastMessage || ''}</div>
+                            </div>
+                            ${userChat.unreadByAdmin ? `<span class="user-unread-badge">新</span>` : ''}
+                        </li>
+                    `;
+                });
+
+                listContainer.innerHTML = listHtml;
+                if (badge) {
+                    if (unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = "inline-block"; }
+                    else { badge.style.display = "none"; }
+                }
+            });
+        }
+
+        window.selectChatUser = function(uid, userName) {
+            activeChatUserId = uid;
+            document.getElementById("currentChatHeader").innerHTML = `<span><i class="fa-solid fa-user-gear"></i> 與 <b>${userName}</b> 的對話窗口</span>`;
+            
+            update(ref(db, `chats/${uid}`), { unreadByAdmin: false });
+
+            const msgRef = ref(db, `chats/${uid}/messages`);
+            onValue(msgRef, (snap) => {
+                const msgs = snap.val();
+                const body = document.getElementById("chatMessages");
+                if (!msgs) { body.innerHTML = `<div class="chat-empty"><p>尚無對話記錄</p></div>`; return; }
+
+                let html = "";
+                Object.values(msgs).forEach(m => {
+                    const isAdmin = m.sender === 'admin';
+                    const timeStr = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    html += `
+                        <div class="msg-bubble ${isAdmin ? 'admin' : 'user'}">
+                            <div>${m.text}</div>
+                            <div class="msg-time">${timeStr}</div>
+                        </div>
+                    `;
+                });
+                body.innerHTML = html;
+                body.scrollTop = body.scrollHeight;
+            });
+        };
+
+        window.sendAdminMessage = async function() {
+            const input = document.getElementById("adminMsgInput");
+            const text = input.value.trim();
+            if (!text || !activeChatUserId) return;
+
+            input.value = "";
+            const timestamp = new Date().toISOString();
+
+            await push(ref(db, `chats/${activeChatUserId}/messages`), {
+                sender: "admin",
+                text: text,
+                timestamp: timestamp
+            });
+
+            await update(ref(db, `chats/${activeChatUserId}`), {
+                lastMessage: text,
+                lastTimestamp: timestamp
+            });
+        };
+
+        async function loadPrizes() {
+            const snap = await get(ref(db, "prizes"));
+            const data = snap.val();
+            const tbody = document.getElementById("prizesTableBody");
+            if (!data) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">尚未設定任何抽獎獎項</td></tr>`; return; }
+
+            let html = "";
+            Object.keys(data).forEach(id => {
+                let p = data[id];
+                html += `
+                    <tr>
+                        <td><b>${p.title}</b></td>
+                        <td>NT$ ${p.discount || 0}</td>
+                        <td>${p.prob || 10}</td>
+                        <td><button class="btn-delete-single" onclick="deletePrize('${id}')"><i class="fa-solid fa-trash"></i> 刪除</button></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        window.addPrize = async function() {
+            const title = document.getElementById("prizeTitle").value.trim();
+            const discount = parseInt(document.getElementById("prizeDiscount").value) || 0;
+            const prob = parseInt(document.getElementById("prizeProb").value) || 10;
+            if (!title) { alert("請填寫獎項名稱！"); return; }
+
+            await push(ref(db, "prizes"), { title, discount, prob });
+            alert("🎉 獎項新增成功！");
+            document.getElementById("prizeTitle").value = "";
+            document.getElementById("prizeDiscount").value = "";
+            loadPrizes();
+        };
+
+        window.deletePrize = async function(id) {
+            if (!confirm("確定刪除此獎項？")) return;
+            await remove(ref(db, `prizes/${id}`));
+            loadPrizes();
+        };
+
+        async function loadUsers() {
+            const snap = await get(ref(db, "users"));
+            const data = snap.val();
+            const tbody = document.getElementById("usersTableBody");
+            if (!data) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">尚無會員資料</td></tr>`; return; }
+
+            let html = "";
+            Object.keys(data).forEach(uid => {
+                let u = data[uid];
+                html += `
+                    <tr>
+                        <td><b>${u.name || '未填寫'}</b></td>
+                        <td>${u.email || '-'}</td>
+                        <td>${u.phone || '-'}</td>
+                        <td><b style="color:var(--warning-orange);">${u.points || 0} 點</b></td>
+                        <td>
+                            <input id="user_pts_${uid}" type="number" style="width:80px; padding:4px 8px;" value="${u.points || 0}">
+                            <button class="btn-edit-single" onclick="updateUserPoints('${uid}')">儲存</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        window.updateUserPoints = async function(uid) {
+            const pts = parseInt(document.getElementById(`user_pts_${uid}`).value) || 0;
+            await update(ref(db, `users/${uid}`), { points: pts });
+            alert("🎉 點數調整成功！");
+            loadUsers();
+        };
+
+        window.exportToExcel = function() {
+            if (globalOrdersCache.length === 0) { alert("目前無訂單可匯出！"); return; }
+            const exportData = globalOrdersCache.map(o => ({
+                "訂單號碼": o.id,
+                "顧客姓名": o.name || o.userName || "",
+                "電話": o.phone || "",
+                "取貨日期": o.date || "",
+                "取貨時段": o.time || "",
+                "取貨地點": o.location || "",
+                "專區": o.category || "",
+                "結帳金額": o.finalTotal || o.subtotal || 0,
+                "狀態": o.status === 'completed' ? '已完成' : '處理中'
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "訂單清單");
+            XLSX.writeFile(workbook, `焰麥預購訂單_${new Date().toISOString().split('T')[0]}.xlsx`);
+        };
+
+        window.initBackend = function() { alert("重新載入成功！"); location.reload(); };
+        window.clearAllOrders = async function() { if (confirm("⚠️ 確定清空所有歷史訂單？")) { await remove(ref(db, "orders")); alert("已清空訂單！"); loadOrders(); } };
+        window.clearAllProducts = async function() { if (confirm("⚠️ 確定清空所有商品庫存？")) { await remove(ref(db, "products")); await remove(ref(db, "classic_products")); await remove(ref(db, "custom_products")); alert("已清空商品！"); filterInventory('A'); } };
+
+        loadOrders();
     </script>
 </body>
 </html>
