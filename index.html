@@ -849,29 +849,22 @@
         calculateCartTotal();
     }
 
-    window.calculateCartTotal = function() {
-        let subtotal = 0;
-        for (let product in cart) {
-            let qty = cart[product];
-            let price = (currentProductsDataSnapshot[product] && currentProductsDataSnapshot[product].price) || 0;
-            subtotal += price * qty;
-        }
-
-        let discount = 0;
-        const couponSelect = document.getElementById("couponSelect");
-        if (couponSelect && couponSelect.value !== "") {
-            const selectedIdx = couponSelect.value;
-            if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons[selectedIdx]) {
-                discount = Number(currentUserProfile.coupons[selectedIdx].discount) || 0;
-            }
-        }
-
-        let grandTotal = Math.max(0, subtotal - discount);
-
-        document.getElementById("raw-subtotal-display").textContent = `NT$ ${subtotal.toLocaleString()}`;
-        document.getElementById("discount-display").textContent = `- NT$ ${discount.toLocaleString()}`;
-        document.getElementById("grand-total-display").textContent = `NT$ ${grandTotal.toLocaleString()}`;
+    function updateCouponDropdown() {
+    const couponSelect = document.getElementById("couponSelect");
+    if (!couponSelect) return;
+    
+    couponSelect.innerHTML = `<option value="">不使用優惠券（保留至下次）</option>`;
+    if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons.length > 0) {
+        currentUserProfile.coupons.forEach((coupon, idx) => {
+            let opt = document.createElement("option");
+            opt.value = idx;
+            let val = coupon.discount || 0;
+            let desc = (val > 0 && val < 1) ? `享 ${val * 10} 折優惠` : `折抵 NT$ ${val}`;
+            opt.textContent = `🎟️ ${coupon.title} (${desc})`;
+            couponSelect.appendChild(opt);
+        });
     }
+}
 
     function updateCouponDropdown() {
         const couponSelect = document.getElementById("couponSelect");
