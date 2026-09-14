@@ -59,6 +59,12 @@
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-amber); box-shadow: 0 0 0 3px rgba(140,98,57,0.15); }
         .form-group textarea { resize: vertical; min-height: 80px; font-family: inherit; }
 
+        /* 密碼顯示切換容器樣式 */
+        .password-input-wrap { position: relative; display: flex; align-items: center; }
+        .password-input-wrap input { padding-right: 45px; }
+        .toggle-password-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: #a39589; font-size: 16px; padding: 4px; }
+        .toggle-password-btn:hover { color: var(--primary-amber); }
+
         .login-notice-box { text-align: center; padding: 30px 20px; background: #faf8f5; border: 2px dashed #e5dfd5; border-radius: 10px; }
         .login-notice-box i { font-size: 38px; color: var(--primary-amber); margin-bottom: 12px; }
         .login-notice-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
@@ -96,7 +102,6 @@
         .btn-submit { width: 100%; padding: 12px; background: var(--primary-amber); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(140,98,57,0.18); }
         .btn-submit:hover { background: #6f4e2d; }
 
-        /* 🚀 調整後的浮動按鈕群樣式（縮小尺寸並微調位置） */
         .floating-action-group { position: fixed; bottom: 20px; right: 10px; display: flex; flex-direction: column; gap: 8px; z-index: 999; }
         .fab-btn { width: 42px; height: 42px; border-radius: 50%; background: #fff; border: 1px solid var(--border-color); color: var(--primary-amber); font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.12); transition: all 0.25s ease; position: relative; opacity: 0.9; }
         .fab-btn:hover { opacity: 1; transform: scale(1.05); }
@@ -116,7 +121,6 @@
         .auth-view { display: none; }
         .auth-view.active { display: block; }
 
-        /* 💬 客服對話視窗專用樣式 */
         .chat-box-card { max-width: 420px; height: 500px; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
         .chat-header { background: var(--primary-amber); color: #fff; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header h3 { color: #fff; margin: 0; font-size: 16px; text-align: left; }
@@ -285,12 +289,15 @@
                 <div id="loginFormBlock">
                     <h3><i class="fa-solid fa-user-circle"></i> 會員登入</h3>
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label>電子信箱</label>
-                        <input id="loginAcc" type="email" placeholder="請輸入註冊的 Email">
+                        <label>手機號碼 (登入帳號)</label>
+                        <input id="loginAcc" type="tel" placeholder="請輸入手機號碼">
                     </div>
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label>密碼</label>
-                        <input id="loginPwd" type="password" placeholder="請輸入密碼">
+                        <div class="password-input-wrap">
+                            <input id="loginPwd" type="password" placeholder="請輸入密碼">
+                            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('loginPwd', this)"><i class="fa-solid fa-eye"></i></button>
+                        </div>
                     </div>
                     <button class="btn-submit" onclick="performLogin()">確認登入</button>
 
@@ -316,16 +323,19 @@
                     <input id="regName" type="text" placeholder="例如：王小明">
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
-                    <label>電子信箱 (作為登入帳號)</label>
-                    <input id="regEmail" type="email" placeholder="example@gmail.com">
+                    <label>LINE 群組暱稱</label>
+                    <input id="regLineNick" type="text" placeholder="例如：小明 (LINE社群暱稱)">
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
-                    <label>聯絡電話</label>
+                    <label>手機號碼 (作為登入帳號)</label>
                     <input id="regPhone" type="tel" placeholder="0912345678">
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label>設定密碼</label>
-                    <input id="regPwd" type="password" placeholder="至少 6 位數密碼">
+                    <div class="password-input-wrap">
+                        <input id="regPwd" type="password" placeholder="至少 6 位數密碼">
+                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('regPwd', this)"><i class="fa-solid fa-eye"></i></button>
+                    </div>
                 </div>
                 <button class="btn-submit" onclick="performRegister()"><i class="fa-solid fa-circle-check"></i> 立即送出註冊</button>
 
@@ -336,12 +346,12 @@
 
             <div id="viewForgot" class="auth-view">
                 <h3><i class="fa-solid fa-key"></i> 重設密碼</h3>
-                <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px; text-align: center;">請輸入您註冊時填寫的電子信箱，系統將發送重設驗證指示給您。</p>
+                <p style="font-size: 13px; color: #8a7c70; margin-bottom: 15px; text-align: center;">請輸入您註冊時的手機號碼，系統將協助您重設密碼。</p>
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label>註冊電子信箱</label>
-                    <input id="forgotEmail" type="email" placeholder="請輸入您的 Email">
+                    <label>註冊手機號碼</label>
+                    <input id="forgotPhone" type="tel" placeholder="請輸入手機號碼">
                 </div>
-                <button class="btn-submit" onclick="performForgotPassword()"><i class="fa-solid fa-paper-plane"></i> 發送密碼重設信</button>
+                <button class="btn-submit" onclick="performForgotPassword()"><i class="fa-solid fa-paper-plane"></i> 發送密碼重設指示</button>
 
                 <div class="auth-links" style="justify-content: center; margin-top: 20px;">
                     <a onclick="switchAuthView('login')"><i class="fa-solid fa-arrow-left"></i> 想起來了？返回登入</a>
@@ -382,6 +392,21 @@
     let currentCategory = 'A';
 
     const weekDayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+
+    // 密碼顯示/隱藏切換功能
+    window.togglePasswordVisibility = function(inputId, btnEl) {
+        const input = document.getElementById(inputId);
+        const icon = btnEl.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    };
 
     window.switchCategory = function(category) {
         currentCategory = category;
@@ -472,7 +497,7 @@
         if (!currentUserUid) return;
         try {
             let userSnap = await get(ref(db, "users/" + currentUserUid));
-            currentUserProfile = userSnap.exists() ? userSnap.val() : { name: "", phone: "", points: 0, totalSpent: 0 };
+            currentUserProfile = userSnap.exists() ? userSnap.val() : { name: "", phone: "", lineNick: "", points: 0, totalSpent: 0 };
             if (currentUserProfile.points === undefined) currentUserProfile.points = 0;
         } catch (err) { console.error("載入會員檔失敗:", err); }
     }
@@ -549,34 +574,40 @@
     }
 
     window.performLogin = async function() {
-        const email = document.getElementById('loginAcc').value.trim();
+        const phone = document.getElementById('loginAcc').value.trim();
         const pwd = document.getElementById('loginPwd').value;
-        if (!email || !pwd) { alert('請完整填寫信箱與密碼！'); return; }
+        if (!phone || !pwd) { alert('請完整填寫手機號碼與密碼！'); return; }
+
+        // 以電話號碼對應虛擬 Email 進行 Firebase 驗證
+        const pseudoEmail = `${phone}@yanmai.system`;
 
         try {
-            await signInWithEmailAndPassword(auth, email, pwd);
+            await signInWithEmailAndPassword(auth, pseudoEmail, pwd);
             alert('🎉 登入成功！');
             closeLoginModal();
         } catch (err) {
-            alert('❌ 登入失敗：' + err.message);
+            alert('❌ 登入失敗，請確認手機號碼與密碼是否正確：' + err.message);
         }
     };
 
     window.performRegister = async function() {
         const name = document.getElementById('regName').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
+        const lineNick = document.getElementById('regLineNick').value.trim();
         const phone = document.getElementById('regPhone').value.trim();
         const pwd = document.getElementById('regPwd').value;
 
-        if (!name || !email || !phone || !pwd) { alert('請填寫所有註冊欄位！'); return; }
+        if (!name || !lineNick || !phone || !pwd) { alert('請填寫所有註冊欄位！'); return; }
         if (pwd.length < 6) { alert('密碼長度至少需要 6 位數！'); return; }
 
+        // 以手機號碼組合成虛擬 Email 給 Firebase Auth 使用
+        const pseudoEmail = `${phone}@yanmai.system`;
+
         try {
-            const res = await createUserWithEmailAndPassword(auth, email, pwd);
+            const res = await createUserWithEmailAndPassword(auth, pseudoEmail, pwd);
             const uid = res.user.uid;
             await set(ref(db, "users/" + uid), {
                 name: name,
-                email: email,
+                lineNick: lineNick,
                 phone: phone,
                 points: 0,
                 totalSpent: 0
@@ -584,16 +615,17 @@
             alert('🎉 註冊成功並已自動登入！');
             closeLoginModal();
         } catch (err) {
-            alert('❌ 註冊失敗：' + err.message);
+            alert('❌ 註冊失敗（可能此手機號碼已被註冊）：' + err.message);
         }
     };
 
     window.performForgotPassword = async function() {
-        const email = document.getElementById('forgotEmail').value.trim();
-        if (!email) { alert('請輸入註冊的電子信箱！'); return; }
+        const phone = document.getElementById('forgotPhone').value.trim();
+        if (!phone) { alert('請輸入註冊的手機號碼！'); return; }
+        const pseudoEmail = `${phone}@yanmai.system`;
         try {
-            await sendPasswordResetEmail(auth, email);
-            alert('✉️ 密碼重設信已發送至您的信箱，請前往查收！');
+            await sendPasswordResetEmail(auth, pseudoEmail);
+            alert('✉️ 密碼重設指示已發送，若該手機有對應帳號請依指示處理！');
             switchAuthView('login');
         } catch (err) {
             alert('❌ 發送失敗：' + err.message);
@@ -887,6 +919,7 @@
                 userId: currentUserUid,
                 name: name,
                 phone: phone,
+                lineNick: currentUserProfile ? currentUserProfile.lineNick : '',
                 date: currentCategory === 'A' ? date : '經典熱銷專區(3天內出貨)',
                 time: time,
                 location: location,
