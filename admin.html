@@ -632,6 +632,33 @@
         let activeChatUserId = null;
         let currentInventoryCategory = 'A';
 
+        // 即時監聽全域未讀聊天訊息數量
+        function listenGlobalUnreadChats() {
+            const chatListRef = ref(db, "chats");
+            onValue(chatListRef, (snapshot) => {
+                const data = snapshot.val();
+                const badge = document.getElementById("globalChatBadge");
+                if (!badge) return;
+
+                let unreadCount = 0;
+                if (data) {
+                    Object.keys(data).forEach(uid => {
+                        if (data[uid].unreadByAdmin) {
+                            unreadCount++;
+                        }
+                    });
+                }
+
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = "inline-block";
+                } else {
+                    badge.style.display = "none";
+                }
+            });
+        }
+        listenGlobalUnreadChats();
+
         // 分頁切換
         window.switchTab = function(event, tabId) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -898,19 +925,15 @@
             onValue(chatListRef, (snapshot) => {
                 const data = snapshot.val();
                 const listContainer = document.getElementById("chatUserList");
-                const badge = document.getElementById("globalChatBadge");
                 if (!data) {
                     listContainer.innerHTML = `<li style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">尚無訊息</li>`;
-                    if (badge) badge.style.display = "none";
                     return;
                 }
 
                 let listHtml = "";
-                let unreadCount = 0;
 
                 Object.keys(data).forEach(uid => {
                     const userChat = data[uid];
-                    if (userChat.unreadByAdmin) unreadCount++;
                     const activeClass = uid === activeChatUserId ? "active" : "";
                     const initial = (userChat.userName || "會").charAt(0);
 
@@ -921,16 +944,12 @@
                                 <div class="user-name">${userChat.userName || '匿名會員'}</div>
                                 <div class="user-last-msg">${userChat.lastMessage || ''}</div>
                             </div>
-                            ${userChat.unreadByAdmin ? `<span class="user-unread-badge">新</span>` : ''}
+                            ${userChat.unreadByAdmin ? `<span class="user-unread-badge">新訊息</span>` : ''}
                         </li>
                     `;
                 });
 
                 listContainer.innerHTML = listHtml;
-                if (badge) {
-                    if (unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = "inline-block"; }
-                    else { badge.style.display = "none"; }
-                }
             });
         }
 
@@ -978,7 +997,8 @@
 
             await update(ref(db, `chats/${activeChatUserId}`), {
                 lastMessage: text,
-                lastTimestamp: timestamp
+                lastTimestamp: timestamp,
+                unreadByUser: true
             });
         };
 
