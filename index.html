@@ -133,7 +133,6 @@
 
         .coupon-item { display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px dashed var(--border-color); padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-size: 13px; }
 
-        /* 💬 客服對話視窗專用樣式 */
         .chat-box-card { max-width: 420px; height: 500px; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
         .chat-header { background: var(--primary-amber); color: #fff; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header h3 { color: #fff; margin: 0; font-size: 16px; text-align: left; }
@@ -187,7 +186,7 @@
             </div>
         </div>
 
-        <!-- 📝 取貨人資訊與購物清單 -->
+        <!-- 取貨人資訊與購物清單 -->
         <div class="checkout-grid">
             <div class="order-form-card">
                 <h2 class="section-title"><i class="fa-solid fa-address-card"></i> 填寫預購取貨人資訊</h2>
@@ -232,7 +231,7 @@
                         </select>
                     </div>
 
-                    <!-- 🎟️ 優惠券折抵選單 -->
+                    <!-- 優惠券折抵選單 -->
                     <div class="form-group full-width">
                         <label><i class="fa-solid fa-ticket"></i> 使用優惠券折抵</label>
                         <select id="couponSelect" onchange="calculateCartTotal()">
@@ -247,7 +246,7 @@
                 </div>
             </div>
 
-            <!-- 🛒 購物預定清單 -->
+            <!-- 購物預定清單 -->
             <div class="cart-sticky-panel">
                 <h2 class="section-title" style="margin-bottom: 10px;"><i class="fa-solid fa-basket-shopping"></i> 購物預定清單</h2>
                 <table class="cart-table">
@@ -272,7 +271,7 @@
         </div>
     </section>
 
-    <!-- 🚀 浮動按鈕群 -->
+    <!-- 浮動按鈕群 -->
     <div class="floating-action-group">
         <button id="chatFabBtn" class="fab-btn fab-chat" onclick="openChatModal()" title="聯絡線上客服" style="display: none;">
             <i class="fa-solid fa-comments"></i>
@@ -288,7 +287,7 @@
         </button>
     </div>
 
-    <!-- 💬 客服溝通聊天室 Modal -->
+    <!-- 客服溝通聊天室 Modal -->
     <div id="chatModal" class="modal-overlay">
         <div class="modal-card chat-box-card">
             <div class="chat-header">
@@ -305,7 +304,7 @@
         </div>
     </div>
 
-    <!-- 🎰 幸運抽獎 Modal -->
+    <!-- 幸運抽獎 Modal -->
     <div id="lotteryModal" class="modal-overlay">
         <div class="modal-card">
             <i class="fa-solid fa-xmark modal-close" onclick="closeLotteryModal()"></i>
@@ -340,7 +339,7 @@
         </div>
     </div>
 
-    <!-- 🔑 客戶登入 / 註冊 Modal -->
+    <!-- 客戶登入 / 註冊 Modal -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-card">
             <i class="fa-solid fa-xmark modal-close" onclick="closeLoginModal()"></i>
@@ -859,7 +858,7 @@
 
         let discount = 0;
         const couponSelect = document.getElementById("couponSelect");
-        if (couponSelect && couponSelect.value) {
+        if (couponSelect && couponSelect.value !== "") {
             const selectedIdx = couponSelect.value;
             if (currentUserProfile && currentUserProfile.coupons && currentUserProfile.coupons[selectedIdx]) {
                 discount = currentUserProfile.coupons[selectedIdx].discount || 0;
@@ -1089,7 +1088,7 @@
         return prizes[0];
     }
 
-    /* 📤 送出預購訂單 */
+    /* 送出預購訂單 */
     window.submitOrder = async function() {
         if (!isLoggedIn) {
             alert("請先登入會員帳號後再送出訂單！");
