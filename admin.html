@@ -628,9 +628,7 @@
         const db = getDatabase(app);
 
         let currentBase64Image = "";
-        let currentEditBase64Image = "";
         let globalOrdersCache = [];
-        let globalUsersCache = {};
         let activeChatUserId = null;
         let currentInventoryCategory = 'A';
 
@@ -771,7 +769,6 @@
 
                     for (let p in data) {
                         let item = data[p];
-                        let remain = (item.total || 999) - (item.sold || 0);
                         let tag = cat === 'B' ? '<span class="section-tag tag-b">經典熱銷</span>' : '<span class="section-tag tag-c">接單烘焙</span>';
                         html += `
                             <div class="item-row">
@@ -883,7 +880,7 @@
             try {
                 await update(ref(db, `orders/${orderId}`), { status: "completed" });
                 
-                if (userId) {
+                if (userId && userId !== 'undefined') {
                     const pointsToAdd = Math.floor(amount / 100);
                     const userSnap = await get(ref(db, `users/${userId}`));
                     if (userSnap.exists()) {
@@ -896,7 +893,6 @@
             } catch (err) { alert("❌ 操作失敗！"); }
         };
 
-        /* 💬 客服訊息中心邏輯 */
         function initChatDashboard() {
             const chatListRef = ref(db, "chats");
             onValue(chatListRef, (snapshot) => {
