@@ -299,7 +299,7 @@
         </div>
     </section>
 
-    <!-- 🚀 浮動按鈕群（客服聊天按鈕位於抽獎按鈕上方） -->
+    <!-- 🚀 浮動按鈕群 -->
     <div class="floating-action-group">
         <button id="chatFabBtn" class="fab-btn fab-chat" onclick="openChatModal()" title="聯絡線上客服" style="display: none;">
             <i class="fa-solid fa-comments"></i>
@@ -472,7 +472,6 @@
     let currentUserProfile = null;
     let currentCategory = 'A';
     let isDrawing = false;
-    let chatListenerUnsubscribe = null;
 
     let currentRotationDeg = 0; 
     let prizesArrayCache = [];  
@@ -750,14 +749,12 @@
         const chatRef = ref(db, `chats/${currentUserUid}`);
         const messagesRef = ref(db, `chats/${currentUserUid}/messages`);
 
-        // 寫入對話內容
         await push(messagesRef, {
             sender: "customer",
             text: text,
             timestamp: timestamp
         });
 
-        // 更新聊天室頭資訊（供後台列表展示）
         await update(chatRef, {
             userName: userName,
             lastMessage: text,
@@ -1224,11 +1221,14 @@
             }
 
             await update(ref(db, "users/" + currentUserUid), {
+                name: name,
+                phone: phone,
                 coupons: updatedCoupons
             });
 
             await set(push(ref(db, "orders")), { 
                 userId: currentUserUid,
+                userName: name,
                 name, 
                 phone, 
                 date, 
