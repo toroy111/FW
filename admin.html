@@ -467,17 +467,11 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>獎項名稱</label>
-                        <input id="prizeTitle" placeholder="例如：折價券或折扣">
+                        <input id="prizeTitle" placeholder="例如：9折優惠卷 或 折價卷 NT$ 50">
                     </div>
                     <div class="form-group">
-                        <label>折抵類型與數值</label>
-                        <div style="display: flex; gap: 8px;">
-                            <select id="prizeDiscountType" style="width: 140px;" onchange="toggleDiscountInput()">
-                                <option value="amount">固定金額 (NT$)</option>
-                                <option value="percent">訂單總金額折數</option>
-                            </select>
-                            <input id="prizeDiscountValue" type="number" min="0" step="any" placeholder="例如：50">
-                        </div>
+                        <label>折抵內容 (若小於1代表折扣數如0.9，若大於等於1代表折抵現金NT$)</label>
+                        <input id="prizeDiscount" type="number" step="0.05" min="0" placeholder="例如：0.9 或 50">
                     </div>
                     <div class="form-group">
                         <label>抽中機率權重 (數值越大機率越高)</label>
@@ -520,7 +514,7 @@
                                 <th>Email</th>
                                 <th>電話</th>
                                 <th>目前累積點數</th>
-                                <th>手動調整點數</th>
+                                <th>操作管理</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
@@ -583,6 +577,75 @@
         </div>
     </div>
 
+    <!-- 編輯獎項 Modal 彈出視窗 -->
+    <div id="editPrizeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="border:none; margin:0; padding:0;"><i class="fa-solid fa-pen-to-square"></i> 編輯抽獎獎項</h3>
+                <button class="modal-close" onclick="closeEditPrizeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+                <input type="hidden" id="editPrizeId">
+                <div class="form-group">
+                    <label>獎項名稱</label>
+                    <input id="editPrizeTitle" placeholder="例如：9折優惠卷">
+                </div>
+                <div class="form-group">
+                    <label>折抵內容 (若小於1代表折扣數如0.9，若大於等於1代表折抵現金NT$)</label>
+                    <input id="editPrizeDiscount" type="number" step="0.05" min="0" placeholder="例如：0.9 或 50">
+                </div>
+                <div class="form-group">
+                    <label>抽中機率權重</label>
+                    <input id="editPrizeProb" type="number" min="1">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEditPrizeModal()">取消</button>
+                <button class="btn-add" onclick="savePrizeEdit()"><i class="fa-solid fa-floppy-disk"></i> 儲存變更</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 會員優惠券與點數詳情 Modal 彈出視窗 -->
+    <div id="userModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 style="border:none; margin:0; padding:0;"><i class="fa-solid fa-id-card"></i> 會員詳細資料與優惠券管理</h3>
+                <button class="modal-close" onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="hidden" id="modalUserId">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>會員姓名</label>
+                    <input id="modalUserName" readonly style="background:#edf2f7;">
+                </div>
+                <div class="form-group">
+                    <label>目前點數</label>
+                    <input id="modalUserPoints" type="number" min="0">
+                </div>
+            </div>
+            <h4 style="margin: 16px 0 10px 0; font-size: 15px; font-weight: 600;"><i class="fa-solid fa-ticket"></i> 此會員擁有的優惠券列表</h4>
+            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>優惠券標題</th>
+                            <th>折抵內容</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalUserCouponsBody">
+                        <tr><td colspan="3" style="text-align:center; color:var(--text-muted);">尚無優惠券</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="btn-cancel" onclick="closeUserModal()">關閉</button>
+                <button class="btn-add" onclick="saveUserModalChanges()"><i class="fa-solid fa-floppy-disk"></i> 儲存會員變更</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, set, update, remove, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -604,6 +667,7 @@
         let globalOrdersCache = [];
         let activeChatUserId = null;
         let currentInventoryCategory = 'A';
+        let currentEditingUserCoupons = [];
 
         function listenGlobalUnreadChats() {
             const chatListRef = ref(db, "chats");
@@ -962,17 +1026,6 @@
             });
         };
 
-        // 抽獎獎項相關 JavaScript
-        window.toggleDiscountInput = function() {
-            const type = document.getElementById("prizeDiscountType").value;
-            const input = document.getElementById("prizeDiscountValue");
-            if (type === "amount") {
-                input.placeholder = "例如：50";
-            } else {
-                input.placeholder = "例如：0.85 (85折) 或 9";
-            }
-        };
-
         async function loadPrizes() {
             const snap = await get(ref(db, "prizes"));
             const data = snap.val();
@@ -982,19 +1035,16 @@
             let html = "";
             Object.keys(data).forEach(id => {
                 let p = data[id];
-                let discountText = "";
-                if (p.discountType === 'percent' || (p.discount && p.discount < 1 && p.discount > 0)) {
-                    discountText = `訂單總金額 ${p.discount} 折`;
-                } else {
-                    discountText = `NT$ ${p.discount || 0}`;
-                }
-
+                let discountText = (p.discount > 0 && p.discount < 1) ? `訂單總金額 ${p.discount} 折` : `NT$ ${p.discount || 0}`;
                 html += `
                     <tr>
                         <td><b>${p.title}</b></td>
                         <td>${discountText}</td>
                         <td>${p.prob || 10}</td>
-                        <td><button class="btn-delete-single" onclick="deletePrize('${id}')"><i class="fa-solid fa-trash"></i> 刪除</button></td>
+                        <td class="action-buttons">
+                            <button class="btn-edit-single" onclick="openEditPrizeModal('${id}', '${p.title}', ${p.discount}, ${p.prob})"><i class="fa-solid fa-pen"></i> 編輯</button>
+                            <button class="btn-delete-single" onclick="deletePrize('${id}')"><i class="fa-solid fa-trash"></i> 刪除</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -1003,23 +1053,43 @@
 
         window.addPrize = async function() {
             const title = document.getElementById("prizeTitle").value.trim();
-            const discountType = document.getElementById("prizeDiscountType").value;
-            const discountVal = parseFloat(document.getElementById("prizeDiscountValue").value) || 0;
+            const discount = parseFloat(document.getElementById("prizeDiscount").value) || 0;
             const prob = parseInt(document.getElementById("prizeProb").value) || 10;
-            
             if (!title) { alert("請填寫獎項名稱！"); return; }
 
-            await push(ref(db, "prizes"), { 
-                title, 
-                discountType, 
-                discount: discountVal, 
-                prob 
-            });
-            
+            await push(ref(db, "prizes"), { title, discount, prob });
             alert("🎉 獎項新增成功！");
             document.getElementById("prizeTitle").value = "";
-            document.getElementById("prizeDiscountValue").value = "";
+            document.getElementById("prizeDiscount").value = "";
             loadPrizes();
+        };
+
+        window.openEditPrizeModal = function(id, title, discount, prob) {
+            document.getElementById("editPrizeId").value = id;
+            document.getElementById("editPrizeTitle").value = title;
+            document.getElementById("editPrizeDiscount").value = discount;
+            document.getElementById("editPrizeProb").value = prob;
+            document.getElementById("editPrizeModal").style.display = "flex";
+        };
+
+        window.closeEditPrizeModal = function() {
+            document.getElementById("editPrizeModal").style.display = "none";
+        };
+
+        window.savePrizeEdit = async function() {
+            const id = document.getElementById("editPrizeId").value;
+            const title = document.getElementById("editPrizeTitle").value.trim();
+            const discount = parseFloat(document.getElementById("editPrizeDiscount").value) || 0;
+            const prob = parseInt(document.getElementById("editPrizeProb").value) || 10;
+
+            if (!title) { alert("請填寫獎項名稱！"); return; }
+
+            try {
+                await update(ref(db, `prizes/${id}`), { title, discount, prob });
+                alert("🎉 獎項更新成功！");
+                closeEditPrizeModal();
+                loadPrizes();
+            } catch (err) { alert("❌ 更新失敗！"); }
         };
 
         window.deletePrize = async function(id) {
@@ -1044,8 +1114,7 @@
                         <td>${u.phone || '-'}</td>
                         <td><b style="color:var(--warning-orange);">${u.points || 0} 點</b></td>
                         <td>
-                            <input id="user_pts_${uid}" type="number" style="width:80px; padding:4px 8px;" value="${u.points || 0}">
-                            <button class="btn-edit-single" onclick="updateUserPoints('${uid}')">儲存</button>
+                            <button class="btn-edit-single" onclick="openUserModal('${uid}')"><i class="fa-solid fa-pen-to-square"></i> 查看詳情與優惠券</button>
                         </td>
                     </tr>
                 `;
@@ -1053,11 +1122,63 @@
             tbody.innerHTML = html;
         }
 
-        window.updateUserPoints = async function(uid) {
-            const pts = parseInt(document.getElementById(`user_pts_${uid}`).value) || 0;
-            await update(ref(db, `users/${uid}`), { points: pts });
-            alert("🎉 點數調整成功！");
-            loadUsers();
+        window.openUserModal = async function(uid) {
+            document.getElementById("modalUserId").value = uid;
+            try {
+                const snap = await get(ref(db, `users/${uid}`));
+                if (!snap.exists()) return;
+                let u = snap.val();
+                document.getElementById("modalUserName").value = u.name || '未填寫';
+                document.getElementById("modalUserPoints").value = u.points || 0;
+                
+                currentEditingUserCoupons = u.coupons || [];
+                renderModalUserCoupons();
+                document.getElementById("userModal").style.display = "flex";
+            } catch (err) { alert("讀取會員資料失敗"); }
+        };
+
+        window.closeUserModal = function() {
+            document.getElementById("userModal").style.display = "none";
+        };
+
+        function renderModalUserCoupons() {
+            const tbody = document.getElementById("modalUserCouponsBody");
+            if (!currentEditingUserCoupons || currentEditingUserCoupons.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">此會員尚無任何優惠券</td></tr>`;
+                return;
+            }
+            let html = "";
+            currentEditingUserCoupons.forEach((coupon, idx) => {
+                let desc = (coupon.discount > 0 && coupon.discount < 1) ? `折扣 ${coupon.discount} 折` : `折抵 NT$ ${coupon.discount}`;
+                html += `
+                    <tr>
+                        <td><b>${coupon.title}</b></td>
+                        <td>${desc}</td>
+                        <td><button class="btn-delete-single" onclick="removeUserCoupon(${idx})">刪除</button></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        window.removeUserCoupon = function(idx) {
+            currentEditingUserCoupons.splice(idx, 1);
+            renderModalUserCoupons();
+        };
+
+        window.saveUserModalChanges = async function() {
+            const uid = document.getElementById("modalUserId").value;
+            const points = parseInt(document.getElementById("modalUserPoints").value) || 0;
+
+            try {
+                await update(ref(db, `users/${uid}`), {
+                    points: points,
+                    coupons: currentEditingUserCoupons
+                });
+                alert("🎉 會員資料更新成功！");
+                closeUserModal();
+                loadUsers();
+            } catch (err) { alert("❌ 更新失敗！"); }
         };
 
         window.exportToExcel = function() {
